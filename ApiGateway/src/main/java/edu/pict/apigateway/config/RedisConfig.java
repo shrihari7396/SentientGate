@@ -22,5 +22,6 @@ public class RedisConfig {
 
         return new ReactiveStringRedisTemplate(connectionFactory, context);
     }
+}
 
 
