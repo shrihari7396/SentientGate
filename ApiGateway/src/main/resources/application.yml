@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: after_route
+              uri: https://example.org
+              predicates:
+              - Cookie=mycookie,mycookievalue
