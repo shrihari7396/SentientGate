@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a2ff81f1-6f31-4859-a579-64b7e915a804" name="Changes" comment="" />
+    <list default="true" id="a2ff81f1-6f31-4859-a579-64b7e915a804" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/SentientGate.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/ApiGatewayApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/src/test/java/edu/pict/apigateway/ApiGatewayApplicationTests.java" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,9 +26,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="3970npKZc6ECJsBx8ntWLLriYvj" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -26,6 +42,7 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/shrihari/Documents/PersonalProjects/SentientGate",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -45,6 +62,7 @@
       <option name="presentableId" value="Default" />
       <updated>1770031971322</updated>
       <workItem from="1770031972450" duration="114000" />
+      <workItem from="1770032786442" duration="150000" />
     </task>
     <servers />
   </component>
