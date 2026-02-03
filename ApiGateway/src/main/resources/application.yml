@@ -8,3 +8,16 @@ spring:
               uri: https://example.org
               predicates:
               - Cookie=mycookie,mycookievalue
+            - id: user-service
+              uri: lb://DUMMYSERVICE
+              predicates:
+#                - Path=/api/v1/inventory/**
+#              filters:
+#                - StripPrefix=2
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
