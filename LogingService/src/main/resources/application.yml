@@ -1,0 +1,24 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydb
+    username: postgres
+    password: postgres
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
