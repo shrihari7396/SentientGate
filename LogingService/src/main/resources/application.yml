@@ -22,3 +22,22 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    consumer:
+      group-id: sentientgate-logging-service
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: edu.pict.loggingservice.kafka.model.GatewayDecisionEvent
+
+    listener:
+      concurrency: 3
+      ack-mode: record   # commit after each message
