@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a2ff81f1-6f31-4859-a579-64b7e915a804" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/filters/global/LoggingGlobalFilter.java" beforeDir="false" />
-    </list>
+    <list default="true" id="a2ff81f1-6f31-4859-a579-64b7e915a804" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,6 +57,7 @@
       <workItem from="1770032786442" duration="150000" />
       <workItem from="1770111288176" duration="209000" />
       <workItem from="1770111978355" duration="87000" />
+      <workItem from="1770117800408" duration="132000" />
     </task>
     <servers />
   </component>
