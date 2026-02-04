@@ -6,7 +6,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/mydb
     username: postgres
     password: postgres
-
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
@@ -17,11 +16,13 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: update   # change to validate in prod
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
+        jdbc:
+          batch_size: 100
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -29,15 +30,16 @@ spring:
     consumer:
       group-id: sentientgate-logging-service
       auto-offset-reset: earliest
-      enable-auto-commit: true
+      enable-auto-commit: false
+      max-poll-records: 500
 
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 
       properties:
-        spring.json.trusted.packages: "*"
-        spring.json.value.default.type: edu.pict.loggingservice.kafka.model.GatewayDecisionEvent
+        spring.json.trusted.packages: "edu.pict.loggingservice.kafka.model"
 
     listener:
       concurrency: 3
-      ack-mode: record   # commit after each message
+      type: batch
+      ack-mode: batch
