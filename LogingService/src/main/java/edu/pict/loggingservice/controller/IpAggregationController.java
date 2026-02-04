@@ -1,6 +1,5 @@
 package edu.pict.loggingservice.controller;
 
-import edu.pict.loggingservice.dto.IpActivitySummary;
 import edu.pict.loggingservice.service.IpAggregationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
