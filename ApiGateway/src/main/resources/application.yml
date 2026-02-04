@@ -11,6 +11,7 @@ spring:
             - id: user-service
               uri: lb://DUMMYSERVICE
               predicates:
+
 #                - Path=/api/v1/inventory/**
 #              filters:
 #                - StripPrefix=2
