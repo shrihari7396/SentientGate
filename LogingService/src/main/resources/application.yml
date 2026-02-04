@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8010
   servlet:
     context-path: /loggingService/
 
@@ -40,7 +40,11 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 
       properties:
-        spring.json.trusted.packages: "edu.pict.loggingservice.kafka.model"
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: edu.pict.loggingservice.kafka.model
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: edu.pict.loggingservice.kafka.model.GatewayDecisionEvent
 
     listener:
       concurrency: 3

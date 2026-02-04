@@ -31,7 +31,7 @@ spring:
 
 
     properties:
-      spring.json.trusted.packages: "edu.pict.loggingservice.kafka.model"
+      spring.json.trusted.packages: "edu.pict.apigateway.kafkaEvent"
 
 
 eureka:
