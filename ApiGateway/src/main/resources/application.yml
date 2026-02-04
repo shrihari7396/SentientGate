@@ -5,16 +5,34 @@ spring:
         webflux:
           routes:
             - id: after_route
-              uri: https://example.org
-              predicates:
-              - Cookie=mycookie,mycookievalue
-            - id: user-service
               uri: lb://DUMMYSERVICE
               predicates:
+                - Path=/dummy/**
+            - id: logging_service
+              uri: lb://LOGGINGSERVICE
+              predicates:
+                - Path=/loggingService/**
+#              order=100
+#              predicates:
+#                - Cookie=mycookie,mycookievalue
+#            - id: user-service
+#              uri: lb://DUMMYSERVICE
+#              predicates:
 
 #                - Path=/api/v1/inventory/**
 #              filters:
 #                - StripPrefix=2
+
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+
+    properties:
+      spring.json.trusted.packages: "edu.pict.loggingservice.kafka.model"
+
 
 eureka:
   client:

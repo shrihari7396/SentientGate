@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DummyController {
+    @GetMapping("/")
+    public String index() {
+        return "Hello World!";
+    }
     @GetMapping("/dummy")
     public String dummy() {
         return "Service Is running Successfully!    ";

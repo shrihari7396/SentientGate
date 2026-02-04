@@ -1,5 +1,7 @@
 server:
-  port: 8082
+  port: 8090
+  servlet:
+    context-path: /dummy/
 
 
 eureka:
