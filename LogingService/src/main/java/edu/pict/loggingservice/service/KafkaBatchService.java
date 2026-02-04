@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -20,7 +21,7 @@ public class KafkaBatchService {
 
         List<GatewayLogEntity> entities = events.stream()
                 .map(event -> GatewayLogEntity.builder()
-                        .id(event.eventId())
+                        .id(UUID.randomUUID())
                         .clientIp(event.clientIp())
                         .routeId(event.routeId())
                         .decision(event.decision())
