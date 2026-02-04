@@ -1,5 +1,8 @@
 server:
   port: 8083
+  servlet:
+    context-path: /loggingService/
+
 
 spring:
   datasource:
@@ -43,3 +46,10 @@ spring:
       concurrency: 3
       type: batch
       ack-mode: batch
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
