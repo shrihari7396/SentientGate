@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: AIService
+
+  output:
+    ansi:
+      enabled: always
+
+server:
+  port: 8082
+  servlet:
+    context-path: /api/v1
+
+python:
+  predict:
+    url: http://localhost:8000/predict
+
+ollama:
+  base-url: http://localhost:11434
+  model: gemma3:latest    # or gemma3 if you prefer
