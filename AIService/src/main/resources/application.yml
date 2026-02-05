@@ -6,6 +6,10 @@ spring:
     ansi:
       enabled: always
 
+  threads:
+    virtual:
+      enabled: true
+
 server:
   port: 8082
   servlet:
