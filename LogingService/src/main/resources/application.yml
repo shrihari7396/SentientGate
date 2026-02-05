@@ -3,7 +3,6 @@ server:
   servlet:
     context-path: /loggingService/
 
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/mydb
@@ -19,8 +18,8 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update   # change to validate in prod
-    show-sql: false
+      ddl-auto: validate   # change to validate in prod
+    show-sql: true
     properties:
       hibernate:
         format_sql: true

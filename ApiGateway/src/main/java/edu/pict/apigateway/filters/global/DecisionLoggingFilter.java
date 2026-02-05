@@ -1,5 +1,6 @@
 package edu.pict.apigateway.filters.global;
 
+import edu.pict.apigateway.config.KafkaTopics;
 import edu.pict.apigateway.kafkaEvent.GatewayDecisionEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -13,20 +14,21 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
-@Order
+@Order(-1) // run late but before response commit
 @RequiredArgsConstructor
 public class DecisionLoggingFilter implements GlobalFilter {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    private static final String TOPIC = "sentientgate-decisions";
     private static final String DECISION_ATTR = "decision";
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         long startTime = System.currentTimeMillis();
 
         return chain.filter(exchange)
-                .doFinally((signal) -> {
+                .doFinally(signal -> {
+
                     String clientIp =
                             exchange.getAttributeOrDefault("clientIp", "UNKNOWN");
 
@@ -54,8 +56,18 @@ public class DecisionLoggingFilter implements GlobalFilter {
                             System.currentTimeMillis()
                     );
 
-                    // Fire-and-forget
-                    kafkaTemplate.send(TOPIC, event);
+                    // Fire-and-forget (NON-BLOCKING)
+                    kafkaTemplate.send(
+                            KafkaTopics.SECURITY_EVENTS.topic(),
+                            routeId,
+                            event
+                    );
+
+                    kafkaTemplate.send(
+                            KafkaTopics.USER_LOGS.topic(),
+                            routeId,
+                            event
+                    );
                 });
     }
 }
