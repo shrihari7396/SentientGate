@@ -1,0 +1,19 @@
+package edu.pict.policyservice.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class PolicyResult {
+
+    private int riskScore;
+    private boolean hardBlock;
+    private List<String> reasons;
+}
