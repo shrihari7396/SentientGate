@@ -26,16 +26,10 @@ public class OllamaService {
         this.defaultModel = defaultModel;
     }
 
-    /**
-     * Generate text/HTML using default model from application.yml
-     */
     public String generate(String prompt) {
         return generateWithModel(defaultModel, prompt);
     }
 
-    /**
-     * Generate using a specific model
-     */
     @SuppressWarnings("unchecked")
     public String generateWithModel(String model, String prompt) {
 
@@ -51,49 +45,41 @@ public class OllamaService {
                     .bodyValue(payload)
                     .retrieve()
                     .bodyToMono(Map.class)
+                    .timeout(java.time.Duration.ofSeconds(5))
                     .block();
 
             if (response == null || !response.containsKey("response")) {
-                log.error("Ollama returned empty response!");
-                return "<html><body><h2>Error: Empty response from Ollama</h2></body></html>";
+                log.error("Ollama returned empty response");
+                return "0.0";
             }
 
-            return response.get("response").toString();
+            return response.get("response").toString().trim();
 
         } catch (Exception e) {
-            log.error("Ollama generate() error: {}", e.getMessage());
-
-            return """
-                <html>
-                <body>
-                    <h2 style='color:red;'>Ollama AI Error</h2>
-                    <p>%s</p>
-                </body>
-                </html>
-            """.formatted(e.getMessage());
+            log.error("Ollama generate error", e);
+            return "0.0"; // numeric fail-safe
         }
     }
 
     /**
-     * System prompt + user prompt version
+     * STRICT numeric-only anomaly score [0.0 – 1.0]
      */
-    public String generateWithSystemPrompt(String systemPrompt, String userPrompt) {
-        String finalPrompt = systemPrompt + "\n\n" + userPrompt;
-        return generate(finalPrompt);
-    }
-
-
-
     public double predictAnomalyScore(String prompt) {
 
         String response = generate(prompt);
 
         try {
-            return Double.parseDouble(response.trim());
+            double score = Double.parseDouble(response);
+
+            // Clamp to safe range
+            if (score < 0.0) score = 0.0;
+            if (score > 1.0) score = 1.0;
+
+            return score;
+
         } catch (Exception e) {
-            log.error("Invalid AI score: {}", response);
-            return 0.0; // fail-safe
+            log.error("Invalid AI score from Ollama: '{}'", response);
+            return 0.0;
         }
     }
-
 }
