@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/ai/anomaly")
+@RequestMapping("/anomaly")
 @RequiredArgsConstructor
 public class AnomalyController {
 

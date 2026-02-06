@@ -1,6 +1,6 @@
 spring:
   application:
-    name: AIService
+    name: ai-service
 
   output:
     ansi:
@@ -13,12 +13,16 @@ spring:
 server:
   port: 8082
   servlet:
-    context-path: /api/v1
+    context-path: /api/aiService/
 
-python:
-  predict:
-    url: http://localhost:8000/predict
 
 ollama:
   base-url: http://localhost:11434
   model: gemma3:latest    # or gemma3 if you prefer
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true

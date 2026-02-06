@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AIResult {
+public class AnomalyDetectionResponse {
 
     private boolean anomaly;
     private double confidence;

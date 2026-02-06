@@ -32,12 +32,16 @@ public class DecisionOrchestrator {
         PolicyResult policy = policyClient.evaluate(context);
 
         // 3. Call AI Service
-        AIResult ai = aiClient.analyze(Map.of(
-                "failureRate", policy.getRiskScore() / 100.0,
-                "requestsPerMinute", 1,
-                "jwtReuseCount", 0,
-                "routeSensitivity", "HIGH"
-        ));
+        AnomalyDetectionResponse ai = aiClient.analyze(
+                AnomalyDetectionRequest.builder()
+                        .failureRate(policy.getRiskScore() / 100.0)
+                        .requestsPerMinute(1)
+                        .jwtReuseCount(0)
+                        .routeSensitivity("HIGH")
+                        .build()
+        );
+
+
 
         // 4. Decision logic (LOCK THIS)
         Decision decision;
@@ -61,7 +65,7 @@ public class DecisionOrchestrator {
     private Decision buildDecision(
             DecisionType type,
             PolicyResult policy,
-            AIResult ai,
+            AnomalyDetectionResponse ai,
             long ttlSeconds) {
 
         return Decision.builder()
