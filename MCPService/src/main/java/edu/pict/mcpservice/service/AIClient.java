@@ -16,8 +16,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AIClient {
 
-    private final RestTemplate restTemplate;
-
     private final AiServiceFeignClient aiServiceFeignClient;
 
     public AnomalyDetectionResponse analyze(AnomalyDetectionRequest anomalyDetectionRequest) {

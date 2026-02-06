@@ -5,11 +5,11 @@ spring:
         webflux:
           routes:
             - id: after_route
-              uri: lb://DUMMYSERVICE
+              uri: lb://DUMMY-SERVICE
               predicates:
                 - Path=/dummy/**
             - id: logging_service
-              uri: lb://LOGGINGSERVICE
+              uri: lb://LOGGING-SERVICE
               predicates:
                 - Path=/loggingService/**
 #              order=100
