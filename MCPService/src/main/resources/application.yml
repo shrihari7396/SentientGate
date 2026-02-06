@@ -1,0 +1,14 @@
+policy:
+  service:
+    url: http://localhost:8083
+
+
+ai:
+  service:
+    url: http://localhost:8082/api/v1
+
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
