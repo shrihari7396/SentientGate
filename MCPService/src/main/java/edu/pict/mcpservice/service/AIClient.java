@@ -1,6 +1,8 @@
 package edu.pict.mcpservice.service;
 
-import edu.pict.mcpservice.model.AIResult;
+import edu.pict.mcpservice.feienClients.AiServiceFeignClient;
+import edu.pict.mcpservice.model.AnomalyDetectionRequest;
+import edu.pict.mcpservice.model.AnomalyDetectionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,22 +18,16 @@ public class AIClient {
 
     private final RestTemplate restTemplate;
 
-    @Value("${ai.service.url}")
-    private String aiServiceUrl;
+    private final AiServiceFeignClient aiServiceFeignClient;
 
-    public AIResult analyze(Map<String, Object> features) {
+    public AnomalyDetectionResponse analyze(AnomalyDetectionRequest anomalyDetectionRequest) {
 
         try {
-            return restTemplate.postForObject(
-                    aiServiceUrl + "/ai/anomaly/analyze",
-                    features,
-                    AIResult.class
-            );
+            return aiServiceFeignClient.analyze(anomalyDetectionRequest).getBody();
         } catch (Exception e) {
             log.error("AI service call failed", e);
-
             // FAIL-OPEN: no anomaly, zero confidence
-            return new AIResult(false, 0.0, "unknown", 0);
+            return new AnomalyDetectionResponse(false, 0.0, "unknown", 0);
         }
     }
 }

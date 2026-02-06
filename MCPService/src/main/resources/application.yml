@@ -7,8 +7,44 @@ ai:
   service:
     url: http://localhost:8082/api/v1
 
+server:
+  port: 9991
 
+#spring:
+#  redis:
+#    host: localhost
+#    port: 6379
 spring:
-  redis:
-    host: localhost
-    port: 6379
+  application:
+    name: mcp-server
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    consumer:
+      group-id: sentientgate-logging-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 500
+
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: edu.pict.mcpservice.model
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: edu.pict.mcpservice.model.GatewayEvent
+
+    listener:
+      concurrency: 3
+      type: batch
+      ack-mode: batch
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
