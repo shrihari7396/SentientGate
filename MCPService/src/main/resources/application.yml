@@ -1,12 +1,3 @@
-policy:
-  service:
-    url: http://localhost:8083
-
-
-ai:
-  service:
-    url: http://localhost:8082/api/v1
-
 server:
   port: 9991
 
