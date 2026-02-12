@@ -84,7 +84,6 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        // Run last to ensure we have the final status code from the microservice
         return Ordered.LOWEST_PRECEDENCE;
     }
 }
