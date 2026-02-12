@@ -1,5 +1,6 @@
-package edu.pict.apigateway.config;
+package edu.pict.apigateway.config.kafka;
 
+import edu.pict.apigateway.config.kafka.KafkaTopics;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

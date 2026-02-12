@@ -1,4 +1,4 @@
-package edu.pict.apigateway.config;
+package edu.pict.apigateway.config.kafka;
 
 public enum KafkaTopics {
     USER_LOGS("user-logs"),
