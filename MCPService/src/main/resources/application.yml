@@ -24,9 +24,9 @@ spring:
       properties:
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: edu.pict.mcpservice.model
+        spring.json.trusted.packages: edu.pict.mcpservice.kafkaEvents
         spring.json.use.type.headers: false
-        spring.json.value.default.type: edu.pict.mcpservice.model.GatewayEvent
+        spring.json.value.default.type: edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent
 
     listener:
       concurrency: 3
@@ -39,3 +39,9 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     prefer-ip-address: true
+
+grpc:
+  client:
+    logging-service:
+      address: discovery:///LOGGING-SERVICE
+      negotiation-type: plaintext

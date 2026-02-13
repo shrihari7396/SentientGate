@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "edu.pict.mcp.grpc";
+option java_outer_classname = "UserLogEventProto";
+
+package log;
+
+// -------------------- Message Definitions --------------------
+
+message UserLogEvent {
+  string uuid = 1;
+  string path = 2;
+  string method = 3;
+  int64 latency_ms = 4;
+  string query_params = 5;
+  string client_ip = 6;
+  int32 status_code = 7;
+  int64 request_size = 8;
+  int64 timestamp = 9;
+  string user_agent = 10;
+}
+
+message UserLogEventsRequest {
+  string uuid = 1;
+  int32 duration = 2;  // duration in minutes (define clearly in docs)
+}
+
+message UserLogEventResponse {
+  repeated UserLogEvent user_log_events = 1;
+}
+
+// -------------------- Service Definition --------------------
+
+service UserLogEventService {
+  rpc GetUserEvents (UserLogEventsRequest)
+      returns (UserLogEventResponse);
+}
