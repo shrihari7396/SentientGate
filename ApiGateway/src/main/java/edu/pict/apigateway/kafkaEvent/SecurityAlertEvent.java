@@ -7,9 +7,12 @@ import lombok.Data;
 @Data
 public class SecurityAlertEvent {
     private String uuid;
-    private int errorCode; // e.g., 401, 429
-    private String reason; // e.g., "RATE_LIMIT_EXCEEDED"
+    private int errorCode;
+    private String reason;
     private String attemptedPath;
-    private String alertSeverity; // "LOW", "MEDIUM", "HIGH"
+    private String method;
+    private String userAgent;
+    private String clientIp;
+    private String alertSeverity;
     private long timestamp;
 }
