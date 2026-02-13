@@ -41,8 +41,11 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                             String uuid = exchange.getRequest().getHeaders().getFirst(VisitorIdFilter.VISITOR_ID);
                             String path = exchange.getRequest().getURI().getPath();
                             String method = exchange.getRequest().getMethod().toString();
+                            String queryParams = exchange.getRequest().getQueryParams().toString();
+                            long requestSize = exchange.getRequest().getHeaders().getContentLength();
                             String clientIp = Objects.requireNonNull(exchange.getRequest().getRemoteAddress())
                                     .getAddress().getHostAddress();
+                            String userAgent = exchange.getRequest().getHeaders().getFirst("User-Agent");
 
                             // 1. General Pipeline: Always log the history
                             UserLogEvent userLogEvent = UserLogEvent.builder()
@@ -50,11 +53,15 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                                     .path(path)
                                     .method(method)
                                     .latencyMs(duration)
-                                    .statusCode(statusCode)
+                                    .queryParams(queryParams)
                                     .clientIp(clientIp)
+                                    .statusCode(statusCode)
+                                    .requestSize(requestSize > 0 ? requestSize : 0)
                                     .timestamp(System.currentTimeMillis())
+                                    .userAgent(userAgent)
                                     .build();
 
+                            assert uuid != null;
                             kafkaTemplate.send(KafkaTopics.USER_LOGS.topic(), uuid, userLogEvent);
 
                             // 2. Security Pipeline: Trigger for non-200s (Redirection, Client/Server Errors)
@@ -64,6 +71,9 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                                         .errorCode(statusCode)
                                         .reason(reasonPhrase)
                                         .attemptedPath(path)
+                                        .method(method)
+                                        .userAgent(userAgent)
+                                        .clientIp(clientIp)
                                         .alertSeverity(determineSeverity(statusCode))
                                         .timestamp(System.currentTimeMillis())
                                         .build();
