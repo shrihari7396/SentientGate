@@ -3,8 +3,6 @@ package edu.pict.apigateway.kafkaEvent;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigInteger;
-
 @Builder
 @Data
 public class LogEvent {
@@ -18,5 +16,4 @@ public class LogEvent {
     private long requestSize;
     private long timestamp;
     private String userAgent;
-    BigInteger
 }

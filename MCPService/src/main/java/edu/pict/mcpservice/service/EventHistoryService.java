@@ -1,10 +1,9 @@
 package edu.pict.mcpservice.service;
 
-import edu.pict.mcp.grpc.UserLogEvent;
-import edu.pict.mcp.grpc.UserLogEventResponse;
-import edu.pict.mcp.grpc.UserLogEventServiceGrpc;
-import edu.pict.mcp.grpc.UserLogEventsRequest;
-
+import edu.pict.mcpservice.grpc.UserLogEvent;
+import edu.pict.mcpservice.grpc.UserLogEventResponse;
+import edu.pict.mcpservice.grpc.UserLogEventServiceGrpc;
+import edu.pict.mcpservice.grpc.UserLogEventsRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;

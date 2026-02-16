@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "edu.pict.mcp.grpc";
+option java_package = "edu.pict.mcpservice.grpc";
 option java_outer_classname = "UserLogEventProto";
 
 package log;
