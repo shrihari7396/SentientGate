@@ -2,7 +2,7 @@ package edu.pict.apigateway.filters.global;
 
 import edu.pict.apigateway.config.kafka.KafkaTopics;
 import edu.pict.apigateway.kafkaEvent.SecurityAlertEvent;
-import edu.pict.apigateway.kafkaEvent.UserLogEvent;
+import edu.pict.apigateway.kafkaEvent.LogEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -48,7 +48,7 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                             String userAgent = exchange.getRequest().getHeaders().getFirst("User-Agent");
 
                             // 1. General Pipeline: Always log the history
-                            UserLogEvent userLogEvent = UserLogEvent.builder()
+                            LogEvent logEvent = LogEvent.builder()
                                     .uuid(uuid)
                                     .path(path)
                                     .method(method)
@@ -62,7 +62,7 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                                     .build();
 
                             assert uuid != null;
-                            kafkaTemplate.send(KafkaTopics.USER_LOGS.topic(), uuid, userLogEvent);
+                            kafkaTemplate.send(KafkaTopics.USER_LOGS.topic(), uuid, logEvent);
 
                             // 2. Security Pipeline: Trigger for non-200s (Redirection, Client/Server Errors)
                             if (statusCode < 200 || statusCode >= 300) {
