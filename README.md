@@ -6,34 +6,77 @@ Unlike traditional firewalls that rely on static rules, SentientGate uses a **"S
 
 ---
 
+# 🏗️ System Architecture
+
+## 📌 High-Level Architecture Diagram
+
+![SentientGate Architecture](Architectures/Sentigate_Architectural_Diagram.png)
+
+The architecture follows a distributed, event-driven microservice model where detection, analysis, and enforcement are fully decoupled for scalability and resilience.
+
+---
+
+# 🔄 Request Lifecycle (Sequence Flow)
+
+## 📌 Sequence Diagram
+
+![SentientGate Sequence](Architectures/Sentigate_Sequence_Diagram.png)
+
+This sequence shows how a suspicious request flows through:
+
+1. ApiGateway  
+2. Kafka Event Bus  
+3. MCPService  
+4. LoggingService (via gRPC)  
+5. AIService (LLM inference)  
+6. Redis TTL enforcement  
+
+---
+
 # 🏗️ Core Services Architecture
 
-The system is composed of multiple specialized services, each responsible for a critical part of the security lifecycle:
+The system is composed of multiple specialized services:
+
+---
 
 ## 🔹 ApiGateway
 - Entry point of the system
 - Handles Visitor Identity signing
 - Performs high-speed **Blacklist Enforcement**
 - Uses **Reactive Redis** for sub-millisecond checks
+- Publishes `SecurityAlertEvent` to Kafka
+
+---
 
 ## 🔹 MCPService (Sentient Service)
 - The brain of the system
 - Consumes security alerts from **Kafka**
 - Fetches 10-minute behavioral history via **gRPC**
 - Executes a **Strategy-based analysis engine**
+- Applies TTL-based dynamic blocking
+
+---
 
 ## 🔹 AIService
 - Reactive Spring Boot service
 - Interfaces with local **Ollama LLM**
 - Performs deep behavioral anomaly detection
+- Used only for high-complexity edge cases
+
+---
 
 ## 🔹 LoggingService
 - The memory of the system
 - Records interaction logs
 - Provides historical data to MCP via **gRPC**
+- Enables entropy & pattern-based behavioral scoring
+
+---
 
 ## 🔹 EurekaServer
 - Service discovery for dynamic microservice communication
+
+---
 
 ## 🔹 DummyService
 - Protected target service used for demonstrating the security mesh
@@ -44,24 +87,26 @@ The system is composed of multiple specialized services, each responsible for a 
 
 ## 🧠 Sentient Analysis Engine
 
-Implemented using the **Strategy Design Pattern**, the MCP applies a layered defense:
+Implemented using the **Strategy Design Pattern**, MCP applies layered defense:
 
-1. **Rule-Based Detection**
-   - SQL Injection
-   - XSS
-   - Path Traversal
-   - (`PatternMatchStrategy`)
+### 1️⃣ Rule-Based Detection
+- SQL Injection
+- XSS
+- Path Traversal
+- Pattern-based scanning  
+- (`PatternMatchStrategy`)
 
-2. **Heuristic Detection**
-   - Burst traffic analysis
-   - High error-rate scanning
-   - (`BurstTrafficStrategy`)
+### 2️⃣ Heuristic Detection
+- Burst traffic detection
+- High error-rate scanning
+- Automated bot probing behavior  
+- (`BurstTrafficStrategy`)
 
-3. **AI-Driven Detection**
-   - Behavioral entropy analysis
-   - Local LLM inference using **Ollama**
-   - Identifies non-human activity patterns
-   - (`AiAnomalyStrategy`)
+### 3️⃣ AI-Driven Detection
+- Behavioral entropy analysis
+- Local LLM inference using **Ollama**
+- Identifies non-human activity patterns
+- (`AiAnomalyStrategy`)
 
 ---
 
@@ -71,6 +116,7 @@ Implemented using the **Strategy Design Pattern**, the MCP applies a layered def
 - **Apache Kafka**
 - Non-blocking threat reporting
 - Decoupled detection pipeline
+- Fault-tolerant via event persistence
 
 ## Reactive Programming
 - **Spring WebFlux**
@@ -84,30 +130,18 @@ Implemented using the **Strategy Design Pattern**, the MCP applies a layered def
 ## Local AI Inference
 - **Ollama**
 - Privacy-focused
-- Cost-free local LLM processing
+- Zero external API dependency
+- Cost-free LLM processing
 
 ---
 
-# 🔄 System Flow
+# 🔐 Security Design Decisions
 
-1. **Gateway Detection**
-   - Suspicious request triggers a `SecurityAlertEvent`
-   - Event is sent to **Kafka**
-
-2. **MCP Consumption**
-   - `MCPService` consumes the alert
-   - Requests last 10 minutes of logs from `LoggingService` via **gRPC**
-
-3. **Intelligence Evaluation**
-   - Logs pass through the Strategy Chain
-   - Complex cases are forwarded to `AIService`
-
-4. **Threat Confirmation**
-   - If malicious behavior is detected:
-     - A `BlockRecord` with TTL is written to **Redis**
-
-5. **Instant Enforcement**
-   - `BlacklistFilter` in Gateway blocks future requests instantly
+- TTL-based temporary blocking to prevent permanent false positives
+- Kafka-backed event buffering to avoid system collapse
+- Decoupled AI inference to avoid Gateway latency increase
+- Strategy Pattern for modular threat extension
+- Horizontal scalability via stateless service design
 
 ---
 
@@ -184,4 +218,11 @@ Specializing in:
 
 # 📜 License
 
-This project is for educational and research purposes.
+This project is licensed under the **Apache License 2.0**.
+
+You are free to use, modify, and distribute this software in accordance with the terms of the license.
+
+See the [LICENSE](LICENSE) file for full details.
+```bash
+ollama serve
+ollama pull llama3
