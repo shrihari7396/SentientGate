@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "ai-inference-service", url = "${ai.service.url}")
+@FeignClient(name = "ai-inference-service")
 public interface AiServiceFeignClient {
 
     @PostMapping("/api/v1/analyze")
