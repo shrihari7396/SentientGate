@@ -9,21 +9,29 @@ import java.time.Duration;
 import java.util.List;
 
 @Component
-@Order(3)
-public class RateLimitCoolDownStrategy implements ThreatStrategy {
+@Order(4)
+public class HighErrorRateStrategy implements ThreatStrategy {
 
     @Override
     public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
-        return alert.getErrorCode() == 429;
+        if (history.isEmpty()) return false;
+
+        long errorCount = history.stream()
+                .filter(log -> log.getStatusCode() >= 400)
+                .count();
+
+        // If error rate is > 70%, it's likely a scanner
+        double errorRate = (double) errorCount / history.size();
+        return history.size() > 5 && errorRate > 0.7;
     }
 
     @Override
     public Duration getBlockDuration() {
-        return Duration.ofMinutes(15);
+        return Duration.ofHours(2);
     }
 
     @Override
     public String getReason() {
-        return "Aggressive polling detected. 15m cool-down.";
+        return "HIGH_ERROR_RATE_SCANNER_DETECTED";
     }
 }
