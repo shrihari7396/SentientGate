@@ -21,7 +21,7 @@ public class EnforcementService {
     /**
      * Executes the block by writing to Redis with a TTL.
      */
-    public void block(String uuid, ThreatStrategy strategy) {
+    public void blockUser(String uuid, ThreatStrategy strategy) {
         String key = BLACKLIST_PREFIX + uuid;
         Duration ttl = strategy.getBlockDuration();
 
