@@ -29,7 +29,6 @@ public class SecurityEventListners {
         try {
             // Passing the alert to our MCP Analysis engine
             mcpAnalysisService.analyze(alert);
-
             log.info("✅ Analysis completed for UUID: {}", alert.getUuid());
         } catch (Exception e) {
             log.error("❌ Error during threat analysis for UUID: {}", alert.getUuid(), e);
