@@ -9,21 +9,26 @@ import java.time.Duration;
 import java.util.List;
 
 @Component
-@Order(3)
-public class RateLimitCoolDownStrategy implements ThreatStrategy {
+@Order(2) // High priority, run early
+public class SensitivePathStrategy implements ThreatStrategy {
+
+    private static final List<String> FORBIDDEN_PATHS = List.of(
+            "/wp-admin", "/.env", "/config.php", "/admin/login", "/.git", "/actuator"
+    );
 
     @Override
     public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
-        return alert.getErrorCode() == 429;
+        String path = alert.getAttemptedPath().toLowerCase();
+        return FORBIDDEN_PATHS.stream().anyMatch(path::startsWith);
     }
 
     @Override
     public Duration getBlockDuration() {
-        return Duration.ofMinutes(15);
+        return Duration.ofDays(7); // Very aggressive for direct recon
     }
 
     @Override
     public String getReason() {
-        return "Aggressive polling detected. 15m cool-down.";
+        return "SENSITIVE_PATH_RECONNAISSANCE";
     }
 }

@@ -6,7 +6,7 @@ import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
 import java.time.Duration;
 import java.util.List;
 
-public interface BlockingStrategy {
+public interface ThreatStrategy {
     boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history);
     Duration getBlockDuration();
     String getReason();
