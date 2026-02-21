@@ -1,61 +1,39 @@
-package edu.pict.mcpservice.service;
+package edu.pict.mcpservice.kafkaListeners;
 
-import edu.pict.mcpservice.grpc.UserLogEvent;
-import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
-import edu.pict.mcpservice.stratagies.blocking.ThreatStrategy;
+import edu.pict.mcpservice.service.McpAnalysisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Component
 @Slf4j
-@Service
 @RequiredArgsConstructor
-public class McpAnalysisService {
+public class SecurityEventListners {
 
-    private final EventHistoryService eventHistoryService;
-    private final EnforcementService enforcementService;
-    // Spring automatically injects these sorted by @Order
-    private final List<ThreatStrategy> strategies;
+    private final McpAnalysisService mcpAnalysisService;
 
-    public void analyze(SecurityAlertEvent alert) {
-        log.info("🔍 Analyzing threat for UUID: {}", alert.getUuid());
+    /**
+     * This method listens to the 'security-events' topic.
+     * Whenever the ApiGateway sends an alert, this triggers the Sentient Analysis.
+     */
+    @KafkaListener(
+            topics = "security-events",
+            groupId = "mcp-analysis-group",
+            containerFactory = "kafkaListenerContainerFactory" // Optional: if using custom config
+    )
+    public void onSecurityAlert(SecurityAlertEvent alert) {
+        log.info("🔔 Kafka Event Received: UUID={} | ErrorCode={} | Reason={}",
+                alert.getUuid(), alert.getErrorCode(), alert.getReason());
 
-        // Context fetch: 10 min history from Logging Service
-        List<UserLogEvent> grpcList = eventHistoryService.getAllEventsInDuration(alert.getUuid(), 10);
-        List<LogEvent> history = grpcList.stream()
-                .map(grpcEvent ->
-                        LogEvent.builder()
-                                .uuid(grpcEvent.getUuid())
-                                .path(grpcEvent.getPath())
-                                .method(grpcEvent.getMethod())
-                                .latencyMs(grpcEvent.getLatencyMs())
-                                .queryParams(grpcEvent.getQueryParams())
-                                .clientIp(grpcEvent.getClientIp())
-                                .statusCode(grpcEvent.getStatusCode())
-                                .requestSize(grpcEvent.getRequestSize())
-                                .timestamp(grpcEvent.getTimestamp())
-                                .userAgent(grpcEvent.getUserAgent())
-                                .build()
-                ).toList();
+        try {
+            // Passing the alert to our MCP Analysis engine
+            mcpAnalysisService.analyze(alert);
 
-        // Functional pipeline to find the first matching strategy
-        strategies.stream()
-                .filter(s -> s.isAvailable(alert, history))
-                .findFirst()
-                .ifPresentOrElse(
-                        strategy -> {
-                            log.warn("🚫 Threat Detected! Strategy: {} | Reason: {}",
-                                    strategy.getClass().getSimpleName(), strategy.getReason());
-
-                            enforcementService.blockUser(
-                                    alert.getUuid(),
-                                    strategy
-                            );
-                        },
-                        () -> log.info("✅ No malicious patterns found for UUID: {}", alert.getUuid())
-                );
+            log.info("✅ Analysis completed for UUID: {}", alert.getUuid());
+        } catch (Exception e) {
+            log.error("❌ Error during threat analysis for UUID: {}", alert.getUuid(), e);
+        }
     }
 }
