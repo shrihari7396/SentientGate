@@ -20,8 +20,7 @@ public class SecurityEventListners {
      */
     @KafkaListener(
             topics = "security-events",
-            groupId = "mcp-analysis-group",
-            containerFactory = "kafkaListenerContainerFactory" // Optional: if using custom config
+            groupId = "mcp-analysis-group"
     )
     public void onSecurityAlert(SecurityAlertEvent alert) {
         log.info("🔔 Kafka Event Received: UUID={} | ErrorCode={} | Reason={}",
