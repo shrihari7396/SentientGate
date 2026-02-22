@@ -3,7 +3,6 @@ package edu.pict.apigateway.service.impl;
 import edu.pict.apigateway.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +30,7 @@ public class JwtServiceImpl implements JwtService {
         return Jwts.parserBuilder()
                 .setSigningKey(signingKey)
                 .build()
-                .parseClaimsJws(token)  // verifies signature + expiry
+                .parseClaimsJws(token)
                 .getBody();
     }
 

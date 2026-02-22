@@ -1,6 +1,8 @@
 package edu.pict.apigateway.filters.global;
 
 import edu.pict.apigateway.service.JwtBlacklistService;
+import edu.pict.apigateway.service.JwtService;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -11,18 +13,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import static edu.pict.apigateway.util.Constants.*;
+
 @Component
 @RequiredArgsConstructor
 public class JwtExtractionFilter implements GlobalFilter, Ordered {
 
+    private final JwtService jwtService;
     private final JwtBlacklistService jwtBlacklistService;
 
-    public static final String JTI_ATTR = "jti";
-    public static final String JWT_TTL_ATTR = "jwt_ttl";
-    public static final String JWT_SUB_ATTR = "jwtSubject";
-    public static final String DECISION_ATTR = "decision";
-
-    private final JwtParsingService jwtParsingService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -36,36 +35,40 @@ public class JwtExtractionFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7);
 
-        JwtParsingService.ParsedJwt parsed;
+        Claims claims;
+
         try {
-            parsed = jwtParsingService.parse(token);
+            // 🔐 Validates signature + expiration automatically
+            claims = jwtService.validateAndExtractClaims(token);
         } catch (Exception e) {
-            return reject(exchange, "INVALID_JWT");
+            return reject(exchange, "INVALID_OR_EXPIRED_JWT");
         }
 
-        long now = System.currentTimeMillis() / 1000;
-        long ttlSeconds = parsed.expEpochSeconds() - now;
+        String jti = jwtService.extractJti(token);
+        String subject = jwtService.extractUserId(token);
+
+        long expirationMillis = claims.getExpiration().getTime();
+        long nowMillis = System.currentTimeMillis();
+        long ttlSeconds = (expirationMillis - nowMillis) / 1000;
 
         if (ttlSeconds <= 0) {
             return reject(exchange, "JWT_EXPIRED");
         }
 
-        String jti = parsed.jti();
-
         return jwtBlacklistService.isBlocked(jti)
                 .flatMap(isBlocked -> {
-                    if (isBlocked) {
+                    if (Boolean.TRUE.equals(isBlocked)) {
                         return reject(exchange, "JWT_BLOCKED");
                     }
 
+                    // Store verified data inside exchange attributes
                     exchange.getAttributes().put(JTI_ATTR, jti);
-                    exchange.getAttributes().put(JWT_SUB_ATTR, parsed.subject());
+                    exchange.getAttributes().put(JWT_SUB_ATTR, subject);
                     exchange.getAttributes().put(JWT_TTL_ATTR, ttlSeconds);
 
                     return chain.filter(exchange);
                 });
     }
-
 
     private Mono<Void> reject(ServerWebExchange exchange, String reason) {
         exchange.getAttributes().put(DECISION_ATTR, reason);
@@ -78,4 +81,3 @@ public class JwtExtractionFilter implements GlobalFilter, Ordered {
         return Ordered.HIGHEST_PRECEDENCE + 1;
     }
 }
-

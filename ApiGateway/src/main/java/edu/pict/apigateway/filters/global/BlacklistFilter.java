@@ -1,5 +1,6 @@
 package edu.pict.apigateway.filters.global;
 
+import edu.pict.apigateway.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -21,7 +22,7 @@ public class BlacklistFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String uuid = exchange.getRequest().getHeaders().getFirst(VisitorIdFilter.VISITOR_ID);
+        String uuid = exchange.getRequest().getHeaders().getFirst(Constants.VISITOR_ID);
 
         if (uuid == null) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
