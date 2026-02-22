@@ -20,5 +20,4 @@ public class HmacConfig {
         return  new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), HMAC_ALGORITHM);
     }
 
-
 }

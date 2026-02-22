@@ -1,7 +1,6 @@
 package edu.pict.apigateway.filters.global;
 
 import edu.pict.apigateway.service.JwtBlacklistService;
-import edu.pict.apigateway.service.JwtParsingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
