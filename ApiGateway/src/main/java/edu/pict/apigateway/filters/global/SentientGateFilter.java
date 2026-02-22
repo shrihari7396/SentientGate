@@ -3,6 +3,7 @@ package edu.pict.apigateway.filters.global;
 import edu.pict.apigateway.config.kafka.KafkaTopics;
 import edu.pict.apigateway.kafkaEvent.SecurityAlertEvent;
 import edu.pict.apigateway.kafkaEvent.LogEvent;
+import edu.pict.apigateway.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -38,7 +39,7 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                             String reasonPhrase = (status instanceof HttpStatus) ?
                                     ((HttpStatus) status).getReasonPhrase() : "Unknown";
 
-                            String uuid = exchange.getRequest().getHeaders().getFirst(VisitorIdFilter.VISITOR_ID);
+                            String uuid = exchange.getRequest().getHeaders().getFirst(Constants.VISITOR_ID);
                             String path = exchange.getRequest().getURI().getPath();
                             String method = exchange.getRequest().getMethod().toString();
                             String queryParams = exchange.getRequest().getQueryParams().toString();

@@ -1,6 +1,7 @@
 package edu.pict.apigateway.filters.global;
 
 import edu.pict.apigateway.service.SentinelSecurityService;
+import edu.pict.apigateway.util.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -13,44 +14,50 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
 public class VisitorIdFilter implements GlobalFilter, Ordered {
 
-    public static final String VISITOR_ID = "VISITOR_ID";
+
     private final SentinelSecurityService  sentinelSecurityService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        HttpCookie cookie = exchange.getRequest().getCookies().getFirst(VISITOR_ID);
+
+        HttpCookie cookie = exchange.getRequest().getCookies().getFirst(Constants.VISITOR_ID);
 
         if (cookie != null) {
             String fullToken = cookie.getValue();
             String uuid = sentinelSecurityService.verifyAndExtractId(fullToken);
 
-            if(uuid == null) {
+            if (uuid == null) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
 
-            exchange.getRequest().mutate().header(VISITOR_ID, fullToken).build();
-            return chain.filter(exchange);
+            ServerWebExchange mutatedExchange = exchange.mutate()
+                    .request(exchange.getRequest()
+                            .mutate()
+                            .header(Constants.VISITOR_ID, uuid)
+                            .build())
+                    .build();
+
+            return chain.filter(mutatedExchange);
         }
 
         String signedId = sentinelSecurityService.generateSignedId();
 
         exchange.getResponse()
-                .addCookie(ResponseCookie.from(VISITOR_ID, signedId)
-                .path("/")
-                .httpOnly(true)
-                .maxAge(Duration.ofDays(365))
-                .build());
+                .addCookie(ResponseCookie.from(Constants.VISITOR_ID, signedId)
+                        .path("/")
+                        .httpOnly(true)
+                        .secure(true)
+                        .sameSite("Strict")
+                        .maxAge(Duration.ofDays(365))
+                        .build());
 
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        return exchange.getResponse().setComplete();
-
+        return chain.filter(exchange);
     }
 
     @Override
