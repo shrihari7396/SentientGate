@@ -22,15 +22,15 @@ public class JwtExtractionFilter implements GlobalFilter, Ordered {
     private final JwtService jwtService;
     private final JwtBlacklistService jwtBlacklistService;
 
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         String authHeader =
                 exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
+        // ✅ 1️⃣ If no JWT → directly continue (public endpoint)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return reject(exchange, "MISSING_JWT");
+            return chain.filter(exchange);
         }
 
         String token = authHeader.substring(7);
@@ -38,14 +38,14 @@ public class JwtExtractionFilter implements GlobalFilter, Ordered {
         Claims claims;
 
         try {
-            // 🔐 Validates signature + expiration automatically
+            // ✅ 2️⃣ Validate signature + expiration automatically
             claims = jwtService.validateAndExtractClaims(token);
         } catch (Exception e) {
             return reject(exchange, "INVALID_OR_EXPIRED_JWT");
         }
 
-        String jti = jwtService.extractJti(token);
-        String subject = jwtService.extractUserId(token);
+        String jti = claims.getId();
+        String subject = claims.getSubject();
 
         long expirationMillis = claims.getExpiration().getTime();
         long nowMillis = System.currentTimeMillis();
@@ -55,13 +55,14 @@ public class JwtExtractionFilter implements GlobalFilter, Ordered {
             return reject(exchange, "JWT_EXPIRED");
         }
 
+        // ✅ 3️⃣ Check Redis blacklist
         return jwtBlacklistService.isBlocked(jti)
                 .flatMap(isBlocked -> {
                     if (Boolean.TRUE.equals(isBlocked)) {
                         return reject(exchange, "JWT_BLOCKED");
                     }
 
-                    // Store verified data inside exchange attributes
+                    // ✅ Store verified values in exchange
                     exchange.getAttributes().put(JTI_ATTR, jti);
                     exchange.getAttributes().put(JWT_SUB_ATTR, subject);
                     exchange.getAttributes().put(JWT_TTL_ATTR, ttlSeconds);
@@ -78,6 +79,6 @@ public class JwtExtractionFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE + 1;
+        return Ordered.HIGHEST_PRECEDENCE + 2;
     }
 }
