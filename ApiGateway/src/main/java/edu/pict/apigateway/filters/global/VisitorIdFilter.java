@@ -3,6 +3,7 @@ package edu.pict.apigateway.filters.global;
 import edu.pict.apigateway.service.SentinelSecurityService;
 import edu.pict.apigateway.util.Constants;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -17,13 +18,14 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class VisitorIdFilter implements GlobalFilter, Ordered {
 
     private final SentinelSecurityService sentinelSecurityService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
+        log.info("exchange path: {}", exchange.getRequest().getPath().toString());
         HttpCookie cookie = exchange.getRequest().getCookies().getFirst(Constants.VISITOR_ID);
 
         if (cookie != null) {
