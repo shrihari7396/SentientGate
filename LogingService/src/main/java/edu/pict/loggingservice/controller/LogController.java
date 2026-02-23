@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/logs")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // For development, allow all
 public class LogController {
 
     private final GatewayLogRepository gatewayLogRepository;

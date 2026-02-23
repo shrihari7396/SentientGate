@@ -1,9 +1,6 @@
 server:
   port: 8079
-
 spring:
-  application:
-    name: api-gateway
   data:
     redis:
       host: localhost
@@ -14,7 +11,7 @@ spring:
         webflux:
           routes:
             - id: user-service
-              uri: lb://USER-SERVICE
+              uri: http://localhost:8081
               predicates:
                 - Path=/api/users/**
               filters:
@@ -24,44 +21,8 @@ spring:
                     redis-rate-limiter.burstCapacity: 20
                     key-resolver: "#{@visitorKeyResolver}"
 
-            - id: LOGGING-SERVICE
-              uri: lb://LOGGING-SERVICE
-              predicates:
-                - Path=/api/logs/**
-              filters:
-                - PrefixPath=/logging-service
-                - name: RequestRateLimiter
-                  args:
-                    redis-rate-limiter.replenishRate: 10
-                    redis-rate-limiter.burstCapacity: 20
-                    key-resolver: "#{@visitorKeyResolver}"
-
-            - id: MCP_SERVER
-              uri: lb://MCP-SERVER
-              predicates:
-                - Path=/api/mcp/**
-              filters:
-                - PrefixPath=/mcp-service
-                - name: RequestRateLimiter
-                  args:
-                    redis-rate-limiter.replenishRate: 10
-                    redis-rate-limiter.burstCapacity: 20
-                    key-resolver: "#{@visitorKeyResolver}"
-
-            - id: AI_SERVICE
-              uri: lb://AI-SERVICE
-              predicates:
-                - Path=/api/ai/**
-              filters:
-                - PrefixPath=/ai-service
-                - name: RequestRateLimiter
-                  args:
-                    redis-rate-limiter.replenishRate: 5
-                    redis-rate-limiter.burstCapacity: 10
-                    key-resolver: "#{@visitorKeyResolver}"
-
             - id: auth-service
-              uri: lb://AUTH-SERVICE
+              uri: http://localhost:8082
               predicates:
                 - Path=/api/auth/**
               filters:
@@ -75,6 +36,20 @@ spring:
               uri: lb://DUMMY-SERVICE
               predicates:
                 - Path=/dummy/**
+            - id: logging_aggregation
+              uri: lb://LOGGING-SERVICE
+              predicates:
+                - Path=/api/logs/**
+#              order=100
+#              predicates:
+#                - Cookie=mycookie,mycookievalue
+#            - id: user-service
+#              uri: lb://DUMMYSERVICE
+#              predicates:
+
+#                - Path=/api/v1/inventory/**
+#              filters:
+#                - StripPrefix=2
 
 
   kafka:

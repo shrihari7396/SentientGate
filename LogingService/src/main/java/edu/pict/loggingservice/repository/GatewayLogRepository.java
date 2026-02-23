@@ -1,5 +1,6 @@
 package edu.pict.loggingservice.repository;
 
+import edu.pict.loggingservice.dto.DashboardRawStats;
 import edu.pict.loggingservice.entity.GatewayLogEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,21 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
     List<GatewayLogEntity> findByOccurredAtBetween(Instant start, Instant end);
 
     List<GatewayLogEntity> findByDecision(String decision);
+
+    @Query("""
+                SELECT new edu.pict.loggingservice.dto.DashboardRawStats(
+                    COUNT(l),
+                    SUM(CASE WHEN l.decision = 'BLOCKED' OR l.statusCode >= 400 THEN 1L ELSE 0L END),
+                    AVG(l.latencyMs * 1.0),
+                    COUNT(DISTINCT l.clientIp)
+                )
+                FROM GatewayLogEntity l
+                WHERE l.occurredAt BETWEEN :start AND :end
+            """)
+    DashboardRawStats summarizeDashboard(Instant start, Instant end);
+
+    @Query(value = "SELECT percentile_cont(0.99) WITHIN GROUP (ORDER BY latency_ms) FROM gateway_logs WHERE occurred_at BETWEEN :start AND :end", nativeQuery = true)
+    Double aggregateP99Latency(Instant start, Instant end);
 
     // IP
     @Query("""

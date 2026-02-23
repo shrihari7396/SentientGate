@@ -19,7 +19,7 @@ public class KafkaBatchService {
 
     public void consumeBatch(List<GatewayDecisionEvent> events) {
 
-        List<GatewayLogEntity> entities = events.stream()
+        List<GatewayLogEntity> entities = events.parallelStream()
                 .map(event -> GatewayLogEntity.builder()
                         .id(UUID.randomUUID())
                         .clientIp(event.clientIp())

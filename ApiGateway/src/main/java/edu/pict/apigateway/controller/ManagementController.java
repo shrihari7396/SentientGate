@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/mgmt/blacklist")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class ManagementController {
 
     private final ReactiveStringRedisTemplate redisTemplate;

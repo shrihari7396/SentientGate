@@ -1,9 +1,14 @@
 server:
   port: 8010
   servlet:
-    context-path: /loggingService/
+    context-path: /logging-service
 
 spring:
+  output:
+    ansi:
+      enabled: always
+  application:
+    name: logging-service
   datasource:
     url: jdbc:postgresql://localhost:5432/mydb
     username: postgres
@@ -18,7 +23,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate   # change to validate in prod
+      ddl-auto: update   # change to validate in prod
     show-sql: true
     properties:
       hibernate:
@@ -41,9 +46,9 @@ spring:
       properties:
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: edu.pict.loggingservice.kafka.model
-        spring.json.use.type.headers: false
-        spring.json.value.default.type: edu.pict.loggingservice.kafka.model.GatewayDecisionEvent
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: true
+        spring.json.type.mapping: "edu.pict.apigateway.kafkaEvent.LogEvent:edu.pict.loggingservice.kafka.model.GatewayDecisionEvent"
 
     listener:
       concurrency: 3

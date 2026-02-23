@@ -13,7 +13,7 @@ spring:
 server:
   port: 8082
   servlet:
-    context-path: /api/aiService/
+    context-path: /ai-service
 
 
 ollama:

@@ -1,10 +1,14 @@
 package edu.pict.mcpservice.kafkaEvents;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SecurityAlertEvent {
     private String uuid;
     private int errorCode;
