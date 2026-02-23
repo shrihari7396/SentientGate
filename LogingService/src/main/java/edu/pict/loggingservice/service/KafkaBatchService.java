@@ -23,14 +23,20 @@ public class KafkaBatchService {
                 .map(event -> GatewayLogEntity.builder()
                         .id(UUID.randomUUID())
                         .clientIp(event.clientIp())
+                        .visitorId(event.uuid())
+                        .path(event.path())
+                        .method(event.method())
                         .routeId(event.routeId())
                         .decision(event.decision())
                         .statusCode(event.statusCode())
+                        .requestSize(event.requestSize())
                         .latencyMs(event.latencyMs())
+                        .queryParams(event.queryParams())
+                        .userAgent(event.userAgent())
                         .occurredAt(Instant.ofEpochMilli(event.timestamp()))
                         .build())
                 .toList();
-        gatewayLogRepository.saveAll(entities);
+        gatewayLogRepository.saveAll((Iterable<GatewayLogEntity>) entities);
     }
 
 }
