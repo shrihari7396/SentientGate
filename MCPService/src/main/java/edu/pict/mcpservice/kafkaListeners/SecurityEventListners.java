@@ -5,6 +5,7 @@ import edu.pict.mcpservice.service.McpAnalysisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,7 +23,7 @@ public class SecurityEventListners {
             topics = "security-events",
             groupId = "mcp-analysis-group"
     )
-    public void onSecurityAlert(SecurityAlertEvent alert) {
+    public void onSecurityAlert(SecurityAlertEvent alert, Acknowledgment acknowledgment) {
         log.info("🔔 Kafka Event Received: UUID={} | ErrorCode={} | Reason={}",
                 alert.getUuid(), alert.getErrorCode(), alert.getReason());
 
@@ -30,6 +31,7 @@ public class SecurityEventListners {
             // Passing the alert to our MCP Analysis engine
             mcpAnalysisService.analyze(alert);
             log.info("✅ Analysis completed for UUID: {}", alert.getUuid());
+            acknowledgment.acknowledge();
         } catch (Exception e) {
             log.error("❌ Error during threat analysis for UUID: {}", alert.getUuid(), e);
         }
