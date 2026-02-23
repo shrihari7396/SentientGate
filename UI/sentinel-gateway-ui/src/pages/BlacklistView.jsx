@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { mgmtApi } from '../api/client';
-import { ShieldAlert, UserX, UserCheck, Search, AlertTriangle, Plus } from 'lucide-react';
+import { ShieldAlert, UserX, UserCheck, Search, AlertTriangle, Plus, Hash, Clock, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const BlacklistView = () => {
     const [blacklist, setBlacklist] = useState([]);
     const [loading, setLoading] = useState(true);
     const [newUuid, setNewUuid] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const fetchBlacklist = () => {
         setLoading(true);
@@ -26,11 +28,13 @@ const BlacklistView = () => {
 
     const handleBlock = (e) => {
         e.preventDefault();
-        if (!newUuid) return;
+        if (!newUuid || isSubmitting) return;
+        setIsSubmitting(true);
         mgmtApi.blockUuid(newUuid).then(() => {
             setNewUuid('');
+            setIsSubmitting(false);
             fetchBlacklist();
-        });
+        }).catch(() => setIsSubmitting(false));
     };
 
     const handleUnblock = (uuid) => {
@@ -40,86 +44,149 @@ const BlacklistView = () => {
     };
 
     return (
-        <div className="space-y-6 animate-in">
-            <div className="flex justify-between items-end">
+        <div className="space-y-12 animate-in pb-20">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Redis Blacklist</h2>
-                    <p className="text-slate-400 mt-2">Manage blocked identities and prevent unauthorized access.</p>
+                    <h2 className="text-4xl font-black tracking-tighter leading-none">
+                        SECURITY <span className="gradient-text">BLACKLIST</span>
+                    </h2>
+                    <p className="text-slate-400 mt-4 font-medium text-lg max-w-xl leading-relaxed">
+                        Identity isolation layer. Manage blocked UUIDs and instantly protect your perimeter.
+                    </p>
+                </div>
+                <div className="px-6 py-2.5 glass rounded-2xl flex items-center gap-3 border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.05)]">
+                    <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(249,115,22,0.8)]" />
+                    <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em]">Live Synchronization</span>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-1 space-y-6">
-                    <div className="glass-card p-6 rounded-2xl">
-                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                            <Plus className="w-5 h-5 text-purple-400" />
-                            Block New Identity
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <div className="lg:col-span-4 space-y-8">
+                    <div className="glass-card p-10 rounded-[3rem] border-white/5 overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 blur-[80px] group-hover:bg-purple-500/10 transition-colors" />
+                        <h3 className="text-xl font-bold mb-8 flex items-center gap-4">
+                            <div className="p-3 bg-purple-600/10 rounded-2xl border border-purple-500/20">
+                                <Plus className="w-6 h-6 text-purple-400" />
+                            </div>
+                            Isolate Identity
                         </h3>
-                        <form onSubmit={handleBlock} className="space-y-4">
-                            <div>
-                                <label className="text-xs text-slate-500 uppercase font-bold mb-1 block">Visitor UUID</label>
-                                <input
-                                    type="text"
-                                    value={newUuid}
-                                    onChange={(e) => setNewUuid(e.target.value)}
-                                    placeholder="e.g. 550e8400-e29b-41d4-a716..."
-                                    className="w-full bg-[#0d0d0f] border border-white/10 rounded-lg px-4 py-2 text-sm text-slate-200 outline-none focus:border-purple-500/50"
-                                    required
-                                />
+                        <form onSubmit={handleBlock} className="space-y-8">
+                            <div className="space-y-3">
+                                <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest px-1">Visitor UUID</label>
+                                <div className="relative group">
+                                    <Hash className="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-purple-400 transition-colors" />
+                                    <input
+                                        type="text"
+                                        value={newUuid}
+                                        onChange={(e) => setNewUuid(e.target.value)}
+                                        placeholder="e.g. 550e8400-e29b-41d4..."
+                                        className="w-full bg-white/[0.02] border border-white/5 rounded-2xl pl-12 pr-6 py-4 text-xs text-slate-200 outline-none focus:border-purple-500/30 focus:bg-white/[0.04] transition-all font-mono"
+                                        required
+                                    />
+                                </div>
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                                disabled={isSubmitting}
+                                className="w-full bg-white text-black font-black uppercase tracking-widest py-4 rounded-2xl transition-all flex items-center justify-center gap-3 hover:scale-[1.02] hover:shadow-[0_20px_40px_-10px_rgba(255,255,255,0.2)] disabled:opacity-50"
                             >
-                                <ShieldAlert className="w-4 h-4" />
-                                Add to Blacklist
+                                <ShieldAlert className="w-5 h-5" />
+                                EXECUTE BLOCK
                             </button>
                         </form>
                     </div>
 
-                    <div className="glass-card p-6 rounded-2xl border-orange-500/20 bg-orange-500/[0.02]">
-                        <h3 className="text-lg font-semibold mb-2 flex items-center gap-2 text-orange-400">
+                    <div className="glass-card p-8 rounded-[2.5rem] border-orange-500/20 bg-orange-500/[0.02] relative overflow-hidden">
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-500/5 blur-[50px]" />
+                        <h3 className="text-base font-bold mb-4 flex items-center gap-3 text-orange-400">
                             <AlertTriangle className="w-5 h-5" />
-                            Caution
+                            Precautionary Notice
                         </h3>
-                        <p className="text-sm text-slate-400 leading-relaxed">
-                            Blacklisting a UUID will immediately drop all incoming requests from that identity across all services. This action takes effect globally within milliseconds via Redis.
+                        <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                            Blacklisting a UUID propagates a <span className="text-slate-300">global dropping rule</span> across all Sentinel filters within 5ms. Actions are logged and attributed to your admin session.
                         </p>
                     </div>
                 </div>
 
-                <div className="lg:col-span-2 glass-card rounded-2xl overflow-hidden border border-white/5">
-                    <div className="p-6 border-b border-white/5 flex justify-between items-center">
-                        <h3 className="font-semibold">Currently Blacklisted</h3>
-                        <span className="bg-white/5 px-3 py-1 rounded-full text-xs text-slate-400">
-                            {blacklist.length} Identities
-                        </span>
+                <div className="lg:col-span-8 glass-card rounded-[3rem] overflow-hidden border border-white/5 min-h-[600px] flex flex-col shadow-2xl relative">
+                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
+
+                    <div className="p-10 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
+                        <div>
+                            <h3 className="text-xl font-bold tracking-tight">Active Isolations</h3>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 italic">Real-time Redis Pool View</p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <span className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse" />
+                            <span className="bg-white/5 border border-white/10 px-5 py-2 rounded-2xl text-xs font-black text-slate-300">
+                                {blacklist.length} IDENTITIES
+                            </span>
+                        </div>
                     </div>
-                    <div className="divide-y divide-white/5 max-h-[600px] overflow-y-auto">
-                        {loading ? (
-                            <div className="p-8 text-center text-slate-500">Loading blacklist...</div>
-                        ) : blacklist.length === 0 ? (
-                            <div className="p-12 text-center text-slate-500 italic">No identities blocked.</div>
-                        ) : blacklist.map((uuid) => (
-                            <div key={uuid} className="p-4 flex items-center justify-between hover:bg-white/[0.01] transition-colors">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
-                                        <UserX className="w-5 h-5 text-red-500" />
-                                    </div>
-                                    <div>
-                                        <code className="text-slate-200 text-sm">{uuid}</code>
-                                        <p className="text-[10px] text-slate-500 mt-0.5">MANUAL_BLOCK • PERSISTENT</p>
+
+                    <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+                        <AnimatePresence mode="popLayout">
+                            {loading && blacklist.length === 0 ? (
+                                <div className="h-64 flex items-center justify-center">
+                                    <div className="flex flex-col items-center gap-4 opacity-20 animate-pulse">
+                                        <Search className="w-12 h-12" />
+                                        <p className="font-black text-xs uppercase tracking-widest">Scanning Redis...</p>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => handleUnblock(uuid)}
-                                    className="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all flex items-center gap-2"
+                            ) : blacklist.length === 0 ? (
+                                <div className="h-64 flex items-center justify-center">
+                                    <div className="flex flex-col items-center gap-4 opacity-20">
+                                        <UserCheck className="w-12 h-12" />
+                                        <p className="font-black text-xs uppercase tracking-widest text-center">No identities isolated.<br /><span className="text-[10px] normal-case font-medium">Infrastructure is currently clean.</span></p>
+                                    </div>
+                                </div>
+                            ) : blacklist.map((uuid, idx) => (
+                                <motion.div
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    key={uuid}
+                                    className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/[0.04] hover:border-red-500/20 hover:bg-red-500/[0.02] transition-all flex items-center justify-between group"
                                 >
-                                    <UserCheck className="w-4 h-4" />
-                                    Unblock
-                                </button>
-                            </div>
-                        ))}
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/10 group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                                            <UserX className="w-6 h-6 text-red-500" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-3">
+                                                <code className="text-slate-100 font-mono text-sm tracking-tighter font-bold">{uuid}</code>
+                                                <span className="px-2 py-0.5 rounded text-[8px] font-black bg-red-500/20 text-red-500 uppercase tracking-widest">Manual</span>
+                                            </div>
+                                            <div className="flex items-center gap-4 mt-2">
+                                                <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
+                                                    <Clock className="w-3 h-3" />
+                                                    <span className="text-[9px] font-black uppercase tracking-widest">Isolated 2m ago</span>
+                                                </div>
+                                                <div className="w-1 h-1 rounded-full bg-slate-700" />
+                                                <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
+                                                    <Hash className="w-3 h-3" />
+                                                    <span className="text-[9px] font-black uppercase tracking-widest">JTI_RULE_V1</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => handleUnblock(uuid)}
+                                        className="p-3 rounded-2xl bg-white/5 border border-white/5 text-slate-500 hover:text-green-500 hover:bg-green-500/10 hover:border-green-500/20 transition-all flex items-center gap-2 group/unblock"
+                                    >
+                                        <UserCheck className="w-5 h-5 group-hover/unblock:scale-125 transition-transform" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest pr-2 hidden sm:block">Restore Access</span>
+                                        <ArrowRight className="w-3 h-3 opacity-0 group-hover/unblock:opacity-100 group-hover/unblock:translate-x-1 transition-all" />
+                                    </button>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+
+                    <div className="p-8 bg-white/[0.01] border-t border-white/5 text-center">
+                        <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.3em]">Sentinel Management Interface • Security V4.2</p>
                     </div>
                 </div>
             </div>

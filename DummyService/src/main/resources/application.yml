@@ -1,3 +1,6 @@
+spring:
+  application:
+    name: dummy-service
 server:
   port: 8090
   servlet:

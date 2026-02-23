@@ -1,27 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { logApi } from '../api/client';
 
-const data = [
-    { time: '10:00', requests: 400, errors: 24, latency: 45 },
-    { time: '10:30', requests: 300, errors: 13, latency: 38 },
-    { time: '11:00', requests: 600, errors: 98, latency: 52 },
-    { time: '11:30', requests: 800, errors: 32, latency: 41 },
-    { time: '12:00', requests: 500, errors: 12, latency: 36 },
-    { time: '12:30', requests: 900, errors: 45, latency: 48 },
-    { time: '13:00', requests: 1100, errors: 67, latency: 55 },
-];
+const StatsChart = () => {
+    const [chartData, setChartData] = useState([]);
 
-const StatsChart = ({ type = 'requests' }) => {
-    const color = type === 'requests' ? '#a855f7' : type === 'errors' ? '#ef4444' : '#3b82f6';
+    const fetchVelocity = () => {
+        const end = new Date();
+        const start = new Date(Date.now() - 30 * 60000); // Last 30 mins
+
+        logApi.getTrafficVelocity(start.toISOString(), end.toISOString())
+            .then(res => {
+                const formatted = res.data.map(bucket => ({
+                    time: new Date(bucket.minute).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    requests: bucket.requestCount,
+                    errors: bucket.errorCount,
+                    rateLimited: bucket.rateLimitedCount
+                }));
+                setChartData(formatted);
+            })
+            .catch(err => {
+                console.error("Chart data fetch failed", err);
+            });
+    };
+
+    useEffect(() => {
+        fetchVelocity();
+        const interval = setInterval(fetchVelocity, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-[400px] min-h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                     <defs>
-                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor={color} stopOpacity={0.3} />
-                            <stop offset="95%" stopColor={color} stopOpacity={0} />
+                        <linearGradient id="colorRequests" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                        </linearGradient>
+                        <linearGradient id="colorErrors" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
@@ -31,6 +51,7 @@ const StatsChart = ({ type = 'requests' }) => {
                         tickLine={false}
                         tick={{ fill: '#64748b', fontSize: 10 }}
                         dy={10}
+                        minTickGap={30}
                     />
                     <YAxis
                         axisLine={false}
@@ -38,16 +59,32 @@ const StatsChart = ({ type = 'requests' }) => {
                         tick={{ fill: '#64748b', fontSize: 10 }}
                     />
                     <Tooltip
-                        contentStyle={{ backgroundColor: '#0d0d0f', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                        itemStyle={{ fontSize: '12px' }}
+                        contentStyle={{
+                            backgroundColor: 'rgba(13, 13, 15, 0.95)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '16px',
+                            backdropFilter: 'blur(10px)',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.4)'
+                        }}
+                        itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
                     />
                     <Area
                         type="monotone"
-                        dataKey={type}
-                        stroke={color}
+                        dataKey="requests"
+                        stroke="#a855f7"
                         fillOpacity={1}
-                        fill="url(#colorValue)"
+                        fill="url(#colorRequests)"
                         strokeWidth={3}
+                        animationDuration={1500}
+                    />
+                    <Area
+                        type="monotone"
+                        dataKey="errors"
+                        stroke="#ef4444"
+                        fillOpacity={1}
+                        fill="url(#colorErrors)"
+                        strokeWidth={3}
+                        animationDuration={2000}
                     />
                 </AreaChart>
             </ResponsiveContainer>

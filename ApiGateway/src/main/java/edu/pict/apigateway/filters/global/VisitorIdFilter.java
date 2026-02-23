@@ -19,8 +19,7 @@ import java.time.Duration;
 @Component
 public class VisitorIdFilter implements GlobalFilter, Ordered {
 
-
-    private final SentinelSecurityService  sentinelSecurityService;
+    private final SentinelSecurityService sentinelSecurityService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -47,6 +46,7 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
         }
 
         String signedId = sentinelSecurityService.generateSignedId();
+        String uuid = sentinelSecurityService.verifyAndExtractId(signedId);
 
         exchange.getResponse()
                 .addCookie(ResponseCookie.from(Constants.VISITOR_ID, signedId)
@@ -57,7 +57,14 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
                         .maxAge(Duration.ofDays(365))
                         .build());
 
-        return chain.filter(exchange);
+        ServerWebExchange mutatedExchange = exchange.mutate()
+                .request(exchange.getRequest()
+                        .mutate()
+                        .header(Constants.VISITOR_ID, uuid)
+                        .build())
+                .build();
+
+        return chain.filter(mutatedExchange);
     }
 
     @Override

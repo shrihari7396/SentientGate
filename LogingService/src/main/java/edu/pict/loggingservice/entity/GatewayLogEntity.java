@@ -43,7 +43,7 @@ public class GatewayLogEntity {
     private long requestSize;
 
     @Column(nullable = false)
-    private int latencyMs;
+    private long latencyMs;
 
     @Column(columnDefinition = "TEXT")
     private String queryParams;
