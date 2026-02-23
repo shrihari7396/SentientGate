@@ -21,17 +21,35 @@ public class GatewayLogEntity {
     @Column(nullable = false)
     private String clientIp;
 
-    @Column(nullable = false)
+    @Column
+    private String visitorId;
+
+    @Column
+    private String path;
+
+    @Column
+    private String method;
+
+    @Column
     private String routeId;
 
-    @Column(nullable = false)
+    @Column
     private String decision;
 
     @Column(nullable = false)
     private int statusCode;
 
+    @Column
+    private long requestSize;
+
     @Column(nullable = false)
     private int latencyMs;
+
+    @Column(columnDefinition = "TEXT")
+    private String queryParams;
+
+    @Column(columnDefinition = "TEXT")
+    private String userAgent;
 
     @Column(nullable = false)
     private Instant occurredAt;
