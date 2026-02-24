@@ -49,7 +49,7 @@ services:
 
       # Application Services
   eureka-server:
-    build: ./EurekaServer
+    image: shrihari7396/eureka-server:latest
     container_name: eureka-server
     ports:
       - "8761:8761"
@@ -58,7 +58,7 @@ services:
       - EUREKA_INSTANCE_HOSTNAME=eureka-server
 
   api-gateway:
-    build: ./ApiGateway
+    image: shrihari7396/api-gateway:latest
     container_name: api-gateway
     ports:
       - "8079:8079"
@@ -72,7 +72,7 @@ services:
       - kafka
 
   logging-service:
-    build: ./LogingService
+    image: shrihari7396/logging-service:latest
     container_name: logging-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mydb
@@ -86,7 +86,7 @@ services:
       - kafka
 
   mcp-server:
-    build: ./MCPService
+    image: shrihari7396/mcp-server:latest
     container_name: mcp-server
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
@@ -97,7 +97,7 @@ services:
       - kafka
 
   ai-service:
-    build: ./AIService
+    image: shrihari7396/ai-service:latest
     container_name: ai-service
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -108,7 +108,7 @@ services:
       - eureka-server
 
   dummy-service:
-    build: ./DummyService
+    image: shrihari7396/dummy-service:latest
     container_name: dummy-service
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -116,7 +116,7 @@ services:
       - eureka-server
 
   sentinel-ui:
-    build: ./UI/sentinel-gateway-ui
+    image: shrihari7396/sentinel-ui:latest
     container_name: sentinel-ui
     ports:
       - "5173:80"
