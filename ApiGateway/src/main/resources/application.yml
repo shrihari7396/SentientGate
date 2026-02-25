@@ -24,6 +24,17 @@ spring:
                     redis-rate-limiter.burstCapacity: 20
                     key-resolver: "#{@visitorKeyResolver}"
 
+            - id: dummy-service
+              uri: lb://DUMMY-SERVICE
+              predicates:
+                - Path=/api/dummy/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@visitorKeyResolver}"
             - id: LOGGING-SERVICE
               uri: lb://LOGGING-SERVICE
               predicates:
