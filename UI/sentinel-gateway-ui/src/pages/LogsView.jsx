@@ -71,12 +71,17 @@ const LogsView = () => {
     ];
 
     return (
-        <div className="space-y-10 animate-in pb-20">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-10 pb-20"
+        >
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
                     <h2 className="text-4xl font-extrabold tracking-tight">TRAFFIC <span className="text-purple-500 underline underline-offset-8 decoration-white/10">LEDGER</span></h2>
-                    <p className="text-slate-500 mt-3 font-medium text-sm border-l-2 border-purple-500/30 pl-4 tracking-tight">
+                    <p className="text-slate-500 dark:text-slate-500 mt-3 font-medium text-sm border-l-2 border-purple-500/30 pl-4 tracking-tight">
                         Comprehensive audit trail of every bit navigating the SentientGate.
                     </p>
                 </div>
@@ -87,7 +92,7 @@ const LogsView = () => {
                             <button
                                 key={f.label}
                                 onClick={() => setFilterPath(f.path)}
-                                className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterPath === f.path ? 'bg-purple-600 text-white shadow-xl scale-105' : 'text-slate-500 hover:text-slate-300'
+                                className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${filterPath === f.path ? 'bg-purple-600 text-slate-900 dark:text-white shadow-xl scale-105' : 'text-slate-500 dark:text-slate-500 hover:text-slate-700 dark:text-slate-300'
                                     }`}
                             >
                                 {f.label}
@@ -99,7 +104,7 @@ const LogsView = () => {
                         onClick={() => setAutoRefresh(!autoRefresh)}
                         className={`flex items-center gap-3 px-6 py-2.5 rounded-2xl border transition-all text-xs font-black uppercase tracking-widest ${autoRefresh
                             ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                            : 'bg-white/5 text-slate-500 border-white/10'
+                            : 'bg-slate-200 dark:bg-white/5 text-slate-500 dark:text-slate-500 border-slate-300 dark:border-white/10'
                             }`}
                     >
                         <RefreshCcw className={`w-4 h-4 ${autoRefresh ? 'animate-spin-slow' : ''}`} />
@@ -117,10 +122,10 @@ const LogsView = () => {
                 ].map((s) => (
                     <div key={s.label} className="glass-card p-6 rounded-3xl flex items-center justify-between group">
                         <div>
-                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{s.label}</p>
-                            <p className="text-2xl font-bold text-white mt-1">{s.value}</p>
+                            <p className="text-[10px] font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest">{s.label}</p>
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{s.value}</p>
                         </div>
-                        <div className={`p-3 rounded-2xl bg-white/[0.03] border border-white/5 ${s.color} group-hover:scale-110 transition-transform`}>
+                        <div className={`p-3 rounded-2xl bg-white/[0.03] border border-slate-200 dark:border-white/5 ${s.color} group-hover:scale-110 transition-transform`}>
                             <s.icon className="w-5 h-5" />
                         </div>
                     </div>
@@ -130,21 +135,21 @@ const LogsView = () => {
             {/* Search & Filter Bar */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-8 relative group">
-                    <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-purple-500 transition-colors" />
+                    <Search className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-500 group-focus-within:text-purple-500 transition-colors" />
                     <input
                         type="text"
                         value={filterPath}
                         onChange={(e) => setFilterPath(e.target.value)}
                         placeholder="Search by endpoint path (e.g. /login)..."
-                        className="w-full bg-white/[0.02] border border-white/5 rounded-3xl pl-14 pr-6 py-4 text-sm text-slate-100 outline-none focus:border-purple-500/30 focus:bg-white/[0.04] transition-all shadow-2xl font-medium"
+                        className="w-full bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-3xl pl-14 pr-6 py-4 text-sm text-slate-100 outline-none focus:border-purple-500/30 focus:bg-white/[0.04] transition-all shadow-2xl font-medium"
                     />
                 </div>
                 <div className="lg:col-span-4 relative">
-                    <Filter className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <Filter className="w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-500" />
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="w-full bg-white/[0.02] border border-white/5 rounded-3xl pl-14 pr-10 py-4 text-sm text-slate-400 outline-none focus:border-purple-500/30 focus:bg-white/[0.04] appearance-none transition-all shadow-2xl font-bold uppercase tracking-tighter"
+                        className="w-full bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-3xl pl-14 pr-10 py-4 text-sm text-slate-400 dark:text-slate-600 dark:text-slate-400 outline-none focus:border-purple-500/30 focus:bg-white/[0.04] appearance-none transition-all shadow-2xl font-bold uppercase tracking-tighter"
                     >
                         <option value="">Status Code: ALL</option>
                         <option value="200">200 OK</option>
@@ -157,13 +162,13 @@ const LogsView = () => {
             </div>
 
             {/* Main Logs Table */}
-            <div className="glass-card rounded-[2.5rem] border-white/5 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] overflow-hidden relative">
+            <div className="glass-card rounded-[2.5rem] border-slate-200 dark:border-white/5 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] overflow-hidden relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500/10 to-transparent" />
 
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/[0.02] text-slate-500 text-[10px] uppercase font-black tracking-[0.2em] border-b border-white/5">
+                            <tr className="bg-white/[0.02] text-slate-500 dark:text-slate-500 text-[10px] uppercase font-black tracking-[0.2em] border-b border-slate-200 dark:border-white/5">
                                 <th className="px-8 py-6">Timeline</th>
                                 <th className="px-8 py-6">Transaction Detail</th>
                                 <th className="px-8 py-6">Origin</th>
@@ -199,14 +204,14 @@ const LogsView = () => {
                                     >
                                         <td className="px-8 py-5 whitespace-nowrap">
                                             <div className="flex items-center gap-3">
-                                                <div className="p-2 rounded-lg bg-white/5 text-slate-500 group-hover:text-purple-400 group-hover:bg-purple-600/10 transition-colors">
+                                                <div className="p-2 rounded-lg bg-slate-200 dark:bg-white/5 text-slate-500 dark:text-slate-500 group-hover:text-purple-400 group-hover:bg-purple-100 dark:bg-purple-600/10 transition-colors">
                                                     <Clock className="w-3.5 h-3.5" />
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-slate-200 font-bold tracking-tighter text-sm">
+                                                    <span className="text-slate-800 dark:text-slate-200 font-bold tracking-tighter text-sm">
                                                         {log?.occurredAt ? new Date(log.occurredAt).toLocaleTimeString([], { hour12: false }) : 'N/A'}
                                                     </span>
-                                                    <span className="text-[10px] text-slate-600 font-black uppercase tracking-tighter">
+                                                    <span className="text-[10px] text-slate-400 dark:text-slate-600 font-black uppercase tracking-tighter">
                                                         {log?.occurredAt ? new Date(log.occurredAt).toLocaleDateString() : 'UNKNOWN'}
                                                     </span>
                                                 </div>
@@ -214,14 +219,14 @@ const LogsView = () => {
                                         </td>
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-4">
-                                                <span className="font-mono text-[9px] px-2 py-1 rounded bg-slate-900 border border-white/5 text-slate-500 group-hover:text-white transition-colors">
+                                                <span className="font-mono text-[9px] px-2 py-1 rounded bg-slate-900 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-500 group-hover:text-slate-900 dark:text-white transition-colors">
                                                     {log.method}
                                                 </span>
                                                 <div className="flex flex-col">
-                                                    <span className="text-slate-300 font-bold group-hover:text-white transition-colors truncate max-w-[300px]" title={log.path}>
+                                                    <span className="text-slate-700 dark:text-slate-300 font-bold group-hover:text-slate-900 dark:text-white transition-colors truncate max-w-[300px]" title={log.path}>
                                                         {log.path}
                                                     </span>
-                                                    <span className="text-[10px] text-slate-600 font-bold italic">Route: {log.routeId || 'SENTINEL_ROOT'}</span>
+                                                    <span className="text-[10px] text-slate-400 dark:text-slate-600 font-bold italic">Route: {log.routeId || 'SENTINEL_ROOT'}</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -230,7 +235,7 @@ const LogsView = () => {
                                                 <div className="p-2 rounded-full bg-blue-500/5 border border-blue-500/10">
                                                     <Globe className="w-3.5 h-3.5 text-blue-500/60" />
                                                 </div>
-                                                <span className="text-xs font-bold text-slate-400 font-mono tracking-tighter">{log.clientIp}</span>
+                                                <span className="text-xs font-bold text-slate-400 dark:text-slate-600 dark:text-slate-400 font-mono tracking-tighter">{log.clientIp}</span>
                                             </div>
                                         </td>
                                         <td className="px-8 py-5">
@@ -238,8 +243,8 @@ const LogsView = () => {
                                                 <StatusBadge code={log.statusCode} />
                                                 <div className="flex flex-col">
                                                     <div className="flex items-center gap-1.5">
-                                                        <Zap className={`w-3 h-3 ${log.latencyMs > 200 ? 'text-orange-500' : 'text-slate-600'}`} />
-                                                        <span className={`text-[11px] font-black ${log.latencyMs > 200 ? 'text-orange-500' : 'text-slate-400'}`}>
+                                                        <Zap className={`w-3 h-3 ${log.latencyMs > 200 ? 'text-orange-500' : 'text-slate-400 dark:text-slate-600'}`} />
+                                                        <span className={`text-[11px] font-black ${log.latencyMs > 200 ? 'text-orange-500' : 'text-slate-400 dark:text-slate-600 dark:text-slate-400'}`}>
                                                             {log.latencyMs}ms
                                                         </span>
                                                     </div>
@@ -248,7 +253,7 @@ const LogsView = () => {
                                             </div>
                                         </td>
                                         <td className="px-8 py-5 text-right">
-                                            <button className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 hover:bg-purple-600/10 hover:text-purple-400 transition-all group/btn">
+                                            <button className="p-2.5 rounded-xl bg-white/[0.03] border border-slate-200 dark:border-white/5 hover:border-purple-500/30 hover:bg-purple-100 dark:bg-purple-600/10 hover:text-purple-400 transition-all group/btn">
                                                 <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                                             </button>
                                         </td>
@@ -260,17 +265,17 @@ const LogsView = () => {
                 </div>
 
                 {/* Pagination Shadow Footer */}
-                <div className="p-6 bg-white/[0.01] flex justify-between items-center border-t border-white/5">
-                    <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">
+                <div className="p-6 bg-white/[0.01] flex justify-between items-center border-t border-slate-200 dark:border-white/5">
+                    <p className="text-[10px] text-slate-400 dark:text-slate-600 font-black uppercase tracking-widest">
                         Batch Analysis: {logs.length} of {stats.total} total
                     </p>
                     <div className="flex gap-2">
-                        <button className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all disabled:opacity-30" disabled>Previous</button>
-                        <button className="px-4 py-2 rounded-xl bg-purple-600 border border-purple-500/30 text-[10px] font-black uppercase tracking-widest text-white shadow-xl hover:scale-105 transition-all">Next Page</button>
+                        <button className="px-4 py-2 rounded-xl bg-slate-200 dark:bg-white/5 border border-slate-200 dark:border-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:text-white transition-all disabled:opacity-30" disabled>Previous</button>
+                        <button className="px-4 py-2 rounded-xl bg-purple-600 border border-purple-500/30 text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white shadow-xl hover:scale-105 transition-all">Next Page</button>
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
