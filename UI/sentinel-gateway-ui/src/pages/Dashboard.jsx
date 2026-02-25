@@ -8,15 +8,16 @@ const StatCard = ({ title, value, change, icon: Icon, trend, delay = 0 }) => (
     <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
+        whileHover={{ scale: 1.02, y: -5 }}
         transition={{ delay, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="glass-card p-7 rounded-[2.5rem] relative group cursor-default"
+        className="glass-card p-7 rounded-[2.5rem] relative group cursor-default hover:border-purple-500/30 transition-all duration-300"
     >
         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
             <Icon className="w-24 h-24" />
         </div>
 
         <div className="flex justify-between items-start mb-6">
-            <div className="p-3 bg-purple-600/10 rounded-2xl border border-purple-500/20 group-hover:scale-110 transition-transform duration-500 group-hover:purple-glow">
+            <div className="p-3 bg-purple-100 dark:bg-purple-600/10 rounded-2xl border border-purple-200 dark:border-purple-500/20 group-hover:scale-110 transition-transform duration-500 group-hover:purple-glow">
                 <Icon className="w-7 h-7 text-purple-400" />
             </div>
             {trend && (
@@ -28,16 +29,16 @@ const StatCard = ({ title, value, change, icon: Icon, trend, delay = 0 }) => (
             )}
         </div>
 
-        <h3 className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{title}</h3>
+        <h3 className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{title}</h3>
         <div className="flex items-baseline gap-2 mt-2">
-            <p className="text-4xl font-extrabold tracking-tighter text-white">
+            <p className="text-4xl font-extrabold tracking-tighter text-slate-900 dark:text-white">
                 {value}
             </p>
             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
         </div>
 
         <div className="mt-6 flex items-center gap-2">
-            <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+            <div className="h-1 w-full bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden">
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: '70%' }}
@@ -45,7 +46,7 @@ const StatCard = ({ title, value, change, icon: Icon, trend, delay = 0 }) => (
                     className="h-full bg-gradient-to-r from-purple-600 to-blue-600 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
                 />
             </div>
-            <span className="text-[10px] text-slate-600 font-bold uppercase tracking-tighter">70%</span>
+            <span className="text-[10px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-tighter">70%</span>
         </div>
     </motion.div>
 );
@@ -99,15 +100,20 @@ const Dashboard = () => {
                 <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 animate-pulse border border-red-500/20">
                     <ShieldAlert className="w-10 h-10" />
                 </div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">System Link Failure</h2>
-                <p className="text-slate-500 max-w-md">The neural link to the logging core has been severed. Check your infrastructure clusters.</p>
-                <button onClick={() => { setLoading(true); fetchStats(); }} className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all">Reconnect</button>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">System Link Failure</h2>
+                <p className="text-slate-500 dark:text-slate-500 max-w-md">The neural link to the logging core has been severed. Check your infrastructure clusters.</p>
+                <button onClick={() => { setLoading(true); fetchStats(); }} className="px-8 py-3 bg-slate-200 dark:bg-white/5 hover:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all">Reconnect</button>
             </div>
         );
     }
 
     return (
-        <div className="space-y-12 animate-in pb-20">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-12 pb-20"
+        >
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
@@ -116,17 +122,17 @@ const Dashboard = () => {
                             NETWORK <span className="gradient-text">OS</span>
                             <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)] mt-2" />
                         </h2>
-                        <p className="text-slate-400 mt-4 font-medium text-lg max-w-xl leading-relaxed">
+                        <p className="text-slate-400 dark:text-slate-600 dark:text-slate-400 mt-4 font-medium text-lg max-w-xl leading-relaxed">
                             Sentinel analytics engine processing <span className="text-purple-400">multi-vector traffic</span> with neural precision.
                         </p>
                     </div>
                 </div>
-                <div className="flex bg-white/[0.03] border border-white/5 rounded-2xl p-1.5 backdrop-blur-xl shadow-2xl">
-                    <button className="px-6 py-2.5 bg-white/5 text-white rounded-xl text-xs font-bold transition-all shadow-[0_0_20px_rgba(168,85,247,0.15)] uppercase tracking-widest flex items-center gap-2">
+                <div className="flex bg-white/[0.03] border border-slate-200 dark:border-white/5 rounded-2xl p-1.5 backdrop-blur-xl shadow-2xl">
+                    <button className="px-6 py-2.5 bg-slate-200 dark:bg-white/5 text-slate-900 dark:text-white rounded-xl text-xs font-bold transition-all shadow-[0_0_20px_rgba(168,85,247,0.15)] uppercase tracking-widest flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-ping" />
                         Live
                     </button>
-                    <button className="px-6 py-2.5 text-slate-500 rounded-xl text-xs font-bold hover:text-slate-300 transition-all uppercase tracking-widest">History</button>
+                    <button className="px-6 py-2.5 text-slate-500 dark:text-slate-500 rounded-xl text-xs font-bold hover:text-slate-700 dark:text-slate-300 transition-all uppercase tracking-widest">History</button>
                 </div>
             </div>
 
@@ -166,26 +172,26 @@ const Dashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                <div className="lg:col-span-8 glass-card p-10 rounded-[3.5rem] border-white/5 relative group overflow-hidden">
+                <div className="lg:col-span-8 glass-card p-10 rounded-[3.5rem] border-slate-200 dark:border-white/5 relative group overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
                     <div className="absolute -right-20 -top-20 w-64 h-64 bg-purple-600/5 blur-[100px] pointer-events-none" />
 
                     <div className="flex justify-between items-center mb-10">
                         <div>
-                            <h3 className="text-xl font-bold flex items-center gap-3 text-white tracking-tight">
+                            <h3 className="text-xl font-bold flex items-center gap-3 text-slate-900 dark:text-white tracking-tight">
                                 <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
                                 Traffic Velocity
                             </h3>
-                            <p className="text-slate-500 text-xs mt-1 font-medium italic opacity-60">Global request distribution in 1m windows</p>
+                            <p className="text-slate-500 dark:text-slate-500 text-xs mt-1 font-medium italic opacity-60">Global request distribution in 1m windows</p>
                         </div>
                         <div className="flex gap-8">
                             <div className="flex items-center gap-2.5">
                                 <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.6)]" />
-                                <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em]">Core Flow</span>
+                                <span className="text-[10px] text-slate-400 dark:text-slate-600 dark:text-slate-400 font-black uppercase tracking-[0.15em]">Core Flow</span>
                             </div>
                             <div className="flex items-center gap-2.5">
                                 <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
-                                <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.15em]">Threat Vectors</span>
+                                <span className="text-[10px] text-slate-400 dark:text-slate-600 dark:text-slate-400 font-black uppercase tracking-[0.15em]">Threat Vectors</span>
                             </div>
                         </div>
                     </div>
@@ -204,9 +210,9 @@ const Dashboard = () => {
                 </div>
 
                 <div className="lg:col-span-4 space-y-10">
-                    <div className="glass-card p-9 rounded-[3rem] border-white/5 bg-gradient-to-br from-purple-600/10 via-transparent to-transparent relative overflow-hidden">
+                    <div className="glass-card p-9 rounded-[3rem] border-slate-200 dark:border-white/5 bg-gradient-to-br from-purple-600/10 via-transparent to-transparent relative overflow-hidden">
                         <div className="absolute inset-0 bg-grid-white opacity-[0.02] pointer-events-none" />
-                        <h3 className="text-lg font-bold mb-10 flex items-center gap-3 text-white tracking-tight">
+                        <h3 className="text-lg font-bold mb-10 flex items-center gap-3 text-slate-900 dark:text-white tracking-tight">
                             <Terminal className="w-5 h-5 text-blue-400" />
                             Cluster Health
                         </h3>
@@ -218,10 +224,10 @@ const Dashboard = () => {
                             ].map((item) => (
                                 <div key={item.label} className="space-y-3">
                                     <div className="flex justify-between items-center px-1">
-                                        <span className="text-[10px] text-slate-500 font-black uppercase tracking-[0.15em]">{item.label}</span>
-                                        <span className="text-xs font-black text-slate-200">{item.value}%</span>
+                                        <span className="text-[10px] text-slate-500 dark:text-slate-500 font-black uppercase tracking-[0.15em]">{item.label}</span>
+                                        <span className="text-xs font-black text-slate-800 dark:text-slate-200">{item.value}%</span>
                                     </div>
-                                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden p-[1px] border border-white/5">
+                                    <div className="h-2 w-full bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden p-[1px] border border-slate-200 dark:border-white/5">
                                         <motion.div
                                             initial={{ width: 0 }}
                                             animate={{ width: `${item.value}%` }}
@@ -241,13 +247,13 @@ const Dashboard = () => {
                                 <ShieldAlert className="w-7 h-7" />
                             </div>
                             <div>
-                                <h4 className="font-bold text-white tracking-tight text-lg">Active Threats</h4>
+                                <h4 className="font-bold text-slate-900 dark:text-white tracking-tight text-lg">Active Threats</h4>
                                 <p className="text-[10px] text-orange-500/60 font-black uppercase tracking-[0.2em]">Live Overwatch</p>
                             </div>
                         </div>
-                        <p className="text-sm text-slate-400 mb-8 leading-relaxed relative font-medium">
+                        <p className="text-sm text-slate-400 dark:text-slate-600 dark:text-slate-400 mb-8 leading-relaxed relative font-medium">
                             {stats?.securityBlocks > 0
-                                ? <span className="text-slate-200 font-bold">{stats.securityBlocks} anomalous patterns</span>
+                                ? <span className="text-slate-800 dark:text-slate-200 font-bold">{stats.securityBlocks} anomalous patterns</span>
                                 : "No active threats detected."}
                             {" "}Identity tracing core is currently identifying potential attack surfaces across global nodes.
                         </p>
@@ -258,7 +264,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

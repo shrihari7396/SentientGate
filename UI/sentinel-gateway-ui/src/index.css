@@ -42,10 +42,14 @@
   }
 
   body {
-    @apply bg-[#030303] text-white selection:bg-purple-500/30;
+    @apply bg-slate-50 text-slate-900 transition-colors duration-500 selection:bg-purple-500/30;
     font-family: 'Outfit', sans-serif;
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.01em;
+  }
+
+  .dark body {
+    @apply bg-[#030303] text-white;
   }
 }
 
@@ -54,12 +58,28 @@
 }
 
 .glass-card {
-  @apply relative overflow-hidden;
+  @apply relative overflow-hidden transition-all duration-500 bg-white;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass-card:hover {
+  box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .glass-card::before {
@@ -69,7 +89,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6), transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -79,7 +99,11 @@
 }
 
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-purple-500/50;
+  @apply bg-clip-text text-transparent bg-gradient-to-br from-slate-900 via-slate-800 to-purple-600;
+}
+
+.dark .gradient-text {
+  @apply bg-gradient-to-br from-white via-white to-purple-500/50;
   filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.2));
 }
 
@@ -98,10 +122,14 @@
 .mesh-grid {
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
   background-size: 32px 32px;
   pointer-events: none;
   z-index: -1;
+}
+
+.dark .mesh-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
 /* Animations */
@@ -140,12 +168,13 @@
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-[#030303];
+  @apply bg-slate-50 dark:bg-[#030303];
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full border-[3px] border-[#030303] hover:bg-white/20 transition-all;
+  @apply bg-slate-300 dark:bg-white/10 rounded-full border-[3px] border-slate-50 dark:border-[#030303] hover:bg-slate-400 dark:hover:bg-white/20 transition-all;
 }
