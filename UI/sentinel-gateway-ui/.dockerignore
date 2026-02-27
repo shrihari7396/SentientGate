@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.gitignore
+.vscode
+.env
+.idea
+Dockerfile
+.dockerignore
+npm-debug.log
+yarn-error.log
+gateway.log
