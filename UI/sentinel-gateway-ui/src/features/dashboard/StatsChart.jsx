@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { logApi } from '../api/client';
+import { logApi } from '../../shared/api/client';
 
 const StatsChart = () => {
     const [chartData, setChartData] = useState([]);
@@ -11,7 +11,7 @@ const StatsChart = () => {
 
         logApi.getTrafficVelocity(start.toISOString(), end.toISOString())
             .then(res => {
-                const formatted = res.data.map(bucket => ({
+                const formatted = (res || []).map(bucket => ({
                     time: new Date(bucket.minute).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     requests: bucket.requestCount,
                     errors: bucket.errorCount,
