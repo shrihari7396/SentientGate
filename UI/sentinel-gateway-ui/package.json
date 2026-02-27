@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
+    "@tanstack/react-table": "^8.21.3",
     "axios": "^1.13.5",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.3",
@@ -18,6 +20,7 @@
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0",
     "recharts": "^3.7.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {

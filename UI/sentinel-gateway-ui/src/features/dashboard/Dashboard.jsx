@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Activity, ShieldCheck, ShieldAlert, Zap, ArrowUpRight, ArrowDownRight, Terminal, Box, Database, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
-import StatsChart from '../components/StatsChart';
-import { logApi } from '../api/client';
+import { useQuery } from '@tanstack/react-query';
+import StatsChart from './StatsChart';
+import { logApi } from '../../shared/api/client';
 
 const StatCard = ({ title, value, change, icon: Icon, trend, delay = 0 }) => (
     <motion.div
@@ -12,16 +13,16 @@ const StatCard = ({ title, value, change, icon: Icon, trend, delay = 0 }) => (
         transition={{ delay, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="glass-card p-7 rounded-[2.5rem] relative group cursor-default hover:border-purple-500/30 transition-all duration-300"
     >
-        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-            <Icon className="w-24 h-24" />
+        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-10 transition-opacity duration-700">
+            <Icon className="w-32 h-32" />
         </div>
 
         <div className="flex justify-between items-start mb-6">
-            <div className="p-3 bg-purple-100 dark:bg-purple-600/10 rounded-2xl border border-purple-200 dark:border-purple-500/20 group-hover:scale-110 transition-transform duration-500 group-hover:purple-glow">
-                <Icon className="w-7 h-7 text-purple-400" />
+            <div className="w-14 h-14 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-[1.25rem] flex items-center justify-center border border-purple-500/20 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                <Icon className="w-7 h-7 text-purple-600 dark:text-purple-400" />
             </div>
             {trend && (
-                <span className={`flex items-center text-[10px] font-black px-3 py-1.5 rounded-full tracking-wider ${trend === 'up' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                <span className={`flex items-center text-[10px] font-bold px-3 py-1.5 rounded-full tracking-wider ${trend === 'up' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
                     }`}>
                     {trend === 'up' ? <ArrowUpRight className="w-3.5 h-3.5 mr-1" /> : <ArrowDownRight className="w-3.5 h-3.5 mr-1" />}
                     {change}%
@@ -29,63 +30,43 @@ const StatCard = ({ title, value, change, icon: Icon, trend, delay = 0 }) => (
             )}
         </div>
 
-        <h3 className="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{title}</h3>
+        <h3 className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{title}</h3>
         <div className="flex items-baseline gap-2 mt-2">
-            <p className="text-4xl font-extrabold tracking-tighter text-slate-900 dark:text-white">
+            <p className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white">
                 {value}
             </p>
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
         </div>
 
-        <div className="mt-6 flex items-center gap-2">
-            <div className="h-1 w-full bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden">
+        <div className="mt-6 flex items-center gap-3">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: '70%' }}
-                    transition={{ duration: 1.5, delay: delay + 0.5 }}
-                    className="h-full bg-gradient-to-r from-purple-600 to-blue-600 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
-                />
+                    transition={{ duration: 1.5, delay: delay + 0.5, ease: "easeOut" }}
+                    className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 relative"
+                >
+                    <div className="absolute inset-0 bg-white/20 animate-shimmer" />
+                </motion.div>
             </div>
-            <span className="text-[10px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-tighter">70%</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">70%</span>
         </div>
     </motion.div>
 );
 
 const Dashboard = () => {
-    const [stats, setStats] = useState({
-        throughput: 0,
-        securityBlocks: 0,
-        p99Latency: 0,
-        totalTraffic: 0
+    // React Query for polling dashboard stats
+    const { data: stats, isLoading: loading, isError: error, refetch } = useQuery({
+        queryKey: ['dashboardStats'],
+        queryFn: async () => {
+            const end = new Date();
+            const start = new Date(Date.now() - 3600000); // Last hour
+            return await logApi.getDashboardSummary(start.toISOString(), end.toISOString());
+        },
+        refetchInterval: 5000, // Poll every 5s
     });
+
     const [chartData, setChartData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    const fetchStats = () => {
-        const end = new Date();
-        const start = new Date(Date.now() - 3600000); // Last hour
-
-        logApi.getDashboardSummary(start.toISOString(), end.toISOString())
-            .then(res => {
-                if (res.data) {
-                    setStats(res.data);
-                    setError(null);
-                }
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error("Failed to fetch dashboard stats", err);
-                setError("Infrastructure communication issues detected.");
-                setLoading(false);
-            });
-    };
-
-    useEffect(() => {
-        fetchStats();
-        const interval = setInterval(fetchStats, 5000);
-        return () => clearInterval(interval);
-    }, []);
 
     const formatValue = (val) => {
         if (!val && val !== 0) return '0';
@@ -97,12 +78,12 @@ const Dashboard = () => {
     if (error && loading) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-6">
-                <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 animate-pulse border border-red-500/20">
+                <div className="w-20 h-20 rounded-[1.5rem] bg-rose-500/10 flex items-center justify-center text-rose-500 animate-[pulse-slow] border border-rose-500/20 shadow-[0_0_30px_rgba(225,29,72,0.2)]">
                     <ShieldAlert className="w-10 h-10" />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">System Link Failure</h2>
-                <p className="text-slate-500 dark:text-slate-500 max-w-md">The neural link to the logging core has been severed. Check your infrastructure clusters.</p>
-                <button onClick={() => { setLoading(true); fetchStats(); }} className="px-8 py-3 bg-slate-200 dark:bg-white/5 hover:bg-white/10 border border-slate-300 dark:border-white/10 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all">Reconnect</button>
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">System Link Failure</h2>
+                <p className="text-slate-500 max-w-md font-medium">The neural link to the logging core has been severed. Check your infrastructure clusters.</p>
+                <button onClick={() => refetch()} className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[1rem] shadow-lg hover:shadow-xl transition-all font-bold text-sm tracking-wide">Reconnect Stream</button>
             </div>
         );
     }
@@ -114,25 +95,27 @@ const Dashboard = () => {
             exit={{ opacity: 0 }}
             className="space-y-12 pb-20"
         >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
                 <div className="relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg blur opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
+                    <div className="absolute -inset-4 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-3xl blur-2xl opacity-10 group-hover:opacity-20 transition-opacity duration-1000" />
                     <div className="relative">
-                        <h2 className="text-5xl font-black tracking-tighter leading-none flex items-center gap-4">
+                        <h2 className="text-5xl lg:text-6xl font-black tracking-tighter leading-none flex items-center gap-4">
                             NETWORK <span className="gradient-text">OS</span>
-                            <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)] mt-2" />
+                            <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.6)] mt-2" />
                         </h2>
-                        <p className="text-slate-400 dark:text-slate-600 dark:text-slate-400 mt-4 font-medium text-lg max-w-xl leading-relaxed">
-                            Sentinel analytics engine processing <span className="text-purple-400">multi-vector traffic</span> with neural precision.
+                        <p className="text-slate-500 mt-4 font-medium text-lg max-w-xl leading-relaxed">
+                            Sentinel analytics engine processing <span className="text-indigo-500 dark:text-indigo-400 font-semibold">multi-vector traffic</span> with neural precision.
                         </p>
                     </div>
                 </div>
-                <div className="flex bg-white/[0.03] border border-slate-200 dark:border-white/5 rounded-2xl p-1.5 backdrop-blur-xl shadow-2xl">
-                    <button className="px-6 py-2.5 bg-slate-200 dark:bg-white/5 text-slate-900 dark:text-white rounded-xl text-xs font-bold transition-all shadow-[0_0_20px_rgba(168,85,247,0.15)] uppercase tracking-widest flex items-center gap-2">
+                <div className="flex bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-1.5 backdrop-blur-xl">
+                    <button className="px-6 py-2.5 bg-white dark:bg-white/10 text-slate-900 dark:text-white rounded-xl text-xs font-bold leading-none transition-all shadow-sm flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-ping" />
-                        Live
+                        Live Data
                     </button>
-                    <button className="px-6 py-2.5 text-slate-500 dark:text-slate-500 rounded-xl text-xs font-bold hover:text-slate-700 dark:text-slate-300 transition-all uppercase tracking-widest">History</button>
+                    <button className="px-6 py-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 rounded-xl text-xs font-bold leading-none transition-all">
+                        History
+                    </button>
                 </div>
             </div>
 

@@ -1,46 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { mgmtApi } from '../api/client';
+import React, { useState } from 'react';
+import { mgmtApi } from '../../shared/api/client';
 import { ShieldAlert, UserX, UserCheck, Search, AlertTriangle, Plus, Hash, Clock, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 const BlacklistView = () => {
-    const [blacklist, setBlacklist] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [newUuid, setNewUuid] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const fetchBlacklist = () => {
-        setLoading(true);
-        mgmtApi.getBlacklist()
-            .then(res => {
-                setBlacklist(res.data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
+    // Fetch Blacklist
+    const { data: blacklist = [], isLoading: loading } = useQuery({
+        queryKey: ['blacklist'],
+        queryFn: async () => {
+            const res = await mgmtApi.getBlacklist();
+            return res;
+        }
+    });
+
+    // Block Mutation
+    const blockMutation = useMutation({
+        mutationFn: (uuid) => mgmtApi.blockUuid(uuid),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['blacklist'] });
+            toast.success('Identity Isolated', {
+                description: 'The UUID has been added to the global blacklist.'
             });
-    };
+            setNewUuid('');
+        },
+        onError: (err) => {
+            toast.error('Isolation Failed', {
+                description: err.response?.data?.message || err.message || 'An error occurred.'
+            });
+        }
+    });
 
-    useEffect(() => {
-        fetchBlacklist();
-    }, []);
+    // Unblock Mutation
+    const unblockMutation = useMutation({
+        mutationFn: (uuid) => mgmtApi.unblockUuid(uuid),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['blacklist'] });
+            toast.success('Access Restored', {
+                description: 'The identity has been removed from the blacklist.'
+            });
+        },
+        onError: (err) => {
+            toast.error('Restore Failed', {
+                description: err.response?.data?.message || err.message || 'An error occurred.'
+            });
+        }
+    });
 
     const handleBlock = (e) => {
         e.preventDefault();
-        if (!newUuid || isSubmitting) return;
-        setIsSubmitting(true);
-        mgmtApi.blockUuid(newUuid).then(() => {
-            setNewUuid('');
-            setIsSubmitting(false);
-            fetchBlacklist();
-        }).catch(() => setIsSubmitting(false));
+        if (!newUuid || blockMutation.isPending) return;
+        blockMutation.mutate(newUuid);
     };
 
     const handleUnblock = (uuid) => {
-        mgmtApi.unblockUuid(uuid).then(() => {
-            fetchBlacklist();
-        });
+        unblockMutation.mutate(uuid);
     };
 
     return (
@@ -55,7 +73,7 @@ const BlacklistView = () => {
                     <h2 className="text-4xl font-black tracking-tighter leading-none">
                         SECURITY <span className="gradient-text">BLACKLIST</span>
                     </h2>
-                    <p className="text-slate-400 dark:text-slate-600 dark:text-slate-400 mt-4 font-medium text-lg max-w-xl leading-relaxed">
+                    <p className="text-slate-400 dark:text-slate-600 mt-4 font-medium text-lg max-w-xl leading-relaxed">
                         Identity isolation layer. Manage blocked UUIDs and instantly protect your perimeter.
                     </p>
                 </div>
@@ -92,11 +110,11 @@ const BlacklistView = () => {
                             </div>
                             <button
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={blockMutation.isPending}
                                 className="w-full bg-white text-black font-black uppercase tracking-widest py-4 rounded-2xl transition-all flex items-center justify-center gap-3 hover:scale-[1.02] hover:shadow-[0_20px_40px_-10px_rgba(255,255,255,0.2)] disabled:opacity-50"
                             >
                                 <ShieldAlert className="w-5 h-5" />
-                                EXECUTE BLOCK
+                                {blockMutation.isPending ? 'EXECUTING...' : 'EXECUTE BLOCK'}
                             </button>
                         </form>
                     </div>
@@ -153,10 +171,10 @@ const BlacklistView = () => {
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ delay: idx * 0.05 }}
                                     key={uuid}
-                                    className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/[0.04] hover:border-red-500/20 hover:bg-red-500/[0.02] transition-all flex items-center justify-between group"
+                                    className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/[0.04] hover:border-red-500/20 hover:bg-red-500/[0.02] transition-all flex items-center justify-between group/row"
                                 >
                                     <div className="flex items-center gap-6">
-                                        <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/10 group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                                        <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/10 group-hover/row:scale-110 transition-transform duration-500 shadow-inner">
                                             <UserX className="w-6 h-6 text-red-500" />
                                         </div>
                                         <div>
@@ -165,12 +183,12 @@ const BlacklistView = () => {
                                                 <span className="px-2 py-0.5 rounded text-[8px] font-black bg-red-500/20 text-red-500 uppercase tracking-widest">Manual</span>
                                             </div>
                                             <div className="flex items-center gap-4 mt-2">
-                                                <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center gap-1.5 opacity-40 group-hover/row:opacity-100 transition-opacity">
                                                     <Clock className="w-3 h-3" />
-                                                    <span className="text-[9px] font-black uppercase tracking-widest">Isolated 2m ago</span>
+                                                    <span className="text-[9px] font-black uppercase tracking-widest">Isolated</span>
                                                 </div>
                                                 <div className="w-1 h-1 rounded-full bg-slate-700" />
-                                                <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center gap-1.5 opacity-40 group-hover/row:opacity-100 transition-opacity">
                                                     <Hash className="w-3 h-3" />
                                                     <span className="text-[9px] font-black uppercase tracking-widest">JTI_RULE_V1</span>
                                                 </div>
@@ -179,10 +197,13 @@ const BlacklistView = () => {
                                     </div>
                                     <button
                                         onClick={() => handleUnblock(uuid)}
-                                        className="p-3 rounded-2xl bg-slate-200 dark:bg-white/5 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-500 hover:text-green-500 hover:bg-green-500/10 hover:border-green-500/20 transition-all flex items-center gap-2 group/unblock"
+                                        disabled={unblockMutation.isPending && unblockMutation.variables === uuid}
+                                        className="p-3 rounded-2xl bg-slate-200 dark:bg-white/5 border border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-500 hover:text-green-500 hover:bg-green-500/10 hover:border-green-500/20 transition-all flex items-center gap-2 group/unblock disabled:opacity-50"
                                     >
                                         <UserCheck className="w-5 h-5 group-hover/unblock:scale-125 transition-transform" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest pr-2 hidden sm:block">Restore Access</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest pr-2 hidden sm:block">
+                                            {(unblockMutation.isPending && unblockMutation.variables === uuid) ? 'Restoring...' : 'Restore Access'}
+                                        </span>
                                         <ArrowRight className="w-3 h-3 opacity-0 group-hover/unblock:opacity-100 group-hover/unblock:translate-x-1 transition-all" />
                                     </button>
                                 </motion.div>
