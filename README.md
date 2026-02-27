@@ -15,7 +15,9 @@
 
 Unlike static firewalls, SentientGate's **Sentient MCP (Master Control Program)** analyzes user behavioral history using a layered Strategy pattern — from rule-based pattern matching to AI anomaly detection — all without any external API dependency.
 
-[Architecture](#-system-architecture) · [Services](#-microservices) · [Tech Stack](#-technology-stack) · [Quick Start](#-quick-start) · [Docker Setup](#-docker-deployment) · [Folder Structure](#-project-structure)
+🌐 **Live Dashboard:** [https://sentient-gate.vercel.app/](https://sentient-gate.vercel.app/)
+
+[Live Demo](https://sentient-gate.vercel.app/) · [Architecture](#-system-architecture) · [Services](#-microservices) · [Tech Stack](#-technology-stack) · [Quick Start](#-quick-start) · [Docker Setup](#-docker-deployment) · [Folder Structure](#-project-structure)
 
 </div>
 
