@@ -3,11 +3,9 @@ package edu.pict.controller;
 import edu.pict.dtos.AnomalyDetectionRequest;
 import edu.pict.dtos.AnomalyDetectionResponse;
 import edu.pict.service.AnomalyDetectionService;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/anomaly")

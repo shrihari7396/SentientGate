@@ -1,10 +1,9 @@
 package edu.pict.loggingservice.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.Instant;
 import java.util.UUID;
+import lombok.*;
 
 @Entity
 @Table(name = "gateway_logs")
@@ -15,32 +14,25 @@ import java.util.UUID;
 @Builder
 public class GatewayLogEntity {
 
-    @Id
-    private UUID id;
+    @Id private UUID id;
 
     @Column(nullable = false)
     private String clientIp;
 
-    @Column
-    private String visitorId;
+    @Column private String visitorId;
 
-    @Column
-    private String path;
+    @Column private String path;
 
-    @Column
-    private String method;
+    @Column private String method;
 
-    @Column
-    private String routeId;
+    @Column private String routeId;
 
-    @Column
-    private String decision;
+    @Column private String decision;
 
     @Column(nullable = false)
     private int statusCode;
 
-    @Column
-    private long requestSize;
+    @Column private long requestSize;
 
     @Column(nullable = false)
     private long latencyMs;

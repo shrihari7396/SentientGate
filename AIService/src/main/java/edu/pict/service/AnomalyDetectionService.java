@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -51,8 +50,6 @@ public class AnomalyDetectionService {
                         req.getUniqueRoutesAccessed(),
                         req.getJwtReuseCount(),
                         req.getIpReputationScore(),
-                        req.getRouteSensitivity()
-                );
+                        req.getRouteSensitivity());
     }
 }
-

@@ -1,25 +1,23 @@
 package edu.pict.loggingservice.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import edu.pict.loggingservice.dto.IpActivitySummary;
 import edu.pict.loggingservice.repository.GatewayLogRepository;
+import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class IpAggregationServiceTest {
 
-    @Mock
-    private GatewayLogRepository gatewayLogRepository;
+    @Mock private GatewayLogRepository gatewayLogRepository;
 
     private IpAggregationService ipAggregationService;
 
@@ -34,13 +32,14 @@ class IpAggregationServiceTest {
         Instant start = Instant.now().minusSeconds(600);
         Instant end = Instant.now();
 
-        Object[] mockResult = new Object[] {
-                100L, // totalRequests
-                5L, // rateLimitedCount
-                2L, // invalidJwtCount
-                10L, // uniqueRoutes
-                50.5 // avgLatencyMs
-        };
+        Object[] mockResult =
+                new Object[] {
+                    100L, // totalRequests
+                    5L, // rateLimitedCount
+                    2L, // invalidJwtCount
+                    10L, // uniqueRoutes
+                    50.5 // avgLatencyMs
+                };
 
         when(gatewayLogRepository.aggregateByIp(eq(ip), any(), any())).thenReturn(mockResult);
 
@@ -57,11 +56,12 @@ class IpAggregationServiceTest {
     @Test
     void summarize_ShouldHandleNullAvgLatency() {
         String ip = "192.168.1.1";
-        Object[] mockResult = new Object[] { 0L, 0L, 0L, 0L, null };
+        Object[] mockResult = new Object[] {0L, 0L, 0L, 0L, null};
 
         when(gatewayLogRepository.aggregateByIp(eq(ip), any(), any())).thenReturn(mockResult);
 
-        IpActivitySummary summary = ipAggregationService.summarize(ip, Instant.now(), Instant.now());
+        IpActivitySummary summary =
+                ipAggregationService.summarize(ip, Instant.now(), Instant.now());
 
         assertEquals(0.0, summary.avgLatencyMs());
     }

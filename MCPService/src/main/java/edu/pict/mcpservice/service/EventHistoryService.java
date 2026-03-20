@@ -5,13 +5,11 @@ import edu.pict.mcpservice.grpc.UserLogEventResponse;
 import edu.pict.mcpservice.grpc.UserLogEventServiceGrpc;
 import edu.pict.mcpservice.grpc.UserLogEventsRequest;
 import io.grpc.StatusRuntimeException;
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -22,6 +20,7 @@ public class EventHistoryService {
 
     /**
      * Fetches user history from the Logging Service via gRPC.
+     *
      * @param uuid The unique visitor ID.
      * @param duration Lookback period in minutes.
      * @return List of Log Events or an empty list if service is down.
@@ -30,16 +29,16 @@ public class EventHistoryService {
         try {
             log.info("📡 Requesting {} min history for UUID: {}", duration, uuid);
 
-            UserLogEventsRequest request = UserLogEventsRequest.newBuilder()
-                    .setUuid(uuid)
-                    .setDuration(duration)
-                    .build();
+            UserLogEventsRequest request =
+                    UserLogEventsRequest.newBuilder().setUuid(uuid).setDuration(duration).build();
 
             // Calling the remote Logging Service
             UserLogEventResponse response = stub.getUserEvents(request);
 
-            log.info("✅ Successfully fetched {} events for UUID: {}",
-                    response.getUserLogEventsCount(), uuid);
+            log.info(
+                    "✅ Successfully fetched {} events for UUID: {}",
+                    response.getUserLogEventsCount(),
+                    uuid);
 
             return response.getUserLogEventsList();
 

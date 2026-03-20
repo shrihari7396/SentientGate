@@ -16,8 +16,6 @@ public class RedisJwtBlacklistService implements JwtBlacklistService {
 
     @Override
     public Mono<Boolean> isBlocked(String jti) {
-        return redisTemplate
-                .hasKey(PREFIX + jti)
-                .defaultIfEmpty(false);
+        return redisTemplate.hasKey(PREFIX + jti).defaultIfEmpty(false);
     }
 }

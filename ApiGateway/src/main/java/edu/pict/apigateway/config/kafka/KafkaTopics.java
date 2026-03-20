@@ -4,7 +4,6 @@ public enum KafkaTopics {
     USER_LOGS("user-logs"),
     SECURITY_EVENTS("security-events");
 
-
     private final String topic;
 
     KafkaTopics(String topic) {

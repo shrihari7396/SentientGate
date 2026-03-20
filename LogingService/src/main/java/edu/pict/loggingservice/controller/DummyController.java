@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/dum")
 public class DummyController {
-    private final GatewayLogRepository  gatewayLogRepository;
+    private final GatewayLogRepository gatewayLogRepository;
 
     @GetMapping("/giveAll")
     public ResponseEntity<?> giveAll() {

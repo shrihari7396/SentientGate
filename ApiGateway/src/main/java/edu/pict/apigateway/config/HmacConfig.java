@@ -1,11 +1,10 @@
 package edu.pict.apigateway.config;
 
+import java.nio.charset.StandardCharsets;
+import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class HmacConfig {
@@ -17,7 +16,6 @@ public class HmacConfig {
 
     @Bean
     public SecretKeySpec hmacSecretKey() {
-        return  new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), HMAC_ALGORITHM);
+        return new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), HMAC_ALGORITHM);
     }
-
 }

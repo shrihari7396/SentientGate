@@ -5,11 +5,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -41,8 +40,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public List<String> extractRoles(String token) {
-        return validateAndExtractClaims(token)
-                .get("roles", List.class);
+        return validateAndExtractClaims(token).get("roles", List.class);
     }
 
     @Override

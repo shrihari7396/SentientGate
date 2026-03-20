@@ -2,19 +2,17 @@ package edu.pict.mcpservice.stratagies.blocking;
 
 import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import java.time.Duration;
 import java.util.List;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 @Component
 @Order(2) // High priority, run early
 public class SensitivePathStrategy implements ThreatStrategy {
 
-    private static final List<String> FORBIDDEN_PATHS = List.of(
-            "/wp-admin", "/.env", "/config.php", "/admin/login", "/.git", "/actuator"
-    );
+    private static final List<String> FORBIDDEN_PATHS =
+            List.of("/wp-admin", "/.env", "/config.php", "/admin/login", "/.git", "/actuator");
 
     @Override
     public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {

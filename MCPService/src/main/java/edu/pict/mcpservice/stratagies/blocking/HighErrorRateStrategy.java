@@ -2,11 +2,10 @@ package edu.pict.mcpservice.stratagies.blocking;
 
 import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import java.time.Duration;
 import java.util.List;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 @Component
 @Order(4)
@@ -16,9 +15,7 @@ public class HighErrorRateStrategy implements ThreatStrategy {
     public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
         if (history.isEmpty()) return false;
 
-        long errorCount = history.stream()
-                .filter(log -> log.getStatusCode() >= 400)
-                .count();
+        long errorCount = history.stream().filter(log -> log.getStatusCode() >= 400).count();
 
         // If error rate is > 70%, it's likely a scanner
         double errorRate = (double) errorCount / history.size();

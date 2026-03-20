@@ -6,5 +6,4 @@ public record IpActivitySummary(
         long rateLimitedCount,
         long invalidJwtCount,
         long uniqueRoutes,
-        double avgLatencyMs
-) {}
+        double avgLatencyMs) {}

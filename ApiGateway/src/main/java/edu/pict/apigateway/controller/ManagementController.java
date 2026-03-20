@@ -1,12 +1,11 @@
 package edu.pict.apigateway.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/mgmt/blacklist")
@@ -18,7 +17,8 @@ public class ManagementController {
 
     @GetMapping
     public Mono<ResponseEntity<List<String>>> getBlacklist() {
-        return redisTemplate.keys(BLACKLIST_PREFIX + "*")
+        return redisTemplate
+                .keys(BLACKLIST_PREFIX + "*")
                 .map(key -> key.substring(BLACKLIST_PREFIX.length()))
                 .collectList()
                 .map(ResponseEntity::ok);
@@ -26,13 +26,16 @@ public class ManagementController {
 
     @PostMapping("/{uuid}")
     public Mono<ResponseEntity<Void>> block(@PathVariable String uuid) {
-        return redisTemplate.opsForValue().set(BLACKLIST_PREFIX + uuid, "true")
+        return redisTemplate
+                .opsForValue()
+                .set(BLACKLIST_PREFIX + uuid, "true")
                 .map(success -> ResponseEntity.ok().<Void>build());
     }
 
     @DeleteMapping("/{uuid}")
     public Mono<ResponseEntity<Void>> unblock(@PathVariable String uuid) {
-        return redisTemplate.delete(BLACKLIST_PREFIX + uuid)
+        return redisTemplate
+                .delete(BLACKLIST_PREFIX + uuid)
                 .map(count -> ResponseEntity.ok().<Void>build());
     }
 }

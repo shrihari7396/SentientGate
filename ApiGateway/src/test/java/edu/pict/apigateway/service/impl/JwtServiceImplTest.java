@@ -1,19 +1,18 @@
 package edu.pict.apigateway.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class JwtServiceImplTest {
 
@@ -58,26 +57,30 @@ class JwtServiceImplTest {
     @Test
     void testExtractUserId() {
         String sub = "test-user";
-        String token = generateToken(sub, "jti", List.of(), new Date(System.currentTimeMillis() + 10000));
+        String token =
+                generateToken(sub, "jti", List.of(), new Date(System.currentTimeMillis() + 10000));
         assertEquals(sub, jwtService.extractUserId(token));
     }
 
     @Test
     void testExtractJti() {
         String jti = "test-jti";
-        String token = generateToken("sub", jti, List.of(), new Date(System.currentTimeMillis() + 10000));
+        String token =
+                generateToken("sub", jti, List.of(), new Date(System.currentTimeMillis() + 10000));
         assertEquals(jti, jwtService.extractJti(token));
     }
 
     @Test
     void testExtractRoles() {
         List<String> roles = List.of("ADMIN", "USER");
-        String token = generateToken("sub", "jti", roles, new Date(System.currentTimeMillis() + 10000));
+        String token =
+                generateToken("sub", "jti", roles, new Date(System.currentTimeMillis() + 10000));
         assertEquals(roles, jwtService.extractRoles(token));
     }
 
     @Test
     void testInvalidToken() {
-        assertThrows(Exception.class, () -> jwtService.validateAndExtractClaims("invalid.token.here"));
+        assertThrows(
+                Exception.class, () -> jwtService.validateAndExtractClaims("invalid.token.here"));
     }
 }

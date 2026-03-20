@@ -1,13 +1,12 @@
 package edu.pict.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -18,11 +17,8 @@ public class OllamaService {
 
     public OllamaService(
             @Value("${ollama.base-url}") String ollamaBaseUrl,
-            @Value("${ollama.model}") String defaultModel
-    ) {
-        this.webClient = WebClient.builder()
-                .baseUrl(ollamaBaseUrl)
-                .build();
+            @Value("${ollama.model}") String defaultModel) {
+        this.webClient = WebClient.builder().baseUrl(ollamaBaseUrl).build();
         this.defaultModel = defaultModel;
     }
 
@@ -39,14 +35,16 @@ public class OllamaService {
         payload.put("stream", false);
 
         try {
-            Map<Object, Object> response = webClient.post()
-                    .uri("/api/generate")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(payload)
-                    .retrieve()
-                    .bodyToMono(Map.class)
-                    .timeout(java.time.Duration.ofSeconds(5))
-                    .block();
+            Map<Object, Object> response =
+                    webClient
+                            .post()
+                            .uri("/api/generate")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(payload)
+                            .retrieve()
+                            .bodyToMono(Map.class)
+                            .timeout(java.time.Duration.ofSeconds(5))
+                            .block();
 
             if (response == null || !response.containsKey("response")) {
                 log.error("Ollama returned empty response");
@@ -61,9 +59,7 @@ public class OllamaService {
         }
     }
 
-    /**
-     * STRICT numeric-only anomaly score [0.0 – 1.0]
-     */
+    /** STRICT numeric-only anomaly score [0.0 – 1.0] */
     public double predictAnomalyScore(String prompt) {
 
         String response = generate(prompt);
