@@ -12,5 +12,4 @@ public record GatewayDecisionEvent(
         long latencyMs,
         String queryParams,
         String userAgent,
-        long timestamp) {
-}
+        long timestamp) {}

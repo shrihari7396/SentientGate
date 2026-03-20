@@ -1,13 +1,12 @@
 package edu.pict.apigateway.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.crypto.spec.SecretKeySpec;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class SentinelSecurityServiceImplTest {
 
@@ -16,7 +15,8 @@ class SentinelSecurityServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        SecretKeySpec secretKeySpec =
+                new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         securityService = new SentinelSecurityServiceImpl(secretKeySpec);
     }
 

@@ -8,5 +8,4 @@ class LoggingServiceApplicationTests {
     void contextLoads() {
         // Simple smoke test without full context load
     }
-
 }

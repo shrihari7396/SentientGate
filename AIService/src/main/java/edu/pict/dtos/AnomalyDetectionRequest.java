@@ -2,8 +2,6 @@ package edu.pict.dtos;
 
 import lombok.*;
 
-import java.util.Map;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -7,5 +7,4 @@ public final class Constants {
     public static final String JWT_TTL_ATTR = "jwt_ttl";
     public static final String JWT_SUB_ATTR = "jwtSubject";
     public static final String DECISION_ATTR = "decision";
-
 }

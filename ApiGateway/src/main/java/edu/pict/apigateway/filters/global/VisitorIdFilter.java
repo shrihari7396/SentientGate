@@ -2,6 +2,7 @@ package edu.pict.apigateway.filters.global;
 
 import edu.pict.apigateway.service.SentinelSecurityService;
 import edu.pict.apigateway.util.Constants;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -13,8 +14,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import java.time.Duration;
 
 @RequiredArgsConstructor
 @Component
@@ -37,12 +36,14 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
                 return exchange.getResponse().setComplete();
             }
 
-            ServerWebExchange mutatedExchange = exchange.mutate()
-                    .request(exchange.getRequest()
-                            .mutate()
-                            .header(Constants.VISITOR_ID, uuid)
-                            .build())
-                    .build();
+            ServerWebExchange mutatedExchange =
+                    exchange.mutate()
+                            .request(
+                                    exchange.getRequest()
+                                            .mutate()
+                                            .header(Constants.VISITOR_ID, uuid)
+                                            .build())
+                            .build();
 
             return chain.filter(mutatedExchange);
         }
@@ -51,20 +52,23 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
         String uuid = sentinelSecurityService.verifyAndExtractId(signedId);
 
         exchange.getResponse()
-                .addCookie(ResponseCookie.from(Constants.VISITOR_ID, signedId)
-                        .path("/")
-                        .httpOnly(true)
-                        .secure(true)
-                        .sameSite("Strict")
-                        .maxAge(Duration.ofDays(365))
-                        .build());
+                .addCookie(
+                        ResponseCookie.from(Constants.VISITOR_ID, signedId)
+                                .path("/")
+                                .httpOnly(true)
+                                .secure(true)
+                                .sameSite("Strict")
+                                .maxAge(Duration.ofDays(365))
+                                .build());
 
-        ServerWebExchange mutatedExchange = exchange.mutate()
-                .request(exchange.getRequest()
-                        .mutate()
-                        .header(Constants.VISITOR_ID, uuid)
-                        .build())
-                .build();
+        ServerWebExchange mutatedExchange =
+                exchange.mutate()
+                        .request(
+                                exchange.getRequest()
+                                        .mutate()
+                                        .header(Constants.VISITOR_ID, uuid)
+                                        .build())
+                        .build();
 
         return chain.filter(mutatedExchange);
     }

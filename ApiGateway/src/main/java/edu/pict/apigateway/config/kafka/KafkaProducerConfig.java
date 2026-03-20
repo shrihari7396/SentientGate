@@ -11,9 +11,7 @@ import org.springframework.kafka.core.ProducerFactory;
 public class KafkaProducerConfig {
 
     @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate(
-            ProducerFactory<String, Object> factory
-    ) {
+    public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> factory) {
         return new KafkaTemplate<>(factory);
     }
 }

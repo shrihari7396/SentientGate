@@ -1,12 +1,11 @@
 package edu.pict.apigateway.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Service;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

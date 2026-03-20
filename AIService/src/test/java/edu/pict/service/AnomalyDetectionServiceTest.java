@@ -1,5 +1,9 @@
 package edu.pict.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import edu.pict.dtos.AnomalyDetectionRequest;
 import edu.pict.dtos.AnomalyDetectionResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,15 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class AnomalyDetectionServiceTest {
 
-    @Mock
-    private OllamaService ollamaService;
+    @Mock private OllamaService ollamaService;
 
     private AnomalyDetectionService anomalyDetectionService;
 
@@ -27,14 +26,15 @@ class AnomalyDetectionServiceTest {
 
     @Test
     void analyze_ShouldReturnAnomaly_WhenScoreHigh() {
-        AnomalyDetectionRequest request = AnomalyDetectionRequest.builder()
-                .failureRate(0.8f)
-                .requestsPerMinute(500)
-                .uniqueRoutesAccessed(50)
-                .jwtReuseCount(10)
-                .ipReputationScore(0.1f)
-                .routeSensitivity("HIGH")
-                .build();
+        AnomalyDetectionRequest request =
+                AnomalyDetectionRequest.builder()
+                        .failureRate(0.8f)
+                        .requestsPerMinute(500)
+                        .uniqueRoutesAccessed(50)
+                        .jwtReuseCount(10)
+                        .ipReputationScore(0.1f)
+                        .routeSensitivity("HIGH")
+                        .build();
 
         when(ollamaService.predictAnomalyScore(anyString())).thenReturn(0.9);
 
@@ -46,14 +46,15 @@ class AnomalyDetectionServiceTest {
 
     @Test
     void analyze_ShouldNotReturnAnomaly_WhenScoreLow() {
-        AnomalyDetectionRequest request = AnomalyDetectionRequest.builder()
-                .failureRate(0.01f)
-                .requestsPerMinute(10)
-                .uniqueRoutesAccessed(2)
-                .jwtReuseCount(0)
-                .ipReputationScore(0.9f)
-                .routeSensitivity("LOW")
-                .build();
+        AnomalyDetectionRequest request =
+                AnomalyDetectionRequest.builder()
+                        .failureRate(0.01f)
+                        .requestsPerMinute(10)
+                        .uniqueRoutesAccessed(2)
+                        .jwtReuseCount(0)
+                        .ipReputationScore(0.9f)
+                        .routeSensitivity("LOW")
+                        .build();
 
         when(ollamaService.predictAnomalyScore(anyString())).thenReturn(0.2);
 

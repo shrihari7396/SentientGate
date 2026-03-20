@@ -1,24 +1,23 @@
 package edu.pict.apigateway.filters.global;
 
 import edu.pict.apigateway.config.kafka.KafkaTopics;
-import edu.pict.apigateway.kafkaEvent.SecurityAlertEvent;
 import edu.pict.apigateway.kafkaEvent.LogEvent;
+import edu.pict.apigateway.kafkaEvent.SecurityAlertEvent;
 import edu.pict.apigateway.util.Constants;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.core.Ordered;
+import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import org.springframework.cloud.gateway.route.Route;
 import reactor.core.publisher.Mono;
-
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -30,75 +29,101 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         long startTime = System.currentTimeMillis();
-        return chain.filter(exchange).then(
-                Mono.fromRunnable(
-                        () -> {
-                            long duration = System.currentTimeMillis() - startTime;
-                            HttpStatusCode status = exchange.getResponse().getStatusCode();
+        return chain.filter(exchange)
+                .then(
+                        Mono.fromRunnable(
+                                () -> {
+                                    long duration = System.currentTimeMillis() - startTime;
+                                    HttpStatusCode status = exchange.getResponse().getStatusCode();
 
-                            int statusCode = (status != null) ? status.value() : 500;
+                                    int statusCode = (status != null) ? status.value() : 500;
 
-                            String reasonPhrase = (status instanceof HttpStatus)
-                                    ? ((HttpStatus) status).getReasonPhrase()
-                                    : "Unknown";
+                                    String reasonPhrase =
+                                            (status instanceof HttpStatus)
+                                                    ? ((HttpStatus) status).getReasonPhrase()
+                                                    : "Unknown";
 
-                            String uuid = exchange.getRequest().getHeaders().getFirst(Constants.VISITOR_ID);
-                            String path = exchange.getRequest().getURI().getPath();
-                            String method = exchange.getRequest().getMethod().toString();
-                            String queryParams = exchange.getRequest().getQueryParams().toString();
-                            long requestSize = exchange.getRequest().getHeaders().getContentLength();
-                            String clientIp = Objects.requireNonNull(exchange.getRequest().getRemoteAddress())
-                                    .getAddress().getHostAddress();
-                            String userAgent = exchange.getRequest().getHeaders().getFirst("User-Agent");
+                                    String uuid =
+                                            exchange.getRequest()
+                                                    .getHeaders()
+                                                    .getFirst(Constants.VISITOR_ID);
+                                    String path = exchange.getRequest().getURI().getPath();
+                                    String method = exchange.getRequest().getMethod().toString();
+                                    String queryParams =
+                                            exchange.getRequest().getQueryParams().toString();
+                                    long requestSize =
+                                            exchange.getRequest().getHeaders().getContentLength();
+                                    String clientIp =
+                                            Objects.requireNonNull(
+                                                            exchange.getRequest()
+                                                                    .getRemoteAddress())
+                                                    .getAddress()
+                                                    .getHostAddress();
+                                    String userAgent =
+                                            exchange.getRequest()
+                                                    .getHeaders()
+                                                    .getFirst("User-Agent");
 
-                            Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-                            String routeId = (route != null) ? route.getId() : "unknown";
+                                    Route route =
+                                            exchange.getAttribute(
+                                                    ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+                                    String routeId = (route != null) ? route.getId() : "unknown";
 
-                            // 1. General Pipeline: Always log the history
-                            LogEvent logEvent = LogEvent.builder()
-                                    .uuid(uuid)
-                                    .path(path)
-                                    .method(method)
-                                    .routeId(routeId)
-                                    .decision("ALLOWED") // In this global filter, it's generally allowed
-                                    .latencyMs(duration)
-                                    .queryParams(queryParams)
-                                    .clientIp(clientIp)
-                                    .statusCode(statusCode)
-                                    .requestSize(requestSize > 0 ? requestSize : 0)
-                                    .timestamp(System.currentTimeMillis())
-                                    .userAgent(userAgent)
-                                    .build();
+                                    // 1. General Pipeline: Always log the history
+                                    LogEvent logEvent =
+                                            LogEvent.builder()
+                                                    .uuid(uuid)
+                                                    .path(path)
+                                                    .method(method)
+                                                    .routeId(routeId)
+                                                    .decision("ALLOWED") // In this global filter,
+                                                    // it's generally allowed
+                                                    .latencyMs(duration)
+                                                    .queryParams(queryParams)
+                                                    .clientIp(clientIp)
+                                                    .statusCode(statusCode)
+                                                    .requestSize(requestSize > 0 ? requestSize : 0)
+                                                    .timestamp(System.currentTimeMillis())
+                                                    .userAgent(userAgent)
+                                                    .build();
 
-                            assert uuid != null;
-                            kafkaTemplate.send(KafkaTopics.USER_LOGS.topic(), uuid, logEvent);
+                                    assert uuid != null;
+                                    kafkaTemplate.send(
+                                            KafkaTopics.USER_LOGS.topic(), uuid, logEvent);
 
-                            // 2. Security Pipeline: Trigger for non-200s (Redirection, Client/Server
-                            // Errors)
-                            if (statusCode < 200 || statusCode >= 300) {
-                                SecurityAlertEvent alertEvent = SecurityAlertEvent.builder()
-                                        .uuid(uuid)
-                                        .errorCode(statusCode)
-                                        .reason(reasonPhrase)
-                                        .attemptedPath(path)
-                                        .method(method)
-                                        .userAgent(userAgent)
-                                        .clientIp(clientIp)
-                                        .alertSeverity(determineSeverity(statusCode))
-                                        .timestamp(System.currentTimeMillis())
-                                        .build();
+                                    // 2. Security Pipeline: Trigger for non-200s (Redirection,
+                                    // Client/Server
+                                    // Errors)
+                                    if (statusCode < 200 || statusCode >= 300) {
+                                        SecurityAlertEvent alertEvent =
+                                                SecurityAlertEvent.builder()
+                                                        .uuid(uuid)
+                                                        .errorCode(statusCode)
+                                                        .reason(reasonPhrase)
+                                                        .attemptedPath(path)
+                                                        .method(method)
+                                                        .userAgent(userAgent)
+                                                        .clientIp(clientIp)
+                                                        .alertSeverity(
+                                                                determineSeverity(statusCode))
+                                                        .timestamp(System.currentTimeMillis())
+                                                        .build();
 
-                                kafkaTemplate.send(KafkaTopics.SECURITY_EVENTS.topic(), uuid, alertEvent);
-                                log.warn("Security Event: Sent alert for UUID {} due to status {}", uuid, statusCode);
-                            }
-                        }));
+                                        kafkaTemplate.send(
+                                                KafkaTopics.SECURITY_EVENTS.topic(),
+                                                uuid,
+                                                alertEvent);
+                                        log.warn(
+                                                "Security Event: Sent alert for UUID {} due to status {}",
+                                                uuid,
+                                                statusCode);
+                                    }
+                                }));
     }
 
     private String determineSeverity(int code) {
-        if (code >= 500)
-            return "HIGH";
-        if (code == 429 || code == 403 || code == 401)
-            return "MEDIUM";
+        if (code >= 500) return "HIGH";
+        if (code == 429 || code == 403 || code == 401) return "MEDIUM";
         return "LOW";
     }
 

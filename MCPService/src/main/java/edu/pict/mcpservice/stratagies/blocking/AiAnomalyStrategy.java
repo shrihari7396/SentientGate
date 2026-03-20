@@ -5,12 +5,11 @@ import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
 import edu.pict.mcpservice.model.AnomalyDetectionRequest;
 import edu.pict.mcpservice.model.AnomalyDetectionResponse;
 import edu.pict.mcpservice.service.AIClient;
+import java.time.Duration;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -24,12 +23,12 @@ public class AiAnomalyStrategy implements ThreatStrategy {
         // AI analysis is only needed if history is rich enough
         if (history.size() < 5) return false;
 
-        AnomalyDetectionResponse response = aiClient.analyze(
-                AnomalyDetectionRequest.builder()
-                        .uuid(alert.getUuid())
-                        .history(history)
-                        .build()
-        );
+        AnomalyDetectionResponse response =
+                aiClient.analyze(
+                        AnomalyDetectionRequest.builder()
+                                .uuid(alert.getUuid())
+                                .history(history)
+                                .build());
         return response.isAnomaly() && response.getConfidenceScore() > 0.85;
     }
 

@@ -5,7 +5,6 @@ import edu.pict.mcpservice.service.McpAnalysisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,13 +15,16 @@ public class SecurityEventListners {
     private final McpAnalysisService mcpAnalysisService;
 
     /**
-     * This method listens to the 'security-events' topic.
-     * Whenever the ApiGateway sends an alert, this triggers the Sentient Analysis.
+     * This method listens to the 'security-events' topic. Whenever the ApiGateway sends an alert,
+     * this triggers the Sentient Analysis.
      */
     @KafkaListener(topics = "security-events", groupId = "mcp-analysis-group")
     public void onSecurityAlert(SecurityAlertEvent alert) {
-        log.info("🔔 Kafka Event Received: UUID={} | ErrorCode={} | Reason={}",
-                alert.getUuid(), alert.getErrorCode(), alert.getReason());
+        log.info(
+                "🔔 Kafka Event Received: UUID={} | ErrorCode={} | Reason={}",
+                alert.getUuid(),
+                alert.getErrorCode(),
+                alert.getReason());
 
         try {
             // Passing the alert to our MCP Analysis engine

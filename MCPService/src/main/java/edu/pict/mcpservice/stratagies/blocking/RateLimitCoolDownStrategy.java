@@ -2,11 +2,10 @@ package edu.pict.mcpservice.stratagies.blocking;
 
 import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import java.time.Duration;
 import java.util.List;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 @Component
 @Order(3)

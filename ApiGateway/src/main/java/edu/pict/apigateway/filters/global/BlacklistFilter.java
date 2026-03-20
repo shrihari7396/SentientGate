@@ -29,19 +29,21 @@ public class BlacklistFilter implements GlobalFilter, Ordered {
             return exchange.getResponse().setComplete();
         }
 
-        return reactiveStringRedisTemplate.hasKey(BLACKLIST_PREFIX+uuid)
-                .flatMap(isBlocked -> {
-                    if(Boolean.TRUE.equals(isBlocked)) {
-                        log.warn("Request blocked: UUID {} is on the blacklist.", uuid);
-                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                        return exchange.getResponse().setComplete();
-                    }
-                    return chain.filter(exchange);
-                });
+        return reactiveStringRedisTemplate
+                .hasKey(BLACKLIST_PREFIX + uuid)
+                .flatMap(
+                        isBlocked -> {
+                            if (Boolean.TRUE.equals(isBlocked)) {
+                                log.warn("Request blocked: UUID {} is on the blacklist.", uuid);
+                                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                                return exchange.getResponse().setComplete();
+                            }
+                            return chain.filter(exchange);
+                        });
     }
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE+1;
+        return Ordered.HIGHEST_PRECEDENCE + 1;
     }
 }

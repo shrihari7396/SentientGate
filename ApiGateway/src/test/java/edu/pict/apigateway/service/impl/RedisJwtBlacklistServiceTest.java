@@ -1,6 +1,8 @@
 package edu.pict.apigateway.service.impl;
 
-import org.junit.jupiter.api.BeforeEach;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,17 +12,12 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class RedisJwtBlacklistServiceTest {
 
-    @Mock
-    private ReactiveStringRedisTemplate redisTemplate;
+    @Mock private ReactiveStringRedisTemplate redisTemplate;
 
-    @InjectMocks
-    private RedisJwtBlacklistService blackListService;
+    @InjectMocks private RedisJwtBlacklistService blackListService;
 
     private static final String PREFIX = "jwt:blacklist:";
 
@@ -29,9 +26,7 @@ class RedisJwtBlacklistServiceTest {
         String jti = "test-jti-123";
         when(redisTemplate.hasKey(PREFIX + jti)).thenReturn(Mono.just(true));
 
-        StepVerifier.create(blackListService.isBlocked(jti))
-                .expectNext(true)
-                .verifyComplete();
+        StepVerifier.create(blackListService.isBlocked(jti)).expectNext(true).verifyComplete();
     }
 
     @Test
@@ -39,9 +34,7 @@ class RedisJwtBlacklistServiceTest {
         String jti = "non-existent-jti";
         when(redisTemplate.hasKey(PREFIX + jti)).thenReturn(Mono.just(false));
 
-        StepVerifier.create(blackListService.isBlocked(jti))
-                .expectNext(false)
-                .verifyComplete();
+        StepVerifier.create(blackListService.isBlocked(jti)).expectNext(false).verifyComplete();
     }
 
     @Test
@@ -50,8 +43,6 @@ class RedisJwtBlacklistServiceTest {
         when(redisTemplate.hasKey(anyString())).thenReturn(Mono.empty());
 
         // The implementation uses .defaultIfEmpty(false)
-        StepVerifier.create(blackListService.isBlocked(jti))
-                .expectNext(false)
-                .verifyComplete();
+        StepVerifier.create(blackListService.isBlocked(jti)).expectNext(false).verifyComplete();
     }
 }

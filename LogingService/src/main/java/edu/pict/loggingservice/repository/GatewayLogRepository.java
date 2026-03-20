@@ -2,20 +2,20 @@ package edu.pict.loggingservice.repository;
 
 import edu.pict.loggingservice.dto.DashboardRawStats;
 import edu.pict.loggingservice.entity.GatewayLogEntity;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-
 @Repository
 public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UUID> {
 
-    @Query("SELECT l FROM GatewayLogEntity l WHERE (:path IS NULL OR l.path LIKE %:path%) AND (:statusCode IS NULL OR l.statusCode = :statusCode)")
+    @Query(
+            "SELECT l FROM GatewayLogEntity l WHERE (:path IS NULL OR l.path LIKE %:path%) AND (:statusCode IS NULL OR l.statusCode = :statusCode)")
     Page<GatewayLogEntity> findWithFilters(String path, Integer statusCode, Pageable pageable);
 
     List<GatewayLogEntity> findByClientIp(String clientIp);
@@ -24,7 +24,8 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
 
     List<GatewayLogEntity> findByDecision(String decision);
 
-    @Query("""
+    @Query(
+            """
                 SELECT new edu.pict.loggingservice.dto.DashboardRawStats(
                     COUNT(l),
                     SUM(CASE WHEN l.decision = 'BLOCKED' OR l.statusCode >= 400 THEN 1L ELSE 0L END),
@@ -36,11 +37,15 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
             """)
     DashboardRawStats summarizeDashboard(Instant start, Instant end);
 
-    @Query(value = "SELECT percentile_cont(0.99) WITHIN GROUP (ORDER BY latency_ms) FROM gateway_logs WHERE occurred_at BETWEEN :start AND :end", nativeQuery = true)
+    @Query(
+            value =
+                    "SELECT percentile_cont(0.99) WITHIN GROUP (ORDER BY latency_ms) FROM gateway_logs WHERE occurred_at BETWEEN :start AND :end",
+            nativeQuery = true)
     Double aggregateP99Latency(Instant start, Instant end);
 
     // IP
-    @Query("""
+    @Query(
+            """
                 SELECT
                     COUNT(l),
                     SUM(CASE WHEN l.decision = 'RATE_LIMITED' THEN 1 ELSE 0 END),
@@ -51,13 +56,11 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
                 WHERE l.clientIp = :ip
                   AND l.occurredAt BETWEEN :start AND :end
             """)
-    Object[] aggregateByIp(
-            String ip,
-            Instant start,
-            Instant end);
+    Object[] aggregateByIp(String ip, Instant start, Instant end);
 
     // TimeBucket
-    @Query("""
+    @Query(
+            """
                 SELECT
                     FUNCTION('date_trunc', 'minute', l.occurredAt),
                     COUNT(l),
@@ -68,12 +71,11 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
                 GROUP BY FUNCTION('date_trunc', 'minute', l.occurredAt)
                 ORDER BY FUNCTION('date_trunc', 'minute', l.occurredAt)
             """)
-    List<Object[]> aggregateByMinute(
-            Instant start,
-            Instant end);
+    List<Object[]> aggregateByMinute(Instant start, Instant end);
 
     // Route Level Routing
-    @Query("""
+    @Query(
+            """
                 SELECT
                     l.routeId,
                     COUNT(l),
@@ -83,7 +85,5 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
                 WHERE l.occurredAt BETWEEN :start AND :end
                 GROUP BY l.routeId
             """)
-    List<Object[]> aggregateByRoute(
-            Instant start,
-            Instant end);
+    List<Object[]> aggregateByRoute(Instant start, Instant end);
 }

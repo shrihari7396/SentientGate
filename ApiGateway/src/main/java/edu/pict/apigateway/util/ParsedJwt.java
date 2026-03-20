@@ -1,3 +1,3 @@
 package edu.pict.apigateway.util;
 
-public record ParsedJwt (){}
+public record ParsedJwt() {}

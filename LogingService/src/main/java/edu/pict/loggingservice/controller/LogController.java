@@ -26,6 +26,7 @@ public class LogController {
             @RequestParam(required = false) Integer statusCode) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         PageRequest pageRequest = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(gatewayLogRepository.findWithFilters(path, statusCode, pageRequest));
+        return ResponseEntity.ok(
+                gatewayLogRepository.findWithFilters(path, statusCode, pageRequest));
     }
 }

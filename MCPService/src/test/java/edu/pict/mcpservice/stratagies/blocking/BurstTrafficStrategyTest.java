@@ -1,15 +1,14 @@
 package edu.pict.mcpservice.stratagies.blocking;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class BurstTrafficStrategyTest {
 
@@ -25,7 +24,10 @@ class BurstTrafficStrategyTest {
         List<LogEvent> history = new ArrayList<>();
         long now = System.currentTimeMillis();
         for (int i = 0; i < 20; i++) {
-            history.add(LogEvent.builder().timestamp(now + i * 100).build()); // 20 requests in 2 seconds
+            history.add(
+                    LogEvent.builder()
+                            .timestamp(now + i * 100)
+                            .build()); // 20 requests in 2 seconds
         }
 
         SecurityAlertEvent alert = SecurityAlertEvent.builder().build();
@@ -49,7 +51,10 @@ class BurstTrafficStrategyTest {
         List<LogEvent> history = new ArrayList<>();
         long now = System.currentTimeMillis();
         for (int i = 0; i < 20; i++) {
-            history.add(LogEvent.builder().timestamp(now + i * 1000).build()); // 20 requests in 19 seconds
+            history.add(
+                    LogEvent.builder()
+                            .timestamp(now + i * 1000)
+                            .build()); // 20 requests in 19 seconds
         }
 
         SecurityAlertEvent alert = SecurityAlertEvent.builder().build();
