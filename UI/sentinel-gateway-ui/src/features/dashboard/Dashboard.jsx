@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Activity, ShieldCheck, ShieldAlert, Zap, ArrowUpRight, ArrowDownRight, Terminal, Box, Database, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
@@ -55,18 +55,20 @@ const StatCard = ({ title, value, change, icon: Icon, trend, delay = 0 }) => (
 );
 
 const Dashboard = () => {
+    const [viewMode, setViewMode] = useState('live');
+
+    const windowMinutes = useMemo(() => (viewMode === 'live' ? 60 : 360), [viewMode]);
+
     // React Query for polling dashboard stats
     const { data: stats, isLoading: loading, isError: error, refetch } = useQuery({
-        queryKey: ['dashboardStats'],
+        queryKey: ['dashboardStats', windowMinutes],
         queryFn: async () => {
             const end = new Date();
-            const start = new Date(Date.now() - 3600000); // Last hour
+            const start = new Date(Date.now() - windowMinutes * 60000);
             return await logApi.getDashboardSummary(start.toISOString(), end.toISOString());
         },
-        refetchInterval: 5000, // Poll every 5s
+        refetchInterval: viewMode === 'live' ? 5000 : false,
     });
-
-    const [chartData, setChartData] = useState([]);
 
     const formatValue = (val) => {
         if (!val && val !== 0) return '0';
@@ -75,7 +77,7 @@ const Dashboard = () => {
         return val;
     };
 
-    if (error && loading) {
+    if (error) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-6">
                 <div className="w-20 h-20 rounded-[1.5rem] bg-rose-500/10 flex items-center justify-center text-rose-500 animate-[pulse-slow] border border-rose-500/20 shadow-[0_0_30px_rgba(225,29,72,0.2)]">
@@ -101,7 +103,7 @@ const Dashboard = () => {
                     <div className="relative">
                         <h2 className="text-5xl lg:text-6xl font-black tracking-tighter leading-none flex items-center gap-4">
                             NETWORK <span className="gradient-text">OS</span>
-                            <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.6)] mt-2" />
+                            <div className={`h-3 w-3 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.6)] mt-2 ${viewMode === 'live' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
                         </h2>
                         <p className="text-slate-500 mt-4 font-medium text-lg max-w-xl leading-relaxed">
                             Sentinel analytics engine processing <span className="text-indigo-500 dark:text-indigo-400 font-semibold">multi-vector traffic</span> with neural precision.
@@ -109,11 +111,17 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div className="flex bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-1.5 backdrop-blur-xl">
-                    <button className="px-6 py-2.5 bg-white dark:bg-white/10 text-slate-900 dark:text-white rounded-xl text-xs font-bold leading-none transition-all shadow-sm flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-ping" />
+                    <button
+                        onClick={() => setViewMode('live')}
+                        className={`px-6 py-2.5 rounded-xl text-xs font-bold leading-none transition-all shadow-sm flex items-center gap-2 ${viewMode === 'live' ? 'bg-white dark:bg-white/10 text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'}`}
+                    >
+                        <div className={`w-1.5 h-1.5 rounded-full ${viewMode === 'live' ? 'bg-purple-500 animate-ping' : 'bg-slate-400'}`} />
                         Live Data
                     </button>
-                    <button className="px-6 py-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 rounded-xl text-xs font-bold leading-none transition-all">
+                    <button
+                        onClick={() => setViewMode('history')}
+                        className={`px-6 py-2.5 rounded-xl text-xs font-bold leading-none transition-all ${viewMode === 'history' ? 'bg-white dark:bg-white/10 text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'}`}
+                    >
                         History
                     </button>
                 </div>
@@ -167,7 +175,7 @@ const Dashboard = () => {
                             </h3>
                             <p className="text-slate-500 dark:text-slate-500 text-xs mt-1 font-medium italic opacity-60">Global request distribution in 1m windows</p>
                         </div>
-                        <div className="flex gap-8">
+                        <div className="flex items-center gap-8">
                             <div className="flex items-center gap-2.5">
                                 <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_12px_rgba(168,85,247,0.6)]" />
                                 <span className="text-[10px] text-slate-400 dark:text-slate-600 dark:text-slate-400 font-black uppercase tracking-[0.15em]">Core Flow</span>
@@ -176,11 +184,14 @@ const Dashboard = () => {
                                 <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
                                 <span className="text-[10px] text-slate-400 dark:text-slate-600 dark:text-slate-400 font-black uppercase tracking-[0.15em]">Threat Vectors</span>
                             </div>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-widest hidden xl:block">
+                                {viewMode === 'live' ? 'Auto-refresh every 5s' : 'Snapshot mode'}
+                            </span>
                         </div>
                     </div>
 
                     <div className="h-[400px] w-full relative overflow-hidden">
-                        {loading && chartData?.length === 0 && (
+                        {loading && (
                             <div className="absolute inset-0 flex items-center justify-center bg-[#0d0d0f]/20 backdrop-blur-sm z-10 rounded-2xl">
                                 <div className="flex flex-col items-center gap-4">
                                     <div className="w-10 h-10 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
@@ -188,7 +199,10 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         )}
-                        <StatsChart />
+                        <StatsChart
+                            windowMinutes={viewMode === 'live' ? 30 : 180}
+                            refreshInterval={viewMode === 'live' ? 5000 : false}
+                        />
                     </div>
                 </div>
 

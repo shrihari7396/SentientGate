@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { logApi } from '../../shared/api/client';
 
-const StatsChart = () => {
+const StatsChart = ({ windowMinutes = 30, refreshInterval = 5000 }) => {
     const [chartData, setChartData] = useState([]);
 
     const fetchVelocity = () => {
         const end = new Date();
-        const start = new Date(Date.now() - 30 * 60000); // Last 30 mins
+        const start = new Date(Date.now() - windowMinutes * 60000);
 
         logApi.getTrafficVelocity(start.toISOString(), end.toISOString())
             .then(res => {
@@ -26,9 +26,10 @@ const StatsChart = () => {
 
     useEffect(() => {
         fetchVelocity();
-        const interval = setInterval(fetchVelocity, 5000);
+        if (!refreshInterval) return undefined;
+        const interval = setInterval(fetchVelocity, refreshInterval);
         return () => clearInterval(interval);
-    }, []);
+    }, [windowMinutes, refreshInterval]);
 
     return (
         <div className="w-full h-[400px] min-h-[400px]">

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { logApi } from '../../shared/api/client';
 import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, flexRender, createColumnHelper } from '@tanstack/react-table';
+import { useSearchParams } from 'react-router-dom';
 
 const StatusBadge = ({ code }) => {
     const isError = code >= 400;
@@ -109,13 +110,21 @@ const columns = [
 ];
 
 const LogsView = () => {
+    const [searchParams] = useSearchParams();
     const [autoRefresh, setAutoRefresh] = useState(true);
-    const [filterPath, setFilterPath] = useState('');
+    const [filterPath, setFilterPath] = useState(searchParams.get('path') || '');
     const [filterStatus, setFilterStatus] = useState('');
+    const [selectedLog, setSelectedLog] = useState(null);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: 50,
     });
+
+    React.useEffect(() => {
+        const queryPath = searchParams.get('path') || '';
+        setFilterPath(queryPath);
+        setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    }, [searchParams]);
 
     const { data: logsResponse, isLoading: loading, isFetching } = useQuery({
         queryKey: ['logs', pagination.pageIndex, pagination.pageSize, filterPath, filterStatus],
@@ -194,6 +203,17 @@ const LogsView = () => {
                     >
                         <RefreshCcw className={`w-4 h-4 ${(autoRefresh && isFetching) ? 'animate-spin-slow' : ''}`} />
                         {autoRefresh ? 'Live' : 'Stopped'}
+                    </button>
+                    <button
+                        onClick={() => {
+                            setFilterPath('');
+                            setFilterStatus('');
+                            setSelectedLog(null);
+                            setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+                        }}
+                        className="px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-white/10 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-widest hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all"
+                    >
+                        Reset
                     </button>
                 </div>
             </div>
@@ -299,8 +319,9 @@ const LogsView = () => {
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ duration: 0.2 }}
                                             key={row.id}
-                                            className="hover:bg-white/[0.02] transition-all group"
-                                        >
+                                        className="hover:bg-white/[0.02] transition-all group cursor-pointer"
+                                        onClick={() => setSelectedLog(row.original)}
+                                    >
                                             {row.getVisibleCells().map(cell => (
                                                 <td key={cell.id} className="px-8 py-5 whitespace-nowrap">
                                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -337,6 +358,33 @@ const LogsView = () => {
                     </div>
                 </div>
             </div>
+
+            <AnimatePresence>
+                {selectedLog && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="glass-card rounded-[2rem] p-6 border border-slate-200 dark:border-white/5"
+                    >
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Selected Event</p>
+                                <p className="font-mono text-sm text-slate-700 dark:text-slate-200 mt-1">{selectedLog.path || 'Unknown path'}</p>
+                            </div>
+                            <button
+                                onClick={() => setSelectedLog(null)}
+                                className="px-4 py-2 rounded-xl border border-slate-300 dark:border-white/10 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all self-start"
+                            >
+                                Dismiss
+                            </button>
+                        </div>
+                        <pre className="bg-slate-100 dark:bg-black/30 border border-slate-200 dark:border-white/10 rounded-2xl p-4 text-xs text-slate-700 dark:text-slate-300 overflow-x-auto">
+                            {JSON.stringify(selectedLog, null, 2)}
+                        </pre>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 };
