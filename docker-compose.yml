@@ -59,9 +59,8 @@ services:
 
   api-gateway:
     image: shrihari7396/api-gateway:latest
-    container_name: api-gateway
-    ports:
-      - "8079:8079"
+    deploy:
+      replicas: 2
     environment:
       - SPRING_DATA_REDIS_HOST=redis
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -87,7 +86,8 @@ services:
 
   mcp-server:
     image: shrihari7396/mcp-server:latest
-    container_name: mcp-server
+    deploy:
+      replicas: 2
     environment:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
