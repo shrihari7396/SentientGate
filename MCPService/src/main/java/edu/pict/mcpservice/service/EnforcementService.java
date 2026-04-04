@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,12 @@ import org.springframework.stereotype.Service;
 public class EnforcementService {
 
     private final ReactiveRedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
     private static final String BLACKLIST_PREFIX = "blacklist:";
+
+    public Boolean isBlocked(String uuid) {
+        return redisTemplate.hasKey(BLACKLIST_PREFIX + uuid).block();
+    }
 
     /** Executes the block by writing to Redis with a TTL. */
     public void blockUser(String uuid, ThreatStrategy strategy) {
@@ -30,18 +36,23 @@ public class EnforcementService {
                         .expiresAt(Instant.now().plus(ttl).toEpochMilli())
                         .build();
 
-        // Convert to JSON and save
-        redisTemplate
-                .opsForValue()
-                .set(key, record.toString(), ttl)
-                .doOnSuccess(
-                        success ->
-                                log.error(
-                                        "🛡️ SENTENCE EXECUTED: UUID {} | Strategy: {} | TTL: {}",
-                                        uuid,
-                                        strategy.getClass().getSimpleName(),
-                                        ttl))
-                .subscribe(); // Fire and forget
+        try {
+            String jsonVal = objectMapper.writeValueAsString(record);
+            // Convert to JSON and save
+            redisTemplate
+                    .opsForValue()
+                    .set(key, jsonVal, ttl)
+                    .doOnSuccess(
+                            success ->
+                                    log.error(
+                                            "🛡️ SENTENCE EXECUTED: UUID {} | Strategy: {} | TTL: {}",
+                                            uuid,
+                                            strategy.getClass().getSimpleName(),
+                                            ttl))
+                    .subscribe(); // Fire and forget
+        } catch (Exception e) {
+            log.error("Failed to serialize block record", e);
+        }
     }
 
     private String determineSeverity(Duration ttl) {
