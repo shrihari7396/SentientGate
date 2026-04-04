@@ -104,6 +104,7 @@ dependencies {
 
     // ---------------- Kafka ----------------
     implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 
     // ---------------- gRPC (ONLY STARTERS, NO MANUAL CORE DEPS) ----------------
     implementation 'net.devh:grpc-server-spring-boot-starter:2.15.0.RELEASE'

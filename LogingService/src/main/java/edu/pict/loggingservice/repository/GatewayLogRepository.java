@@ -21,6 +21,7 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
     List<GatewayLogEntity> findByClientIp(String clientIp);
 
     List<GatewayLogEntity> findByOccurredAtBetween(Instant start, Instant end);
+    List<GatewayLogEntity> findByVisitorIdAndOccurredAtAfter(String visitorId, Instant since);
 
     List<GatewayLogEntity> findByDecision(String decision);
 

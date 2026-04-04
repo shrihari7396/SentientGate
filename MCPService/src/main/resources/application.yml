@@ -28,7 +28,7 @@ spring:
       properties:
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: "edu.pict.mcpservice.kafkaEvents"
         spring.json.use.type.headers: true
         spring.json.type.mapping: "edu.pict.apigateway.kafkaEvent.SecurityAlertEvent:edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent,edu.pict.apigateway.kafkaEvent.LogEvent:edu.pict.mcpservice.kafkaEvents.LogEvent"
 
@@ -36,6 +36,13 @@ spring:
       concurrency: 3
       type: batch
       ack-mode: batch
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 2000
+            readTimeout: 5000
 
 eureka:
   client:

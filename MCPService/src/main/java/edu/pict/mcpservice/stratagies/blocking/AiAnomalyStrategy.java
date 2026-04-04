@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Order(6) // Always run last as it's the most "expensive" call
-public class AiAnomalyStrategy implements ThreatStrategy {
+public class AiAnomalyStrategy implements AsyncThreatStrategy {
 
     private final AIClient aiClient;
 
@@ -29,7 +29,7 @@ public class AiAnomalyStrategy implements ThreatStrategy {
                                 .uuid(alert.getUuid())
                                 .history(history)
                                 .build());
-        return response.isAnomaly() && response.getConfidenceScore() > 0.85;
+        return response != null && response.isAnomaly() && response.getConfidenceScore() > 0.85;
     }
 
     @Override

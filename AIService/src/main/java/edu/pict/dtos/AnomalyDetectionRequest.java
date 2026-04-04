@@ -1,5 +1,6 @@
 package edu.pict.dtos;
 
+import java.util.List;
 import lombok.*;
 
 @Data
@@ -7,6 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AnomalyDetectionRequest {
+
+    private String uuid;
+    private List<BehaviorLogEvent> history;
 
     private double failureRate;
     private int requestsPerMinute;

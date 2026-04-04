@@ -6,7 +6,14 @@ import java.util.UUID;
 import lombok.*;
 
 @Entity
-@Table(name = "gateway_logs")
+@Table(
+        name = "gateway_logs",
+        indexes = {
+            @Index(name = "idx_logs_occurred_at", columnList = "occurredAt"),
+            @Index(name = "idx_logs_visitor_occurred", columnList = "visitorId,occurredAt"),
+            @Index(name = "idx_logs_ip_occurred", columnList = "clientIp,occurredAt"),
+            @Index(name = "idx_logs_status_occurred", columnList = "statusCode,occurredAt")
+        })
 @Getter
 @Setter
 @NoArgsConstructor

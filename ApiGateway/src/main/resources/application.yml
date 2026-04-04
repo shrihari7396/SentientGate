@@ -108,10 +108,10 @@ eureka:
 
 sentinel:
   security:
-    secret-key: asbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryh
+    secret-key: ${SENTINEL_SECURITY_SECRET_KEY}
 
 jwt:
-  secret-key: asbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryhasbdfhabsdfhnjsndjnjdsncnsadncaiusdhfiuwhe7ryh
+  secret-key: ${JWT_SECRET_KEY}
 
 logging:
   level:

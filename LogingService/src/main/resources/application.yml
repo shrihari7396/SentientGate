@@ -10,9 +10,9 @@ spring:
   application:
     name: logging-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mydb}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
@@ -23,7 +23,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update   # change to validate in prod
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     show-sql: true
     properties:
       hibernate:
@@ -46,7 +46,7 @@ spring:
       properties:
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: "edu.pict.loggingservice.kafka.model"
         spring.json.use.type.headers: true
         spring.json.type.mapping: "edu.pict.apigateway.kafkaEvent.LogEvent:edu.pict.loggingservice.kafka.model.GatewayDecisionEvent"
 
@@ -61,3 +61,9 @@ eureka:
       defaultZone: http://localhost:8761/eureka
   instance:
     prefer-ip-address: true
+    metadata-map:
+      grpc.port: ${grpc.server.port}
+
+grpc:
+  server:
+    port: 9091

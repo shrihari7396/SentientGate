@@ -14,23 +14,23 @@ public class IpService {
     private static final String X_FORWARDED_FOR = "X-Forwarded-For";
 
     public String resolveClientIp(HttpHeaders headers, String remoteAddress) {
+        boolean trustForwardedHeaders = isTrustedProxy(remoteAddress);
 
-        // 1️⃣ X-Forwarded-For (first IP only)
-        List<String> xffHeaders = headers.get(X_FORWARDED_FOR);
-        if (xffHeaders != null && !xffHeaders.isEmpty()) {
-            String firstIp = xffHeaders.get(0).split(",")[0].trim();
-            if (isValidIp(firstIp)) {
-                return firstIp;
+        if (trustForwardedHeaders) {
+            List<String> xffHeaders = headers.get(X_FORWARDED_FOR);
+            if (xffHeaders != null && !xffHeaders.isEmpty()) {
+                String firstIp = xffHeaders.get(0).split(",")[0].trim();
+                if (isValidIp(firstIp)) {
+                    return firstIp;
+                }
+            }
+
+            String realIp = headers.getFirst("X-Real-IP");
+            if (isValidIp(realIp)) {
+                return realIp;
             }
         }
 
-        // 2️⃣X-Real-IP
-        String realIp = headers.getFirst("X-Real-IP");
-        if (isValidIp(realIp)) {
-            return realIp;
-        }
-
-        // 3️⃣Fallback to remote address
         if (isValidIp(remoteAddress)) {
             return remoteAddress;
         }
@@ -45,6 +45,20 @@ public class IpService {
         try {
             InetAddress.getByName(ip);
             return true;
+        } catch (UnknownHostException ex) {
+            return false;
+        }
+    }
+
+    private boolean isTrustedProxy(String remoteAddress) {
+        if (!isValidIp(remoteAddress)) {
+            return false;
+        }
+        try {
+            InetAddress address = InetAddress.getByName(remoteAddress);
+            return address.isLoopbackAddress()
+                    || address.isSiteLocalAddress()
+                    || address.isAnyLocalAddress();
         } catch (UnknownHostException ex) {
             return false;
         }

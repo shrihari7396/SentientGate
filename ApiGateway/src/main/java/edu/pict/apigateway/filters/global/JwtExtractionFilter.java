@@ -2,6 +2,7 @@ package edu.pict.apigateway.filters.global;
 
 import static edu.pict.apigateway.util.Constants.*;
 
+import edu.pict.apigateway.security.RouteAccessPolicy;
 import edu.pict.apigateway.service.JwtBlacklistService;
 import edu.pict.apigateway.service.JwtService;
 import io.jsonwebtoken.Claims;
@@ -21,14 +22,19 @@ public class JwtExtractionFilter implements GlobalFilter, Ordered {
 
     private final JwtService jwtService;
     private final JwtBlacklistService jwtBlacklistService;
+    private final RouteAccessPolicy routeAccessPolicy;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String requestPath = exchange.getRequest().getPath().value();
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
-        // ✅ 1️⃣ If no JWT → directly continue (public endpoint)
+        // Require JWT for protected paths.
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (routeAccessPolicy.requiresAuthentication(requestPath)) {
+                return reject(exchange, "MISSING_JWT");
+            }
             return chain.filter(exchange);
         }
 

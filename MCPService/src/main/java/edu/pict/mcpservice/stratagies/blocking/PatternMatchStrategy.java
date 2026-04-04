@@ -28,8 +28,32 @@ public class PatternMatchStrategy implements ThreatStrategy {
 
     @Override
     public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
-        String path = alert.getAttemptedPath().toLowerCase();
-        return MALICIOUS_PATTERNS.stream().anyMatch(path::contains);
+        String payload =
+                String.join(
+                                " ",
+                                nullSafe(alert.getAttemptedPath()),
+                                nullSafe(alert.getReason()),
+                                nullSafe(alert.getMethod()))
+                        .toLowerCase();
+        boolean alertMatch = MALICIOUS_PATTERNS.stream().anyMatch(payload::contains);
+        if (alertMatch) {
+            return true;
+        }
+
+        if (history == null || history.isEmpty()) {
+            return false;
+        }
+
+        return history.stream()
+                .map(
+                        log ->
+                                (nullSafe(log.getPath())
+                                                + " "
+                                                + nullSafe(log.getQueryParams())
+                                                + " "
+                                                + nullSafe(log.getUserAgent()))
+                                        .toLowerCase())
+                .anyMatch(candidate -> MALICIOUS_PATTERNS.stream().anyMatch(candidate::contains));
     }
 
     @Override
@@ -40,5 +64,9 @@ public class PatternMatchStrategy implements ThreatStrategy {
     @Override
     public String getReason() {
         return "CRITICAL_INJECTION_ATTEMPT";
+    }
+
+    private String nullSafe(String value) {
+        return value == null ? "" : value;
     }
 }

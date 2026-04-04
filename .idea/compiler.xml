@@ -21,9 +21,6 @@
         <module name="AIService" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Dummy.app" target="21" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

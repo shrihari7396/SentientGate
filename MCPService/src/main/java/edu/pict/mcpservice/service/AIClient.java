@@ -3,6 +3,7 @@ package edu.pict.mcpservice.service;
 import edu.pict.mcpservice.clients.AiServiceFeignClient;
 import edu.pict.mcpservice.model.AnomalyDetectionRequest;
 import edu.pict.mcpservice.model.AnomalyDetectionResponse;
+import edu.pict.mcpservice.ports.AnomalyScoringPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AIClient {
+public class AIClient implements AnomalyScoringPort {
 
     private final AiServiceFeignClient aiServiceFeignClient;
 
+    @Override
     public AnomalyDetectionResponse analyze(AnomalyDetectionRequest anomalyDetectionRequest) {
 
         try {

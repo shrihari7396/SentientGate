@@ -13,13 +13,14 @@ import reactor.core.publisher.Mono;
 public class ManagementController {
 
     private final ReactiveStringRedisTemplate redisTemplate;
-    private static final String BLACKLIST_PREFIX = "blacklist:";
+    private static final String UUID_BLACKLIST_PREFIX = "blacklist:uuid:";
+    private static final String LEGACY_BLACKLIST_PREFIX = "blacklist:";
 
     @GetMapping
     public Mono<ResponseEntity<List<String>>> getBlacklist() {
         return redisTemplate
-                .keys(BLACKLIST_PREFIX + "*")
-                .map(key -> key.substring(BLACKLIST_PREFIX.length()))
+                .keys(UUID_BLACKLIST_PREFIX + "*")
+                .map(key -> key.substring(UUID_BLACKLIST_PREFIX.length()))
                 .collectList()
                 .map(ResponseEntity::ok);
     }
@@ -28,14 +29,15 @@ public class ManagementController {
     public Mono<ResponseEntity<Void>> block(@PathVariable String uuid) {
         return redisTemplate
                 .opsForValue()
-                .set(BLACKLIST_PREFIX + uuid, "true")
+                .set(UUID_BLACKLIST_PREFIX + uuid, "true")
                 .map(success -> ResponseEntity.ok().<Void>build());
     }
 
     @DeleteMapping("/{uuid}")
     public Mono<ResponseEntity<Void>> unblock(@PathVariable String uuid) {
         return redisTemplate
-                .delete(BLACKLIST_PREFIX + uuid)
+                .delete(UUID_BLACKLIST_PREFIX + uuid)
+                .flatMap(count -> redisTemplate.delete(LEGACY_BLACKLIST_PREFIX + uuid))
                 .map(count -> ResponseEntity.ok().<Void>build());
     }
 }

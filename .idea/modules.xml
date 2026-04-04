@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Dummy.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Dummy.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LoggingService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/LoggingService.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MCPService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/MCPService.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/SentientGate.iml" filepath="$PROJECT_DIR$/.idea/SentientGate.iml" />
     </modules>
   </component>
