@@ -3,13 +3,13 @@ server:
   servlet:
     context-path: /mcp-service
 
-#spring:
-#  redis:
-#    host: localhost
-#    port: 6379
 spring:
   application:
     name: mcp-server
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
   output:
     ansi:
       enabled: always
