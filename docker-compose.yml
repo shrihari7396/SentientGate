@@ -89,11 +89,13 @@ services:
     deploy:
       replicas: 2
     environment:
+      - SPRING_DATA_REDIS_HOST=redis
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
       - GRPC_CLIENT_LOGGING_SERVICE_ADDRESS=discovery:///LOGGING-SERVICE
     depends_on:
       - eureka-server
+      - redis
       - kafka
 
   ai-service:
