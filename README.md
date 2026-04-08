@@ -1,379 +1,190 @@
-<div align="center">
+# SentientGate
 
-# 🛡️ SentientGate
+AI-Driven Security Mesh for Modern Microservices
 
-### AI-Driven Distributed Security Mesh for Microservices
+SentientGate is a distributed security platform that sits in front of microservices, observes traffic in real time, detects suspicious behavior, and takes temporary enforcement actions before attacks spread.
 
-[![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)](https://openjdk.org/projects/jdk/21/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
-[![Kafka](https://img.shields.io/badge/Apache%20Kafka-event--driven-231F20?style=for-the-badge&logo=apachekafka)](https://kafka.apache.org/)
-[![Redis](https://img.shields.io/badge/Redis-reactive-DC382D?style=for-the-badge&logo=redis)](https://redis.io/)
-[![Docker](https://img.shields.io/badge/Docker-containerized-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=for-the-badge)](LICENSE)
+## The Story
 
-**SentientGate** is an intelligent, high-concurrency security infrastructure that protects microservice ecosystems from sophisticated bot attacks, injection attempts, and behavioral anomalies — using **real-time AI-driven threat analysis** powered by a local LLM (Ollama).
+Most API security setups fail in one of two ways:
 
-Unlike static firewalls, SentientGate's **Sentient MCP (Master Control Program)** analyzes user behavioral history using a layered Strategy pattern — from rule-based pattern matching to AI anomaly detection — all without any external API dependency.
+1. They are static and rule-only, so they miss evolving attacks.
+2. They are powerful but expensive, slow, and hard to run privately.
 
-🌐 **Live Dashboard:** [https://sentient-gate.vercel.app/](https://sentient-gate.vercel.app/)
+SentientGate is built to solve that gap. It combines fast gateway enforcement with event-driven analysis, historical context, and local AI inference to make security decisions that are both fast and adaptive.
 
-[Live Demo](https://sentient-gate.vercel.app/) · [Architecture](#-system-architecture) · [Services](#-microservices) · [Tech Stack](#-technology-stack) · [Quick Start](#-quick-start) · [Docker Setup](#-docker-deployment) · [Folder Structure](#-project-structure)
+Instead of blocking forever, it applies TTL-based temporary blocks, learns from behavior, and keeps services available under load.
 
-</div>
+## What SentientGate Is
 
----
+SentientGate is a microservice security fabric with these core capabilities:
 
-## 🏗️ System Architecture
+- Real-time request filtering at the gateway edge
+- Event-driven threat analysis with Kafka
+- Behavioral history analysis via gRPC
+- Layered detection with strategy-based scoring
+- Dynamic temporary blocking via Redis TTL
+- Optional local LLM anomaly checks using Ollama
+- Operational visibility through a React dashboard
 
-### High-Level Architecture
+## How the System Works
+
+Request journey:
+
+1. A client request enters `ApiGateway`.
+2. Gateway filters validate request context and check Redis blacklist state.
+3. Security events are published to Kafka for asynchronous analysis.
+4. `MCPService` consumes events and fetches recent user/IP behavior from `LogingService` through gRPC.
+5. MCP applies layered strategies:
+   - `PatternMatchStrategy` for signature-like payload threats
+   - `BurstTrafficStrategy` for abusive traffic patterns
+   - `AiAnomalyStrategy` for behavioral anomalies
+6. If risk crosses threshold, MCP writes a TTL block record to Redis.
+7. Next malicious requests are denied quickly at gateway level.
+8. Logs and decision outcomes are visible to operators in the UI.
+
+This keeps the hot request path fast while moving deeper intelligence to async services.
+
+## Industry Impact
+
+SentientGate targets practical impact in production environments:
+
+- Financial services: reduces fraud and bot abuse blast radius with fast temporary bans
+- E-commerce: protects checkout and login surfaces during traffic spikes and bot storms
+- SaaS platforms: provides centralized protection for many internal services behind one gateway
+- Regulated industries: enables privacy-first AI analysis using local models (no external LLM dependency)
+- Platform engineering teams: improves resilience by decoupling detection, storage, and enforcement
+
+Business-level outcomes:
+
+- Lower incident response time
+- Fewer successful automated attacks
+- Better uptime during abusive traffic windows
+- Stronger auditability of security decisions
+
+## Architecture
+
+High-level diagram:
 
 ![SentientGate Architecture](Architectures/Sentigate_Architectural_Diagram.png)
 
-The architecture follows a **distributed, event-driven microservice model** where detection, analysis, and enforcement are completely decoupled for maximum scalability and resilience.
-
-### Request Lifecycle (Sequence Flow)
+Sequence diagram:
 
 ![SentientGate Sequence](Architectures/Sentigate_Sequence_Diagram.png)
 
-A suspicious request flows through the following pipeline:
+## Services
 
-```
-Incoming Request
-      │
-      ▼
- ApiGateway ──► Kafka Event Bus ──► MCPService
-      │                                  │
-      │                            ┌─────┴──────────┐
-      │                        LoggingService   AIService
-      │                        (via gRPC)    (Ollama LLM)
-      │                                  │
-      └──────── Redis Blacklist ◄─────────┘
-               (TTL Enforcement)
-```
-
----
-
-## 🔬 Microservices
-
-### 🔹 ApiGateway
-> `ApiGateway/` · Spring Boot · Maven · Port `8079`
-
-The **entry point** of the entire system.
-
-- **Visitor Identity Signing** — generates and validates fingerprinted visitor tokens
-- **Sub-millisecond Blacklist Enforcement** — checks Reactive Redis for blocked IPs/tokens instantly
-- **Threat Event Publishing** — publishes `SecurityAlertEvent` to Kafka for async analysis
-- **Reactive Architecture** — built on **Spring WebFlux** for non-blocking, high-throughput processing
-- **Global Filters** — authentication, request validation, rate limiting applied as gateway filters
-
----
-
-### 🔹 MCPService (Sentient Engine)
-> `MCPService/` · Spring Boot · Gradle · The "Brain"
-
-The **core decision-making engine** of SentientGate.
-
-- Consumes `SecurityAlertEvent` from **Kafka**
-- Fetches 10-minute behavioral history from LoggingService via **gRPC**
-- Applies a **layered, Strategy-based threat analysis pipeline**:
-
-| Strategy | Type | Detects |
+| Service | Purpose | Default Port |
 |---|---|---|
-| `PatternMatchStrategy` | Rule-Based | SQL Injection, XSS, Path Traversal |
-| `BurstTrafficStrategy` | Heuristic | Burst traffic, high error rate, bot probing |
-| `AiAnomalyStrategy` | AI-Driven | Behavioral entropy, non-human activity patterns |
+| `ApiGateway` | Entry point, filtering, rate limiting, Redis enforcement | `8079` |
+| `MCPService` | Security brain, strategy analysis, enforcement decisions | `9991` |
+| `AIService` | Local LLM-based anomaly analysis via Ollama | `8082` |
+| `LogingService` | Log persistence, gRPC behavior history, dashboard data | `8010` |
+| `EurekaServer` | Service discovery registry | `8761` |
+| `DummyService` | Protected downstream test service | `8090` |
+| `sentinel-ui` | Monitoring dashboard | `5173` |
 
-- Applies **TTL-based dynamic blocking** via Redis for temporary bans (prevents false positives)
+## Technology Used
 
----
-
-### 🔹 AIService
-> `AIService/` · Spring Boot · Maven · Reactive
-
-The **AI inference microservice**.
-
-- Interfaces with a **local Ollama LLM** (`llama3` model)
-- Performs deep behavioral anomaly detection on request patterns
-- Called only for **high-complexity, edge-case threats** to avoid latency impact on the gateway
-- Fully **reactive** using Spring WebFlux
-
----
-
-### 🔹 LoggingService
-> `LogingService/` · Spring Boot · Gradle · gRPC Server
-
-The **memory and data layer** of the system.
-
-- Records all gateway interaction logs to **PostgreSQL**
-- Exposes **gRPC endpoints** for MCPService to fetch behavioral history
-- Consumes gateway decision events from **Kafka**
-- Powers entropy and pattern-based behavioral scoring
-- Provides REST APIs for the **monitoring dashboard**
-
----
-
-### 🔹 EurekaServer
-> `EurekaServer/` · Spring Cloud · Gradle · Port `8761`
-
-Netflix Eureka **service discovery** server.
-
-- All microservices register here dynamically
-- Enables **load-balanced, service-name-based** inter-service routing (used with gRPC and Feign)
-
----
-
-### 🔹 DummyService
-> `DummyService/` · Spring Boot · Gradle
-
-A **mock protected backend service** that demonstrates the security mesh in action.
-
-- Simulates a real downstream microservice behind the gateway
-- Used for **end-to-end testing** of detection, blocking, and request forwarding behavior
-
----
-
-### 🔹 UI — Sentinel Gateway Dashboard
-> `UI/sentinel-gateway-ui/` · React · Vite · Tailwind CSS · Port `5173`
-
-A real-time **security monitoring dashboard**.
-
-- Live request logs and threat detection feed
-- Gateway statistics and charts (`/dashboard`)
-- Visualizes blocked IPs, threat reason breakdown, and traffic patterns
-- Communicates with backend via the ApiGateway
-
----
-
-## ⚡ Technology Stack
-
-| Layer | Technology | Purpose |
-|---|---|---|
-| **Backend** | Java 21, Spring Boot 3.x | Core service runtime |
-| **Reactive** | Spring WebFlux, Project Reactor | Non-blocking, high-throughput I/O |
-| **Service Discovery** | Spring Cloud Netflix Eureka | Dynamic service registration |
-| **Messaging** | Apache Kafka | Async, decoupled threat event pipeline |
-| **Communication** | gRPC | Low-latency inter-service calls (MCP ↔ Logging) |
-| **HTTP Client** | OpenFeign | REST-based service-to-service calls |
-| **Cache / Blacklist** | Redis (Reactive) | Sub-millisecond TTL-based block enforcement |
-| **Database** | PostgreSQL | Persistent request log storage |
-| **AI Inference** | Ollama (`llama3`) | Local, privacy-first LLM anomaly detection |
-| **Frontend** | React, Vite, Tailwind CSS | Security monitoring dashboard |
-| **Containerization** | Docker, Docker Compose | Full-stack orchestration |
-| **Build Tools** | Maven, Gradle | Per-service build management |
-
----
-
-## 🔐 Security Design Principles
-
-- **TTL-Based Blocking** — temporary bans prevent permanent false positives; auto-expire via Redis
-- **Kafka Buffering** — security events are buffered, preventing system collapse under spike load
-- **Decoupled AI** — AI inference happens asynchronously; it never adds latency to the gateway response
-- **Strategy Pattern** — threat detection rules are modular and independently extensible
-- **Stateless Services** — every service is designed for **horizontal scalability** with no shared in-memory state
-- **Local AI** — Ollama runs fully on-premise — zero external API dependency, total data privacy
-
----
-
-## 📁 Project Structure
-
-```
-SentientGate/
-├── ApiGateway/                  # Spring Boot (Maven) — Entry point, filters, blacklist
-│   └── src/main/java/
-│       └── filters/             # Global filters: Auth, RateLimit, RequestValidation
-│       └── services/            # Redis blacklist service, Kafka publisher
-│
-├── MCPService/                  # Spring Boot (Gradle) — Sentient threat analysis engine
-│   └── src/main/java/
-│       └── strategy/            # PatternMatch, BurstTraffic, AiAnomaly strategies
-│       └── kafka/               # Security alert consumer
-│       └── grpc/                # gRPC client to LoggingService
-│
-├── AIService/                   # Spring Boot (Maven) — Ollama LLM integration
-│   └── src/main/java/
-│       └── service/             # OllamaService — behavioral anomaly analysis
-│
-├── LogingService/               # Spring Boot (Gradle) — gRPC server, log persistence
-│   └── src/main/java/
-│       └── kafka/               # Gateway decision consumer
-│       └── grpc/                # gRPC server — behavioral history provider
-│       └── repository/          # PostgreSQL interaction log repository
-│
-├── EurekaServer/                # Spring Cloud Eureka — Service registry
-│
-├── DummyService/                # Spring Boot (Gradle) — Mock protected service
-│
-├── UI/
-│   └── sentinel-gateway-ui/     # React + Vite + Tailwind — Monitoring dashboard
-│       └── src/
-│           ├── components/      # Dashboard, charts, log viewer components
-│           └── pages/           # Route-based page views
-│
-├── Architectures/               # Architecture and sequence diagrams
-├── docker-compose.yml           # Full-stack Docker Compose orchestration
-├── push_images.sh               # Docker Hub image publish script
-├── run_tests.sh                 # Automated test runner script
-└── README.md
-```
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-| Requirement | Version |
+| Layer | Tech |
 |---|---|
-| Java | 21+ |
-| Maven | 3.8+ |
-| Gradle | 8+ |
-| Docker & Docker Compose | Latest |
-| Ollama | Latest |
-| Node.js | 18+ (for UI dev only) |
+| Language/Runtime | Java 21 |
+| Frameworks | Spring Boot, Spring Cloud Gateway, Spring WebFlux |
+| Messaging | Apache Kafka |
+| Caching/Enforcement | Redis |
+| Persistence | PostgreSQL |
+| Service Discovery | Netflix Eureka |
+| Inter-service RPC | gRPC |
+| AI Inference | Ollama (`gemma3:latest` configured in `AIService`) |
+| Frontend | React, Vite, Tailwind CSS |
+| Containerization | Docker, Docker Compose |
+| Build Tools | Maven and Gradle |
 
----
+## Why This Design Matters
 
-## 🐳 Docker Deployment (Recommended)
+- Detection is decoupled from enforcement, so analysis can evolve without slowing the gateway.
+- AI is local and optional, so teams keep data control and reduce vendor/API dependency.
+- TTL blocks reduce false-positive damage compared with permanent bans.
+- Strategy pattern allows easy extension for new threat heuristics.
+- Event-driven architecture supports high-throughput and horizontal growth.
 
-The **fastest way** to run the full stack. All service images are pre-built and published to Docker Hub.
+## Quick Start (Docker Compose)
 
-### 1. Pull and Start Ollama (required for AI inference)
+Prerequisites:
+
+- Docker and Docker Compose
+- Ollama running locally (for AIService), default endpoint: `http://localhost:11434`
+- Optional model pull: `ollama pull gemma3:latest`
+
+Start all services:
 
 ```bash
-# Install Ollama: https://ollama.com
-ollama serve
-ollama pull llama3
-```
-
-### 2. Start All Services with Docker Compose
-
-```bash
-git clone https://github.com/shrihari7396/SentientGate.git
-cd SentientGate
-
 docker compose up -d
 ```
 
-Docker Compose will automatically start:
-
-| Container | Image | Port |
-|---|---|---|
-| `sentient-postgres` | `postgres:16.2` | `5433` |
-| `sentient-redis` | `redis:7.2.4` | `6379` |
-| `sentient-kafka` | `confluentinc/cp-kafka:7.5.0` | `9092` |
-| `sentient-zookeeper` | `confluentinc/cp-zookeeper:7.5.0` | — |
-| `eureka-server` | `shrihari7396/eureka-server:latest` | `8761` |
-| `api-gateway` | `shrihari7396/api-gateway:latest` | `8079` |
-| `logging-service` | `shrihari7396/logging-service:latest` | — |
-| `mcp-server` | `shrihari7396/mcp-server:latest` | — |
-| `ai-service` | `shrihari7396/ai-service:latest` | — |
-| `dummy-service` | `shrihari7396/dummy-service:latest` | — |
-| `sentinel-ui` | `shrihari7396/sentinel-ui:latest` | `5173` |
-
-### 3. Access the Dashboard
-
-```
-http://localhost:5173       → Sentinel Gateway Dashboard (UI)
-http://localhost:8761       → Eureka Service Registry
-http://localhost:8079       → API Gateway (entry point)
-```
-
----
-
-## 🛠️ Local Development Setup
-
-### Step 1 — Start Infrastructure
+Stop all services:
 
 ```bash
-# Start Kafka, Zookeeper, Redis, and PostgreSQL via Docker
-docker compose up -d postgres redis zookeeper kafka
+docker compose down
 ```
 
-### Step 2 — Start Ollama
+## Local Development
+
+Each service is independently buildable:
+
+- Maven services: `ApiGateway`, `AIService`
+- Gradle services: `MCPService`, `LogingService`, `EurekaServer`, `DummyService`
+
+Typical local order:
+
+1. Start infrastructure: PostgreSQL, Redis, Kafka, Eureka
+2. Start `LogingService` and `MCPService`
+3. Start `AIService`
+4. Start `DummyService`
+5. Start `ApiGateway`
+6. Start UI from `UI/sentinel-gateway-ui`
+
+## Testing
+
+Run multi-service tests:
 
 ```bash
-ollama serve
-ollama pull llama3
+./run_tests.sh
 ```
 
-### Step 3 — Start Services (Order Matters)
+Run gateway tests separately:
 
 ```bash
-# 1. Service Registry
-cd EurekaServer && ./gradlew bootRun
-
-# 2. Data + Memory layer
-cd LogingService && ./gradlew bootRun
-
-# 3. AI inference
-cd AIService && mvn spring-boot:run
-
-# 4. Sentient brain
-cd MCPService && ./gradlew bootRun
-
-# 5. Entry point
-cd ApiGateway && mvn spring-boot:run
-
-# 6. Protected mock service
-cd DummyService && ./gradlew bootRun
-
-# 7. Dashboard UI
-cd UI/sentinel-gateway-ui && npm install && npm run dev
+cd ApiGateway
+./mvnw test
 ```
 
-### Step 4 — Run Tests
+## Project Structure
 
-```bash
-# Run all service tests
-bash run_tests.sh
+```text
+SentientGate/
+├── ApiGateway/
+├── MCPService/
+├── AIService/
+├── LogingService/
+├── EurekaServer/
+├── DummyService/
+├── UI/sentinel-gateway-ui/
+├── Architectures/
+├── docker-compose.yml
+├── run_tests.sh
+└── README.md
 ```
 
----
+## Additional Documents
 
-## 🧪 How It Works — Attack Scenario
+- `CURRENT_FLAWS_AND_VULNERABILITIES.md`
+- `ARCHITECTURAL_DESIGN_FLAWS.md`
+- `ARCHITECTURAL_SOLUTIONS.md`
+- `IMPROVEMENT_AND_HARDENING_GUIDE.md`
+- `FUTURE_README.md`
+- `SECURITY.md`
 
-1. A bot starts sending **rapid, repeated requests** to the ApiGateway
-2. The gateway detects an anomaly and publishes a `SecurityAlertEvent` to **Kafka** (non-blocking)
-3. **MCPService** consumes the event and fetches the visitor's **last 10 minutes of history** from LoggingService via gRPC
-4. The **Strategy Engine** evaluates:
-   - **Pattern match** → checks for SQL injection, XSS payloads
-   - **Burst traffic heuristic** → detects abnormal request frequency
-   - **AI anomaly** → asks Ollama LLM to evaluate behavioral entropy
-5. If any strategy triggers, the visitor IP/token is **written to Redis** with a configurable TTL
-6. **Future requests from this visitor** are blocked at the gateway level in **sub-millisecond time** via Redis lookup
-7. The entire event is available in the **Sentinel Dashboard**
+## License
 
----
-
-## 🏆 Key Highlights
-
-- ⚡ Sub-millisecond blacklist enforcement using Reactive Redis
-- 🧠 Fully local AI inference (Ollama) — no external API, no cost, full privacy
-- 🔄 100% async, event-driven threat pipeline via Apache Kafka
-- 🧩 Strategy Pattern–based modular detection engine (easily extendable)
-- 🌐 Horizontally scalable — all services are stateless and service-discovery–enabled
-- 🐳 One-command full-stack deployment via Docker Compose
-- 📊 Real-time security monitoring dashboard
-
----
-
-## 👨‍💻 Author
-
-**Shrihari Kulkarni**
-Computer Engineering Student
-
-Specializing in:
-- Distributed Systems & Microservice Architecture
-- Computer Networking (OSI / TCP-IP)
-- AI-Integrated Security Systems
-- High-Concurrency & Reactive Programming
-
----
-
-## 📜 License
-
-This project is licensed under the **Apache License 2.0**.
-
-You are free to use, modify, and distribute this software in accordance with the terms of the license.
-
-See the [LICENSE](LICENSE) file for full details.
+Apache 2.0. See `LICENSE`.
