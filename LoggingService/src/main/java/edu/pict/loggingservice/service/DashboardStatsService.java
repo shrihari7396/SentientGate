@@ -17,6 +17,9 @@ public class DashboardStatsService {
 
     private final GatewayLogRepository gatewayLogRepository;
 
+    @org.springframework.cache.annotation.Cacheable(
+            value = "dashboardSummary",
+            key = "#start.toString() + '-' + #end.toString()")
     public DashboardSummaryStats getSummary(Instant start, Instant end) {
         try {
             log.info("📊 Fetching dashboard summary from {} to {}", start, end);
@@ -49,6 +52,9 @@ public class DashboardStatsService {
         }
     }
 
+    @org.springframework.cache.annotation.Cacheable(
+            value = "dashboardVelocity",
+            key = "#start.toString() + '-' + #end.toString()")
     public List<TimeBucketStats> getVelocity(Instant start, Instant end) {
         return gatewayLogRepository.aggregateByMinute(start, end).stream()
                 .map(

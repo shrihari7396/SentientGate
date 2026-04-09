@@ -25,6 +25,8 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
 
     List<GatewayLogEntity> findByDecision(String decision);
 
+    List<GatewayLogEntity> findByVisitorIdAndOccurredAtAfter(String visitorId, Instant occurredAt);
+
     @Query(
             """
                 SELECT new edu.pict.loggingservice.dto.DashboardRawStats(

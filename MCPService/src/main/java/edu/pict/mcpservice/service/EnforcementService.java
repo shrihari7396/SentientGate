@@ -1,9 +1,7 @@
 package edu.pict.mcpservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.pict.mcpservice.model.BlockRecord;
-import edu.pict.mcpservice.ports.BlockEnforcer;
 import edu.pict.mcpservice.stratagies.blocking.ThreatStrategy;
 import java.time.Duration;
 import java.time.Instant;
@@ -15,40 +13,19 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EnforcementService implements BlockEnforcer {
+public class EnforcementService {
 
     private final ReactiveRedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
-    private static final String LEGACY_BLACKLIST_PREFIX = "blacklist:";
-    private static final String UUID_BLACKLIST_PREFIX = "blacklist:uuid:";
-    private static final String IP_BLACKLIST_PREFIX = "blacklist:ip:";
+    private static final String BLACKLIST_PREFIX = "blacklist:";
 
-    @Override
-    public boolean isBlocked(String uuid) {
-        Boolean blocked =
-                redisTemplate
-                        .hasKey(UUID_BLACKLIST_PREFIX + uuid)
-                        .map(found -> Boolean.TRUE.equals(found))
-                        .defaultIfEmpty(false)
-                        .block();
-
-        if (Boolean.TRUE.equals(blocked)) {
-            return true;
-        }
-
-        Boolean blockedLegacy =
-                redisTemplate
-                        .hasKey(LEGACY_BLACKLIST_PREFIX + uuid)
-                        .map(found -> Boolean.TRUE.equals(found))
-                        .defaultIfEmpty(false)
-                        .block();
-        return Boolean.TRUE.equals(blockedLegacy);
+    public Boolean isBlocked(String uuid) {
+        return redisTemplate.hasKey(BLACKLIST_PREFIX + uuid).block();
     }
 
-    @Override
-    public void blockUser(String uuid, String clientIp, ThreatStrategy strategy) {
-        String uuidKey = UUID_BLACKLIST_PREFIX + uuid;
-        String legacyKey = LEGACY_BLACKLIST_PREFIX + uuid;
+    /** Executes the block by writing to Redis with a TTL. */
+    public void blockUser(String uuid, ThreatStrategy strategy) {
+        String key = BLACKLIST_PREFIX + uuid;
         Duration ttl = strategy.getBlockDuration();
 
         BlockRecord record =
@@ -58,41 +35,23 @@ public class EnforcementService implements BlockEnforcer {
                         .blockedAt(Instant.now().toEpochMilli())
                         .expiresAt(Instant.now().plus(ttl).toEpochMilli())
                         .build();
-        String payload = serializeRecord(record);
 
-        redisTemplate
-                .opsForValue()
-                .set(uuidKey, payload, ttl)
-                .flatMap(success -> redisTemplate.opsForValue().set(legacyKey, payload, ttl))
-                .flatMap(
-                        success -> {
-                            if (clientIp == null || clientIp.isBlank()) {
-                                return reactor.core.publisher.Mono.just(Boolean.TRUE);
-                            }
-                            return redisTemplate.opsForValue().set(IP_BLACKLIST_PREFIX + clientIp, payload, ttl);
-                        })
-                .doOnSuccess(
-                        success ->
-                                log.info(
-                                        "🛡️ BLOCK EXECUTED: UUID {} | Strategy: {} | TTL: {}",
-                                        uuid,
-                                        strategy.getClass().getSimpleName(),
-                                        ttl))
-                .doOnError(
-                        error ->
-                                log.error(
-                                        "Failed to persist block state for UUID {}: {}",
-                                        uuid,
-                                        error.getMessage()))
-                .subscribe(); // Fire and forget
-    }
-
-    private String serializeRecord(BlockRecord record) {
         try {
-            return objectMapper.writeValueAsString(record);
-        } catch (JsonProcessingException e) {
-            log.error("Could not serialize block record, falling back to minimal payload", e);
-            return "{\"reason\":\"SERIALIZATION_ERROR\"}";
+            String jsonVal = objectMapper.writeValueAsString(record);
+            // Convert to JSON and save
+            redisTemplate
+                    .opsForValue()
+                    .set(key, jsonVal, ttl)
+                    .doOnSuccess(
+                            success ->
+                                    log.error(
+                                            "🛡️ SENTENCE EXECUTED: UUID {} | Strategy: {} | TTL: {}",
+                                            uuid,
+                                            strategy.getClass().getSimpleName(),
+                                            ttl))
+                    .subscribe(); // Fire and forget
+        } catch (Exception e) {
+            log.error("Failed to serialize block record", e);
         }
     }
 

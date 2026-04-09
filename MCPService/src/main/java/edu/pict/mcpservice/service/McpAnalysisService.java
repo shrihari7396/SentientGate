@@ -3,16 +3,14 @@ package edu.pict.mcpservice.service;
 import edu.pict.mcpservice.grpc.UserLogEvent;
 import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
-import edu.pict.mcpservice.ports.BlockEnforcer;
-import edu.pict.mcpservice.ports.HistoryProvider;
-import edu.pict.mcpservice.stratagies.blocking.AsyncThreatStrategy;
+import edu.pict.mcpservice.stratagies.blocking.AiAnomalyStrategy;
 import edu.pict.mcpservice.stratagies.blocking.ThreatStrategy;
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -20,33 +18,37 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class McpAnalysisService {
 
-    private static final long DEDUP_WINDOW_MILLIS = Duration.ofSeconds(30).toMillis();
-    private final Map<String, Long> recentlyProcessed = new ConcurrentHashMap<>();
+    private static final String DEDUP_PREFIX = "mcp:dedup:";
+    private static final Duration DEDUP_WINDOW = Duration.ofSeconds(30);
 
-    private final HistoryProvider historyProvider;
-    private final BlockEnforcer blockEnforcer;
-    private final AsyncThreatEvaluator asyncThreatEvaluator;
-    // Spring automatically injects these sorted by @Order
+    private final EventHistoryService eventHistoryService;
+    private final EnforcementService enforcementService;
     private final List<ThreatStrategy> strategies;
+    private final StringRedisTemplate stringRedisTemplate;
 
     public void analyze(SecurityAlertEvent alert) {
-        if (alert.getUuid() == null || alert.getUuid().isBlank()) {
-            log.warn("Skipping analysis due to missing UUID");
+        // Skip if already blocked (Flaw 2)
+        if (Boolean.TRUE.equals(enforcementService.isBlocked(alert.getUuid()))) {
+            log.info("⏭️ UUID {} already blocked, skipping analysis", alert.getUuid());
             return;
         }
-        if (blockEnforcer.isBlocked(alert.getUuid())) {
-            log.debug("⏭️ UUID {} already blocked, skipping analysis", alert.getUuid());
-            return;
-        }
-        if (isDuplicate(alert)) {
-            log.debug("⏭️ Duplicate alert within dedup window for UUID {}", alert.getUuid());
+
+        // Event Deduplication (Flaw 4)
+        String dedupKey = DEDUP_PREFIX + alert.getUuid() + ":" + alert.getErrorCode();
+        Boolean isFirstSeen =
+                stringRedisTemplate
+                        .opsForValue()
+                        .setIfAbsent(dedupKey, String.valueOf(System.currentTimeMillis()), DEDUP_WINDOW);
+        if (!Boolean.TRUE.equals(isFirstSeen)) {
+            log.debug("⏭️ Dedup: skipping duplicate event for {}", dedupKey);
             return;
         }
 
         log.info("🔍 Analyzing threat for UUID: {}", alert.getUuid());
 
         // Context fetch: 10 min history from Logging Service
-        List<UserLogEvent> grpcList = historyProvider.getAllEventsInDuration(alert.getUuid(), 10);
+        List<UserLogEvent> grpcList =
+                eventHistoryService.getAllEventsInDuration(alert.getUuid(), 10);
         List<LogEvent> history =
                 grpcList.stream()
                         .map(
@@ -65,50 +67,44 @@ public class McpAnalysisService {
                                                 .build())
                         .toList();
 
-        List<ThreatStrategy> syncStrategies =
-                strategies.stream().filter(s -> !(s instanceof AsyncThreatStrategy)).toList();
-        List<AsyncThreatStrategy> asyncStrategies =
+        // First matching synchronous strategy wins; stop further analysis immediately.
+        var matchedSyncStrategy =
                 strategies.stream()
-                        .filter(AsyncThreatStrategy.class::isInstance)
-                        .map(AsyncThreatStrategy.class::cast)
-                        .toList();
+                        .filter(s -> !(s instanceof AiAnomalyStrategy))
+                        .filter(s -> s.isAvailable(alert, history))
+                        .findFirst();
 
-        boolean matchedBySync =
-                syncStrategies.stream()
-                .filter(s -> s.isAvailable(alert, history))
+        if (matchedSyncStrategy.isPresent()) {
+            ThreatStrategy strategy = matchedSyncStrategy.get();
+            log.warn(
+                    "🚫 Threat Detected! Strategy: {} | Reason: {}",
+                    strategy.getClass().getSimpleName(),
+                    strategy.getReason());
+            enforcementService.blockUser(alert.getUuid(), strategy);
+            return;
+        }
+
+        log.info("✅ No synchronous malicious patterns found for UUID: {}", alert.getUuid());
+
+        // Run AI analysis only if no synchronous strategy blocked the user.
+        strategies.stream()
+                .filter(s -> s instanceof AiAnomalyStrategy)
                 .findFirst()
-                .map(
-                        strategy -> {
-                            log.warn(
-                                    "🚫 Threat Detected! Strategy: {} | Reason: {}",
-                                    strategy.getClass().getSimpleName(),
-                                    strategy.getReason());
-                            blockEnforcer.blockUser(alert.getUuid(), alert.getClientIp(), strategy);
-                            return true;
-                        })
-                .orElse(false);
-
-        if (!matchedBySync && !asyncStrategies.isEmpty()) {
-            asyncThreatEvaluator.evaluate(alert, history, asyncStrategies);
-        }
-    }
-
-    private boolean isDuplicate(SecurityAlertEvent alert) {
-        String key =
-                alert.getUuid()
-                        + ":"
-                        + alert.getErrorCode()
-                        + ":"
-                        + (alert.getAttemptedPath() == null ? "" : alert.getAttemptedPath());
-        long now = System.currentTimeMillis();
-        Long previous = recentlyProcessed.putIfAbsent(key, now);
-        if (previous == null) {
-            return false;
-        }
-        if (now - previous < DEDUP_WINDOW_MILLIS) {
-            return true;
-        }
-        recentlyProcessed.put(key, now);
-        return false;
+                .ifPresent(
+                        aiStrategy ->
+                                CompletableFuture.runAsync(
+                                        () -> {
+                                            try {
+                                                if (aiStrategy.isAvailable(alert, history)) {
+                                                    log.warn(
+                                                            "🚫 [AI] Threat Detected! Strategy: {}",
+                                                            aiStrategy.getClass().getSimpleName());
+                                                    enforcementService.blockUser(
+                                                            alert.getUuid(), aiStrategy);
+                                                }
+                                            } catch (Exception e) {
+                                                log.error("AI Analysis failed asynchronously", e);
+                                            }
+                                        }));
     }
 }
