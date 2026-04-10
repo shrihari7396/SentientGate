@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { StatusBadge } from '@/shared/components/StatusBadge';
 import { X, Brain, Activity, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { CopyableUUID } from '@/shared/components/CopyableUUID';
-import { AreaChart, Area, ResponsiveContainer, LineChart, Line, XAxis, Tooltip } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, LineChart, Line, Tooltip } from 'recharts';
+import clsx from 'clsx';
 
 export function useUserContext(uuid: string | null) {
   return useQuery({

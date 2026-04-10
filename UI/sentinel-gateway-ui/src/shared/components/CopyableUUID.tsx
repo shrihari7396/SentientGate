@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
-import clsx from 'clsx';
+
 
 export function CopyableUUID({ uuid, maxChars = 12 }: { uuid: string; maxChars?: number }) {
   const [copied, setCopied] = useState(false);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThreatIntel, AnomalyEvent } from '../hooks/useThreatIntel';
 import { CopyableUUID } from '@/shared/components/CopyableUUID';
@@ -6,6 +6,14 @@ import { TTLCountdown } from '@/shared/components/TTLCountdown';
 import { StatusBadge } from '@/shared/components/StatusBadge';
 import { Shield, Brain, Activity, Target } from 'lucide-react';
 import clsx from 'clsx';
+
+export interface BlacklistEntry {
+  uuid: string;
+  reason: string;
+  score: number;
+  blockedAt: string;
+  ttlSeconds: number;
+}
 
 export default function ThreatIntel() {
   const { stats, strategies, feed, blacklist, toggleStrategy, unblockUuid } = useThreatIntel();
@@ -57,10 +65,10 @@ export default function ThreatIntel() {
             <h3 className="text-xs font-semibold tracking-widest uppercase text-text-muted flex items-center gap-2">
               <Target size={14} /> Strategy Console
             </h3>
-            <span className="text-xs bg-elevated px-2 py-0.5 rounded text-text-muted font-mono">{strategiesData.filter(s=>s.enabled).length}/{strategiesData.length} Active</span>
+            <span className="text-xs bg-elevated px-2 py-0.5 rounded text-text-muted font-mono">{strategiesData.filter((s: any) => s.enabled).length}/{strategiesData.length} Active</span>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {strategiesData.map(strategy => (
+            {strategiesData.map((strategy: any) => (
               <div key={strategy.id} className="bg-elevated/50 border border-border/50 rounded p-3 transition-colors hover:border-border">
                 <div className="flex items-start justify-between">
                   <div className="font-mono text-sm text-text-primary">{strategy.name}</div>
@@ -88,7 +96,7 @@ export default function ThreatIntel() {
           </div>
           <div className="flex flex-col gap-3 p-4 overflow-y-auto h-full">
             <AnimatePresence>
-              {feedData.map((event: AnomalyEvent, i: number) => (
+              {feedData.map((event: AnomalyEvent) => (
                 <motion.div
                   key={`${event.uuid}-${event.timestamp}`}
                   initial={{ opacity: 0, x: -20, height: 0 }}

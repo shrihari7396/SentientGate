@@ -15,7 +15,7 @@ export default function ServiceRegistry() {
   const { data: health } = useActuatorHealth(selectedService);
 
   const total = sData.length;
-  const upCount = sData.filter(s => s.status === 'UP').length;
+  const upCount = sData.filter((s: EurekaService) => s.status === 'UP').length;
 
   return (
     <motion.div 

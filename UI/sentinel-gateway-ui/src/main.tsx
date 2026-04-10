@@ -4,7 +4,7 @@ import { App } from './app/App';
 import './index.css';
 
 async function deferRender() {
-  if (process.env.NODE_ENV !== 'development') {
+  if (!import.meta.env.DEV) {
     return;
   }
   
