@@ -4,11 +4,11 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/DummyService" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Dummy" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/DummyService" />
-            <option value="$PROJECT_DIR$/DummyService/app" />
+            <option value="$PROJECT_DIR$/Dummy" />
+            <option value="$PROJECT_DIR$/Dummy/app" />
           </set>
         </option>
       </GradleProjectSettings>
@@ -21,10 +21,10 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/LogingService" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/LoggingService" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/LogingService" />
+            <option value="$PROJECT_DIR$/LoggingService" />
           </set>
         </option>
       </GradleProjectSettings>
