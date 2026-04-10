@@ -1,5 +1,5 @@
 import { usePipeline, PipelineStage, PipelineEvent } from '../hooks/usePipeline';
-import { motion } from 'framer-motion';
+
 import { Network, ArrowRight, ShieldCheck, ShieldAlert, Cpu } from 'lucide-react';
 import clsx from 'clsx';
 import { StatusBadge } from '@/shared/components/StatusBadge';
@@ -18,7 +18,7 @@ export default function PipelineFlow() {
   const sData = stats.data || [];
   const eData = (events.data || []) as PipelineEvent[];
 
-  const getStageStats = (stageName: string) => sData.find(s => s.stage === stageName);
+  const getStageStats = (stageName: string) => sData.find((s: any) => s.stage === stageName);
 
   return (
     <div className="p-6 max-w-[1600px] mx-auto h-full flex flex-col">
@@ -32,16 +32,16 @@ export default function PipelineFlow() {
 
       <div className="flex-1 flex flex-col justify-center min-h-0 relative">
         <div className="flex items-center justify-between relative z-10 w-full overflow-x-auto pb-10 custom-scrollbar">
-          
+
           {/* Animated path line in background */}
           <div className="absolute top-1/2 left-[5%] right-[5%] h-px bg-border -z-10 translate-y-[-50%]"></div>
-          
-          {STAGES.map((s, i) => {
+
+          {STAGES.map((s: any, i) => {
             const stat: PipelineStage | undefined = getStageStats(s.id);
             const isDown = stat?.status === 'DOWN';
             return (
               <div key={s.id} className="flex flex-col items-center flex-1 min-w-[180px] shrink-0 group relative">
-                <div 
+                <div
                   className={clsx(
                     "w-full max-w-[160px] bg-surface border rounded p-4 flex flex-col items-center transition-all",
                     isDown ? "border-red/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]" : "border-border hover:border-teal/50"
@@ -50,7 +50,7 @@ export default function PipelineFlow() {
                   <Cpu size={24} className={clsx("mb-2", isDown ? "text-red" : "text-teal")} />
                   <span className="font-mono text-sm font-semibold text-text-primary text-center leading-tight mb-1">{s.id}</span>
                   <span className="text-[10px] text-text-muted text-center tracking-wide">{s.desc}</span>
-                  
+
                   {stat && (
                     <div className="mt-4 pt-3 border-t border-border/50 w-full flex flex-col items-center gap-1">
                       <span className="text-xl font-mono text-text-primary">{stat.requestsToday.toLocaleString()}</span>
@@ -81,20 +81,20 @@ export default function PipelineFlow() {
           <div className="w-2 h-2 rounded-full bg-teal animate-ping"></div>
         </div>
         <div className="flex-1 overflow-hidden relative">
-           <div className="flex gap-8 whitespace-nowrap px-4 w-max animate-[shimmer_20s_linear_infinite]" style={{ animationDirection: 'reverse' }}>
-             {eData.map(ev => (
-               <div key={ev.id} className="flex items-center gap-2">
-                 <span className="text-text-muted font-mono text-[10px]">[{new Date(ev.timestamp).toLocaleTimeString()}]</span>
-                 <span className="font-mono text-xs">{ev.uuid}</span>
-                 {ev.status === 'PASSED' ? (
-                   <span className="text-teal text-xs font-mono flex items-center gap-1">→ <ShieldCheck size={12}/> PASSED</span>
-                 ) : (
-                   <span className="text-red text-xs font-mono flex items-center gap-1">→ <ShieldAlert size={12}/> BLOCKED at {ev.stage}</span>
-                 )}
-               </div>
-             ))}
-             {eData.length === 0 && <span className="text-xs text-text-muted tracking-widest uppercase py-2">Waiting for traffic...</span>}
-           </div>
+          <div className="flex gap-8 whitespace-nowrap px-4 w-max animate-[shimmer_20s_linear_infinite]" style={{ animationDirection: 'reverse' }}>
+            {eData.map(ev => (
+              <div key={ev.id} className="flex items-center gap-2">
+                <span className="text-text-muted font-mono text-[10px]">[{new Date(ev.timestamp).toLocaleTimeString()}]</span>
+                <span className="font-mono text-xs">{ev.uuid}</span>
+                {ev.status === 'PASSED' ? (
+                  <span className="text-teal text-xs font-mono flex items-center gap-1">→ <ShieldCheck size={12} /> PASSED</span>
+                ) : (
+                  <span className="text-red text-xs font-mono flex items-center gap-1">→ <ShieldAlert size={12} /> BLOCKED at {ev.stage}</span>
+                )}
+              </div>
+            ))}
+            {eData.length === 0 && <span className="text-xs text-text-muted tracking-widest uppercase py-2">Waiting for traffic...</span>}
+          </div>
         </div>
       </div>
     </div>

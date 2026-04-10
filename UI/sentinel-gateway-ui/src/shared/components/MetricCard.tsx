@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { ResponsiveContainer, Sparklines, SparklinesLine } from 'recharts';
-
 interface MetricCardProps {
   label: string;
   value: string | number;
@@ -10,12 +8,6 @@ interface MetricCardProps {
   accentColor?: 'teal' | 'amber' | 'red' | 'blue';
 }
 
-const colorMap = {
-  teal: 'text-teal border-teal/20 bg-teal/10',
-  amber: 'text-amber border-amber/20 bg-amber/10',
-  red: 'text-red border-red/20 bg-red/10',
-  blue: 'text-blue border-blue/20 bg-blue/10',
-};
 
 const hexMap = {
   teal: '#00E5CC',

@@ -1,12 +1,12 @@
-import { ReactNode } from 'react';
 import clsx from 'clsx';
 
-export type StatusType = 'BLOCKED' | 'ALLOWED' | 'MONITORING' | 'UP' | 'DOWN';
+export type StatusType = 'BLOCKED' | 'ALLOWED' | 'MONITORING' | 'UP' | 'DOWN' | 'DEGRADED' | 'STARTING' | 'BLACKLISTED';
 
-export function StatusBadge({ status }: { status: StatusType }) {
-  const isRed = status === 'BLOCKED' || status === 'DOWN';
-  const isGreen = status === 'ALLOWED' || status === 'UP';
-  const isAmber = status === 'MONITORING';
+export function StatusBadge({ status }: { status: StatusType | string }) {
+  const s = status as string;
+  const isRed = s === 'BLOCKED' || s === 'DOWN' || s === 'BLACKLISTED';
+  const isGreen = s === 'ALLOWED' || s === 'UP';
+  const isAmber = s === 'MONITORING' || s === 'DEGRADED' || s === 'STARTING';
 
   return (
     <span
