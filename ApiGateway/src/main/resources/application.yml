@@ -123,3 +123,4 @@ logging:
   level:
     kafka: debug
     redis: debug
+debug: true
