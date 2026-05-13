@@ -34,7 +34,8 @@ public class BlacklistFilter implements GlobalFilter, Ordered {
                 .flatMap(
                         isBlocked -> {
                             if (Boolean.TRUE.equals(isBlocked)) {
-                                log.warn("Request blocked: UUID {} is on the blacklist.", uuid);
+//                                For Performance reason log is commented
+//                                log.warn("Request blocked: UUID {} is on the blacklist.", uuid);
                                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                                 return exchange.getResponse().setComplete();
                             }
