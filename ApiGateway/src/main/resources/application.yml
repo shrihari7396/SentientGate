@@ -102,6 +102,9 @@ spring:
 
     properties:
       spring.json.trusted.packages: "edu.pict.apigateway.kafkaEvent"
+  output:
+    ansi:
+      enabled: always
 
 
 eureka:
@@ -124,3 +127,4 @@ logging:
     kafka: debug
     redis: debug
 debug: true
+
