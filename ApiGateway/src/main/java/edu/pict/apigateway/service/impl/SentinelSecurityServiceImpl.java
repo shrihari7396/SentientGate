@@ -50,9 +50,7 @@ public class SentinelSecurityServiceImpl implements SentinelSecurityService {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
             mac.init(hmacSecretKey);
             byte[] hmacBytes = mac.doFinal(data.getBytes());
-            return Base64.getUrlEncoder()
-                    .withoutPadding()
-                    .encodeToString(hmacBytes);
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(hmacBytes);
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             log.error("Cryptographic failure: {}", e.getMessage());
             throw new RuntimeException("Internal Security Error");

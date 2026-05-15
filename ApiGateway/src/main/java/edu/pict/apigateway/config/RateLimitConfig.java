@@ -13,8 +13,7 @@ public class RateLimitConfig {
     @Bean
     public KeyResolver visitorKeyResolver() {
         return exchange -> {
-            String visitorId =
-                    exchange.getRequest().getHeaders().getFirst(Constants.VISITOR_ID);
+            String visitorId = exchange.getRequest().getHeaders().getFirst(Constants.VISITOR_ID);
             if (visitorId != null && !visitorId.isBlank()) {
                 return Mono.just(visitorId);
             }
