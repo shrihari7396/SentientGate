@@ -24,7 +24,7 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("exchange path: {}", exchange.getRequest().getPath().toString());
+//        log.info("exchange path: {}", exchange.getRequest().getPath().toString());
         HttpCookie cookie = exchange.getRequest().getCookies().getFirst(Constants.VISITOR_ID);
 
         if (cookie != null) {

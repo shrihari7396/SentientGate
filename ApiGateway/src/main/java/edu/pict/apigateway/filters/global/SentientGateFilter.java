@@ -47,12 +47,15 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                                             exchange.getRequest()
                                                     .getHeaders()
                                                     .getFirst(Constants.VISITOR_ID);
+
                                     String path = exchange.getRequest().getURI().getPath();
                                     String method = exchange.getRequest().getMethod().toString();
                                     String queryParams =
                                             exchange.getRequest().getQueryParams().toString();
+
                                     long requestSize =
                                             exchange.getRequest().getHeaders().getContentLength();
+
                                     String clientIp =
                                             Objects.requireNonNull(
                                                             exchange.getRequest()
@@ -87,9 +90,7 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                                                     .userAgent(userAgent)
                                                     .build();
 
-                                    assert uuid != null;
-                                    kafkaTemplate.send(
-                                            KafkaTopics.USER_LOGS.topic(), uuid, logEvent);
+                                    sendLogEvent(logEvent);
 
                                     // 2. Security Pipeline: Trigger for non-200s (Redirection,
                                     // Client/Server
@@ -109,14 +110,7 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                                                         .timestamp(System.currentTimeMillis())
                                                         .build();
 
-                                        kafkaTemplate.send(
-                                                KafkaTopics.SECURITY_EVENTS.topic(),
-                                                uuid,
-                                                alertEvent);
-                                        log.warn(
-                                                "Security Event: Sent alert for UUID {} due to status {}",
-                                                uuid,
-                                                statusCode);
+                                        sendSecurityEvent(uuid, alertEvent);
                                     }
                                 }));
     }
@@ -125,6 +119,20 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
         if (code >= 500) return "HIGH";
         if (code == 429 || code == 403 || code == 401) return "MEDIUM";
         return "LOW";
+    }
+
+    private void sendLogEvent(LogEvent logEvent) {
+        String uuid = logEvent.getUuid();
+        assert uuid != null;
+        kafkaTemplate.send(
+                KafkaTopics.USER_LOGS.topic(), uuid, logEvent);
+    }
+
+    private void sendSecurityEvent(String uuid, SecurityAlertEvent alertEvent) {
+        kafkaTemplate.send(
+                KafkaTopics.SECURITY_EVENTS.topic(),
+                uuid,
+                alertEvent);
     }
 
     @Override
