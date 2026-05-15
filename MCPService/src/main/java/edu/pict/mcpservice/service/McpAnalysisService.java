@@ -38,7 +38,8 @@ public class McpAnalysisService {
         Boolean isFirstSeen =
                 stringRedisTemplate
                         .opsForValue()
-                        .setIfAbsent(dedupKey, String.valueOf(System.currentTimeMillis()), DEDUP_WINDOW);
+                        .setIfAbsent(
+                                dedupKey, String.valueOf(System.currentTimeMillis()), DEDUP_WINDOW);
         if (!Boolean.TRUE.equals(isFirstSeen)) {
             log.debug("⏭️ Dedup: skipping duplicate event for {}", dedupKey);
             return;

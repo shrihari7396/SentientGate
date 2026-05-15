@@ -23,19 +23,21 @@ public class EventHistoryService {
 
     @GrpcClient("logging-service")
     private UserLogEventServiceGrpc.UserLogEventServiceBlockingStub stub;
+
     private final StringRedisTemplate stringRedisTemplate;
 
     public EventHistoryService(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
-
     public List<UserLogEvent> getAllEventsInDuration(String uuid, int duration) {
-        String cacheKey = new StringBuilder().append(HISTORY_CACHE_PREFIX)
-                .append(uuid)
-                .append(":")
-                .append(duration)
-                .toString();
+        String cacheKey =
+                new StringBuilder()
+                        .append(HISTORY_CACHE_PREFIX)
+                        .append(uuid)
+                        .append(":")
+                        .append(duration)
+                        .toString();
 
         String cachedPayload = stringRedisTemplate.opsForValue().get(cacheKey);
         if (cachedPayload != null) {
@@ -59,9 +61,7 @@ public class EventHistoryService {
         try {
 
             UserLogEventResponse response =
-                    UserLogEventResponse.newBuilder()
-                            .addAllUserLogEvents(fetched)
-                            .build();
+                    UserLogEventResponse.newBuilder().addAllUserLogEvents(fetched).build();
 
             String encodedPayload = Base64.getEncoder().encodeToString(response.toByteArray());
             stringRedisTemplate.opsForValue().set(cacheKey, encodedPayload, HISTORY_CACHE_TTL);

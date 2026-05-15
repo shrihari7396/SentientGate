@@ -17,7 +17,6 @@ public class SecurityEventListeners {
 
     private final McpAnalysisService mcpAnalysisService;
 
-
     @KafkaListener(topics = "security-events", groupId = "mcp-analysis-group")
     public void onSecurityAlertBatch(List<SecurityAlertEvent> alerts) {
         log.info("📦 Kafka Batch Received: {} events", alerts.size());
