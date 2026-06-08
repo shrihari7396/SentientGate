@@ -49,3 +49,57 @@ grpc:
     logging-service:
       address: discovery:///LOGGING-SERVICE
       negotiation-type: plaintext
+
+# ============== Resilience4j Circuit Breaker Configuration ==============
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 2s
+        recordExceptions:
+          - java.lang.Exception
+    instances:
+      ai-service-circuit-breaker:
+        baseConfig: default
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 1000
+        retryExceptions:
+          - java.net.ConnectException
+          - java.io.IOException
+    instances:
+      ai-service-circuit-breaker:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        cancelRunningFuture: false
+        timeoutDuration: 2s
+    instances:
+      ai-service-circuit-breaker:
+        timeoutDuration: 2s
+
+# ============== Management Endpoints ==============
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,circuitbreakerevents,retry,timelimiter
+  endpoint:
+    health:
+      show-details: always
