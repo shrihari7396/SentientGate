@@ -1,6 +1,4 @@
-# SentientGate
-
-AI-Driven Security Mesh for Modern Microservices
+# SentientGate: AI-Powered Runtime Security for Cloud-Native Microservices
 
 SentientGate is a distributed security platform that sits in front of microservices, observes traffic in real time, detects suspicious behavior, and takes temporary enforcement actions before attacks spread.
 
