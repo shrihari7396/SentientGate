@@ -29,7 +29,7 @@ public class McpAnalysisService {
     public void analyze(SecurityAlertEvent alert) {
         // Skip if already blocked (Flaw 2)
         if (Boolean.TRUE.equals(enforcementService.isBlocked(alert.getUuid()))) {
-            log.info("⏭️ UUID {} already blocked, skipping analysis", alert.getUuid());
+            log.info("UUID {} already blocked, skipping analysis", alert.getUuid());
             return;
         }
 
@@ -40,16 +40,18 @@ public class McpAnalysisService {
                         .opsForValue()
                         .setIfAbsent(
                                 dedupKey, String.valueOf(System.currentTimeMillis()), DEDUP_WINDOW);
+
         if (!Boolean.TRUE.equals(isFirstSeen)) {
-            log.debug("⏭️ Dedup: skipping duplicate event for {}", dedupKey);
+            log.debug("Dedup: skipping duplicate event for {}", dedupKey);
             return;
         }
 
-        log.info("🔍 Analyzing threat for UUID: {}", alert.getUuid());
+        log.info("Analyzing threat for UUID: {}", alert.getUuid());
 
         // Context fetch: 10 min history from Logging Service
         List<UserLogEvent> grpcList =
                 eventHistoryService.getAllEventsInDuration(alert.getUuid(), 10);
+
         List<LogEvent> history =
                 grpcList.stream()
                         .map(
@@ -78,14 +80,15 @@ public class McpAnalysisService {
         if (matchedSyncStrategy.isPresent()) {
             ThreatStrategy strategy = matchedSyncStrategy.get();
             log.warn(
-                    "🚫 Threat Detected! Strategy: {} | Reason: {}",
+                    "Threat Detected! Strategy: {} | Reason: {}",
                     strategy.getClass().getSimpleName(),
                     strategy.getReason());
+
             enforcementService.blockUser(alert.getUuid(), strategy);
             return;
         }
 
-        log.info("✅ No synchronous malicious patterns found for UUID: {}", alert.getUuid());
+        log.info("No synchronous malicious patterns found for UUID: {}", alert.getUuid());
 
         // Run AI analysis only if no synchronous strategy blocked the user.
         strategies.stream()
@@ -98,8 +101,9 @@ public class McpAnalysisService {
                                             try {
                                                 if (aiStrategy.isAvailable(alert, history)) {
                                                     log.warn(
-                                                            "🚫 [AI] Threat Detected! Strategy: {}",
+                                                            "[AI] Threat Detected! Strategy: {}",
                                                             aiStrategy.getClass().getSimpleName());
+
                                                     enforcementService.blockUser(
                                                             alert.getUuid(), aiStrategy);
                                                 }
