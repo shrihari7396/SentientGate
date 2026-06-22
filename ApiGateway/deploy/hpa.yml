@@ -1,0 +1,18 @@
+apiVersion: autoscaling/v2 # Specifies the Kubernetes API version for HorizontalPodAutoscaler
+kind: HorizontalPodAutoscaler # Declares the resource type as a HorizontalPodAutoscaler
+metadata: # Contains metadata parameters for identifying the resource
+  name: api-gateway-hpa # Unique name of the HorizontalPodAutoscaler in the namespace
+spec: # Details the scaling parameters and targets for the HPA
+  scaleTargetRef: # References the target resource that the HPA will scale
+    apiVersion: apps/v1 # Specifies the target resource's API version
+    kind: Deployment # Specifies the target resource type
+    name: api-gateway # Name of the target Deployment to scale
+  minReplicas: 2 # Minimum number of Pod replicas that can run
+  maxReplicas: 5 # Maximum number of Pod replicas that can scale up to
+  metrics: # List of metrics used to calculate the desired replica count
+    - type: Resource # Specifies the target metric is a resource metric
+      resource: # Contains resource details
+        name: cpu # Metric targets CPU utilization
+        target: # Contains target details
+          type: Utilization # Set target based on percentage utilization
+          averageUtilization: 80 # Scale up if average CPU utilization exceeds 80%
