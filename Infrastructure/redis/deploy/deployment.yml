@@ -1,0 +1,32 @@
+apiVersion: apps/v1 # Specifies the Kubernetes API version for Deployments
+kind: Deployment # Declares the resource type as a Deployment
+metadata: # Contains metadata parameters for identifying the resource
+  name: redis # Unique name of the Deployment in the namespace
+  labels: # Metadata tags used for grouping and identifying the resource
+    app: redis # Label identifier for the application
+spec: # Details the desired state and settings of the Deployment
+  replicas: 1 # Specifies the number of concurrent Pod replicas to run
+  selector: # Defines how the Deployment finds the Pods it manages
+    matchLabels: # Lists label matching requirements for the target Pods
+      app: redis # Match Pods containing the application label 'redis'
+  template: # Templates the specification of Pods to be created
+    metadata: # Contains metadata parameters for the Pod template
+      labels: # Metadata tags applied to the created Pods
+        app: redis # Label applied to Pods for grouping and selection
+    spec: # Details the actual workload specification for the Pods
+      containers: # Lists the containers running within the Pod
+        - name: redis # Logical name of the container
+          image: redis:7.2.4 # Docker registry image path and version tag
+          ports: # Ports exposed by the container
+            - containerPort: 6379 # Port 6379 is exposed for Redis traffic
+---
+apiVersion: v1 # Specifies the Kubernetes API version for Service resources
+kind: Service # Declares the resource type as a Service for network load balancing
+metadata: # Contains metadata parameters for identifying the resource
+  name: redis # Unique name of the Service, used as DNS host name
+spec: # Details the network configuration for the Service
+  ports: # Ports exposed and routed by the Service
+    - port: 6379 # Port exposed on the cluster-internal network
+      targetPort: 6379 # Container port where traffic is forwarded
+  selector: # Determines the set of Pods targeted by this Service
+    app: redis # Route traffic to Pods matching the 'redis' label
