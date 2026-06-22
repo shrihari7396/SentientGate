@@ -45,6 +45,8 @@ eureka:
     prefer-ip-address: true
 
 grpc:
+  server:
+    port: -1
   client:
     logging-service:
       address: discovery:///LOGGING-SERVICE
