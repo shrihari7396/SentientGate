@@ -12,4 +12,10 @@ public class AnomalyDetectionResponse {
     private double confidence;
     private String modelVersion;
     private long inferenceTimeMs;
+
+    private boolean isAnomaly;
+    private double confidenceScore;
+    private String patternDetected;
+    private int suggestedBlockMinutes;
+
 }

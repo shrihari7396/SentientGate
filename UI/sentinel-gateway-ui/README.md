@@ -4,7 +4,7 @@ A premium, high-performance monitoring and management dashboard for the **Sentie
 
 ---
 
-## ✨ Features
+## ✨ Core Features
 
 ### 📊 Network OS (Dashboard)
 The core command center providing high-level telemetry:
@@ -52,72 +52,83 @@ SentientGate UI leverages a modern, reactive stack for a fluid user experience:
 - **Animations**: [Framer Motion](https://www.framer.com/motion/) (Fluid transitions and micro-interactions)
 - **Visuals**: [Lucide React](https://lucide.dev/) & [Recharts](https://recharts.org/) (Sleek icons and responsive charts)
 - **Networking**: [Axios](https://axios-http.com/) (Centralized API client with interceptors)
+- **Mocks**: [Mock Service Worker (MSW)](https://mswjs.io/) (Local REST mock engine for decoupled frontend prototyping)
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Mocks vs. Live Integration Mode
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+By default, the frontend starts with **Mock Service Worker (MSW)** enabled during local development (`npm run dev`). This allows prototyping the dashboard and telemetry UI screens without running the full microservice cluster.
 
-### Development Setup
-1. **Clone the repository** (if not already in the SentientGate workspace).
-2. **Navigate to the UI folder**:
-   ```bash
-   cd UI/sentinel-gateway-ui
-   ```
-3. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-4. **Configure Environment**:
-   Create or edit `.env` file:
+### Switching to Live Backend Integration
+To connect the UI to the actual **ApiGateway** on port `8079`:
+
+1. **Modify the Environment File:**
+   Ensure `UI/sentinel-gateway-ui/.env` points to the ApiGateway base URL:
    ```env
    VITE_API_BASE_URL=http://localhost:8079/api
    ```
-5. **Launch the command center**:
+
+2. **Disable MSW Mocking:**
+   Go to `src/main.tsx` and disable the worker invocation:
+   ```typescript
+   // To disable mocking, comment out the worker start logic or set import.meta.env.DEV to false:
+   async function deferRender() {
+     /* Comment out or delete this block to connect to the live ApiGateway */
+     // if (!import.meta.env.DEV) {
+     //   return;
+     // }
+     // const { worker } = await import('./mocks/browser');
+     // return worker.start({ onUnhandledRequest: 'bypass' });
+     return;
+   }
+   ```
+
+3. **Re-run the Frontend:**
    ```bash
    npm run dev
    ```
 
-### Production Build
-To generate a production bundle:
+---
+
+## 🏗️ Getting Started (Local Development)
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [npm](https://www.npmjs.com/)
+
+### Setup
+1. Navigate to the UI folder:
+   ```bash
+   cd UI/sentinel-gateway-ui
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Vite server:
+   ```bash
+   npm run dev
+   ```
+   The UI will be available at `http://localhost:5173`.
+
+### Docker Deployment
+The UI can be containerized and run via Nginx:
 ```bash
-npm run build
-npm run preview
+# Build the Docker image
+docker build -t sentientgate-ui .
+
+# Run the container mapping to port 5173
+docker run -p 5173:80 sentientgate-ui
 ```
 
 ---
 
-## 🏗️ Architecture
-
-The project follows a **Feature-Driven** architecture for scalability:
-
-```text
-src/
-├── app/          # Global providers, routing, and core App component
-├── features/     # Feature-specific modules (Dashboard, Logs, Registry, etc.)
-│   ├── [feature]/
-│   │   ├── components/  # Feature-specific UI
-│   │   └── hooks/       # Feature-specific logic
-├── shared/       # Reusable components, API clients, and utilities
-├── hooks/        # Global custom hooks
-└── assets/       # Static branding and assets
-```
-
----
-
-## 📊 Current Status
+## 📊 Current Status & Integration Roadmap
 
 - ✅ **UI Shell & Navigation**: Completed with Dark/Light mode support.
 - ✅ **Dashboard Visualization**: Fully functional with live polling.
 - ✅ **Logs Ledger**: High-performance table implementation with filtering.
 - ✅ **Eureka Integration**: Service discovery viewer implemented.
 - ✅ **Pipeline Overview**: Visualization of logic filters complete.
-- 🟡 **Advanced Auth**: Preparation for OAuth2/JWT integration (interceptors ready).
-- 🔵 **Infrastructure Detailed Views**: Kafka/Redis/Postgres specific detail views in progress.
-
----
-
-*Designed with ❤️ by the SentientGate Team.*
+- 🟡 **Service Integration**: The frontend is fully decoupled and relies on MSW mocks for metrics/stats/infrastructure routes. A backend BFF (Backend-For-Frontend) or direct endpoint expansion on `ApiGateway`/`LoggingService` is required to decommission MSW completely.
