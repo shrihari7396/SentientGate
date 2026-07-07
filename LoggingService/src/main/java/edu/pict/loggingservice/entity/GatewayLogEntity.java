@@ -25,9 +25,13 @@ public class GatewayLogEntity {
     @Column(nullable = false)
     private String clientIp;
 
-    @Column private String visitorId;
+    @Column
+    @com.fasterxml.jackson.annotation.JsonProperty("uuid")
+    private String visitorId;
 
-    @Column private String path;
+    @Column
+    @com.fasterxml.jackson.annotation.JsonProperty("endpoint")
+    private String path;
 
     @Column private String method;
 
@@ -36,11 +40,13 @@ public class GatewayLogEntity {
     @Column private String decision;
 
     @Column(nullable = false)
+    @com.fasterxml.jackson.annotation.JsonProperty("status")
     private int statusCode;
 
     @Column private long requestSize;
 
     @Column(nullable = false)
+    @com.fasterxml.jackson.annotation.JsonProperty("latency")
     private long latencyMs;
 
     @Column(columnDefinition = "TEXT")
@@ -50,10 +56,16 @@ public class GatewayLogEntity {
     private String userAgent;
 
     @Column(nullable = false)
+    @com.fasterxml.jackson.annotation.JsonProperty("timestamp")
     private Instant occurredAt;
 
     @Column(nullable = false)
     private Instant ingestedAt;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("threatFlagged")
+    public boolean isThreatFlagged() {
+        return "BLOCKED".equalsIgnoreCase(decision);
+    }
 
     @PrePersist
     public void prePersist() {

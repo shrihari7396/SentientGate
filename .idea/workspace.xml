@@ -4,7 +4,51 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="" />
+    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.codex" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/controller/AnomalyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/controller/AnomalyController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/dtos/AnomalyDetectionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/dtos/AnomalyDetectionRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/dtos/AnomalyDetectionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/dtos/AnomalyDetectionResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/service/AnomalyDetectionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/service/AnomalyDetectionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/src/test/java/edu/pict/service/AnomalyDetectionServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/test/java/edu/pict/service/AnomalyDetectionServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/controller/ManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/controller/ManagementController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CURRENT_FLAWS_AND_VULNERABILITIES.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dummy/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dummy/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dummy/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Dummy/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EurekaServer/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServer/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EurekaServer/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServer/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IMPROVEMENT_AND_HARDENING_GUIDE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/kafka/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/kafka/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/postgres/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/postgres/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/redis/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/redis/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Infrastructure/zookeeper/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/zookeeper/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/controller/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/controller/LogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/entity/GatewayLogEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/entity/GatewayLogEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/repository/GatewayLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/repository/GatewayLogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MCPService/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/MCPService/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SentientGate_UI_Master_Prompt.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/UI/deploy/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/sentinel-gateway-ui/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/UI/sentinel-gateway-ui/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/sentinel-gateway-ui/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/UI/sentinel-gateway-ui/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/sentinel-gateway-ui/src/mocks/handlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/UI/sentinel-gateway-ui/src/mocks/handlers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/format_services.sh" beforeDir="false" afterPath="$PROJECT_DIR$/format_services.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/push_images.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_tests.sh" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,10 +57,11 @@
   <component name="CopilotPersistence">
     <persistenceIdMap>
       <entry key="_/home/shrihari/Desktop/Interview/SentientGate" value="3C7uYQXPENaL47oJlcsOp7RGKAo" />
+      <entry key="_/home/shrihari/Documents/PersonalProjects/SentientGate" value="3FOQsgcszZb5DxcvIM1TIe26asW" />
     </persistenceIdMap>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="410" />
+    <option name="cachedIndexableFilesCount" value="395" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/Dummy">
@@ -31,6 +76,13 @@
     <projectState path="$PROJECT_DIR$/MCPService">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kubernetes Pod" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -47,6 +99,17 @@
     &quot;accountId&quot;: &quot;1235f44f-fec2-48ad-a775-8821ef65deca&quot;
   }
 }</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;configuredContexts&quot;: [
+    {
+      &quot;name&quot;: &quot;minikube&quot;,
+      &quot;kubeConfigUrl&quot;: &quot;file:///home/shrihari/.kube/config&quot;,
+      &quot;originalNamespace&quot;: &quot;default&quot;
+    }
+  ],
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -58,38 +121,113 @@
     <commands />
     <urls />
   </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0009557030531953" />
+      <entry key="S2" value="1.700661208590212" />
+      <entry key="S5" value="3.769414874399943" />
+      <entry key="S10" value="5.630264679268085" />
+      <entry key="S30" value="10.900514095423143" />
+      <entry key="S60" value="15.380293488453715" />
+      <entry key="M2" value="18.99889995247653" />
+      <entry key="M5" value="23.640046029856986" />
+      <entry key="M10" value="33.597000759980205" />
+      <entry key="M15" value="42.737977094211864" />
+      <entry key="M30" value="59.171337381267094" />
+      <entry key="H1" value="71.86723880941398" />
+      <entry key="H2" value="79.79148903880717" />
+      <entry key="H4" value="84.22275389910197" />
+      <entry key="D1" value="88.17862914155113" />
+      <entry key="W1" value="88.88202967615673" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="3.3993512753436703E-205" />
+      <entry key="MS500" value="1.277259698426968E-41" />
+      <entry key="S2" value="5.978191218272538E-11" />
+      <entry key="S5" value="8.140065901064899E-5" />
+      <entry key="S10" value="0.009022231376474947" />
+      <entry key="S30" value="0.208179512315822" />
+      <entry key="S60" value="0.4562669309908643" />
+      <entry key="M2" value="0.6754753370707652" />
+      <entry key="M5" value="0.8547592290523838" />
+      <entry key="M10" value="0.9245318972606533" />
+      <entry key="M15" value="0.9490328954300453" />
+      <entry key="M30" value="0.9741831939784454" />
+      <entry key="H1" value="0.9870071904390801" />
+      <entry key="H2" value="0.9934823553738037" />
+      <entry key="H4" value="0.9967358503504338" />
+      <entry key="D1" value="0.9994552336712047" />
+      <entry key="W1" value="0.9999221580630006" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.9395227492140118" />
+      <entry key="MS500" value="0.9885395285407826" />
+      <entry key="S2" value="1.6910107492569832" />
+      <entry key="S5" value="3.7553980630705976" />
+      <entry key="S10" value="5.619175516027244" />
+      <entry key="S30" value="11.014815606545573" />
+      <entry key="S60" value="15.727856232707708" />
+      <entry key="M2" value="19.590894918895046" />
+      <entry key="M5" value="24.45145868607953" />
+      <entry key="M10" value="34.49776076713959" />
+      <entry key="M15" value="43.670611267873305" />
+      <entry key="M30" value="60.13700265409479" />
+      <entry key="H1" value="72.84989496038405" />
+      <entry key="H2" value="80.78277073328081" />
+      <entry key="H4" value="85.2183828220312" />
+      <entry key="D1" value="89.17789894211795" />
+      <entry key="W1" value="89.88192532023275" />
+    </decayedShown>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="3C7uYQXPENaL47oJlcsOp7RGKAo" />
+  <component name="ProjectSessionTemplates">
+    <option name="panelTemplate">
+      <template>
+        <option name="modeId" value="Agent" />
+        <option name="model">
+          <model>
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+          </model>
+        </option>
+        <option name="targetType" value="BACKGROUND" />
+        <option name="worktreeMode" value="WORKSPACE" />
+      </template>
+    </option>
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunDashboard">
     <option name="configurationTypes">
       <set>
@@ -144,8 +282,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.25134.95" />
-        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.25134.95" />
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.26222.65" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.26222.65" />
       </set>
     </attachedChunks>
   </component>
@@ -160,6 +298,14 @@
       <workItem from="1775751711665" duration="3203000" />
       <workItem from="1775821847469" duration="1376000" />
       <workItem from="1780915786084" duration="46000" />
+      <workItem from="1781943845300" duration="2835000" />
+      <workItem from="1781962564981" duration="799000" />
+      <workItem from="1782067529717" duration="103000" />
+      <workItem from="1782296618696" duration="6000" />
+      <workItem from="1782475735973" duration="2459000" />
+      <workItem from="1783152799094" duration="635000" />
+      <workItem from="1783153469704" duration="4000" />
+      <workItem from="1783238113640" duration="646000" />
     </task>
     <servers />
   </component>

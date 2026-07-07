@@ -10,7 +10,7 @@ export const handlers = [
       activeServices: 14,
     });
   }),
-  
+
   http.get('*/api/dashboard/traffic', () => {
     // Generate 20 buckets
     const data = Array.from({ length: 20 }).map((_, i) => {
@@ -69,48 +69,50 @@ export const handlers = [
       timestamp: new Date(Date.now() - i * 15000).toISOString(),
       source: i % 3 === 0 ? 'AI_MODEL' : 'HEURISTIC',
       strategyFired: i % 3 !== 0 ? 'RateAnomalyStrategy' : undefined,
-      anomalyScore: i % 3 === 0 ? 0.85 + Math.random()*0.1 : 0.4 + Math.random()*0.4,
+      anomalyScore: i % 3 === 0 ? 0.85 + Math.random() * 0.1 : 0.4 + Math.random() * 0.4,
       decision: i === 0 ? 'BLACKLISTED' : (i % 2 === 0 ? 'MONITORING' : 'ALLOWED'),
-      reasoningText: i % 3 === 0 ? 'LLM flagged rapid switching of Authorization headers across IP range.' : undefined 
+      reasoningText: i % 3 === 0 ? 'LLM flagged rapid switching of Authorization headers across IP range.' : undefined
     }));
     return HttpResponse.json(feed);
   }),
 
-  http.get('*/api/threat/blacklist', () => {
-    return HttpResponse.json([
-      { uuid: 'u-8a7b6c5d4e3f20', reason: 'AI_ESCALATION', blockedAt: new Date().toISOString(), ttlSeconds: 432 },
-      { uuid: 'u-abc123xyz8901', reason: 'RateAnomalyStrategy', blockedAt: new Date(Date.now() - 100000).toISOString(), ttlSeconds: 22 },
-    ]);
-  }),
+  // Comment out to integrate with live backend via ApiGateway
+  // http.get('*/api/threat/blacklist', () => {
+  //   return HttpResponse.json([
+  //     { uuid: 'u-8a7b6c5d4e3f20', reason: 'AI_ESCALATION', blockedAt: new Date().toISOString(), ttlSeconds: 432 },
+  //     { uuid: 'u-abc123xyz8901', reason: 'RateAnomalyStrategy', blockedAt: new Date(Date.now() - 100000).toISOString(), ttlSeconds: 22 },
+  //   ]);
+  // }),
+  //
+  // http.delete('*/api/threat/blacklist/:uuid', () => {
+  //   return HttpResponse.json({ success: true });
+  // }),
 
-  http.delete('*/api/threat/blacklist/:uuid', () => {
-    return HttpResponse.json({ success: true });
-  }),
-
-  // Logs
-  http.get('*/api/logs', ({ request }) => {
-    const url = new URL(request.url);
-    const path = url.searchParams.get('path') || '';
-    const status = url.searchParams.get('status') || '';
-    
-    let feed = Array.from({ length: 50 }).map((_, i) => {
-      const isThreat = Math.random() > 0.8;
-      const sCode = status ? (status === '2xx' ? 200 : status === '4xx' ? 403 : 500) : (isThreat ? 403 : 200);
-      return {
-        id: `req-${Date.now()}-${i}`,
-        timestamp: new Date(Date.now() - i * 1234).toISOString(),
-        uuid: `u-user${Math.floor(Math.random() * 1000)}xyz`,
-        method: ['GET', 'POST', 'DELETE'][Math.floor(Math.random() * 3)],
-        endpoint: path || (['/api/v1/users', '/api/v1/payments', '/api/v1/auth/login'][Math.floor(Math.random() * 3)]),
-        status: sCode,
-        latency: Math.floor(Math.random() * 800),
-        routeId: `route-${Math.floor(Math.random()*10)}`,
-        threatFlagged: isThreat,
-      };
-    });
-    
-    return HttpResponse.json({ content: feed, totalElements: 50, totalPages: 1 });
-  }),
+  // Comment out to integrate with live backend via ApiGateway
+  // // Logs
+  // http.get('*/api/logs', ({ request }) => {
+  //   const url = new URL(request.url);
+  //   const path = url.searchParams.get('path') || '';
+  //   const status = url.searchParams.get('status') || '';
+  // 
+  //   let feed = Array.from({ length: 50 }).map((_, i) => {
+  //     const isThreat = Math.random() > 0.8;
+  //     const sCode = status ? (status === '2xx' ? 200 : status === '4xx' ? 403 : 500) : (isThreat ? 403 : 200);
+  //     return {
+  //       id: `req-${Date.now()}-${i}`,
+  //       timestamp: new Date(Date.now() - i * 1234).toISOString(),
+  //       uuid: `u-user${Math.floor(Math.random() * 1000)}xyz`,
+  //       method: ['GET', 'POST', 'DELETE'][Math.floor(Math.random() * 3)],
+  //       endpoint: path || (['/api/v1/users', '/api/v1/payments', '/api/v1/auth/login'][Math.floor(Math.random() * 3)]),
+  //       status: sCode,
+  //       latency: Math.floor(Math.random() * 800),
+  //       routeId: `route-${Math.floor(Math.random() * 10)}`,
+  //       threatFlagged: isThreat,
+  //     };
+  //   });
+  // 
+  //   return HttpResponse.json({ content: feed, totalElements: 50, totalPages: 1 });
+  // }),
 
   // Pipeline
   http.get('*/api/pipeline/stats', () => {
@@ -132,7 +134,7 @@ export const handlers = [
         timestamp: new Date(Date.now() - i * 5000).toISOString(),
         uuid: `u-${Math.floor(Math.random() * 10000)}`,
         status: passed ? 'PASSED' : 'BLOCKED',
-        stage: passed ? 'Response Out' : ['Edge Fire', 'Rate Pulse', 'JTI Vault'][Math.floor(Math.random()*3)]
+        stage: passed ? 'Response Out' : ['Edge Fire', 'Rate Pulse', 'JTI Vault'][Math.floor(Math.random() * 3)]
       };
     });
     return HttpResponse.json(events);
@@ -151,7 +153,7 @@ export const handlers = [
   http.get('*/api/registry/services/:id', ({ params }) => {
     return HttpResponse.json([
       { host: `10.0.1.5`, port: 8080, status: params.id === 'payment-service' ? 'DOWN' : 'UP', homepage: `http://10.0.1.5:8080`, lastHeartbeat: new Date().toISOString() },
-      { host: `10.0.1.6`, port: 8080, status: params.id === 'payment-service' ? 'DOWN' : 'UP', homepage: `http://10.0.1.6:8080`, lastHeartbeat: new Date(Date.now()-5000).toISOString() },
+      { host: `10.0.1.6`, port: 8080, status: params.id === 'payment-service' ? 'DOWN' : 'UP', homepage: `http://10.0.1.6:8080`, lastHeartbeat: new Date(Date.now() - 5000).toISOString() },
     ]);
   }),
 
@@ -167,7 +169,7 @@ export const handlers = [
         { name: 'security-audit-events', partitions: 12, lag: 45, throughput: 1240 },
         { name: 'gateway-metrics', partitions: 6, lag: 0, throughput: 850 },
       ],
-      recentAudit: Array.from({length: 20}).map((_, i) => `[Event-K${i}] Threat signature detected on Edge Fire. UUID=u-${i}xyz`)
+      recentAudit: Array.from({ length: 20 }).map((_, i) => `[Event-K${i}] Threat signature detected on Edge Fire. UUID=u-${i}xyz`)
     });
   }),
   http.get('*/api/infra/redis', () => {
@@ -191,18 +193,18 @@ export const handlers = [
       lastWrite: new Date().toISOString()
     });
   }),
-  
+
   // User Context
-  http.get('*/api/users/:uuid/context', ({params}) => {
+  http.get('*/api/users/:uuid/context', ({ params }) => {
     return HttpResponse.json({
       uuid: params.uuid,
       status: 'MONITORING',
-      timeline: Array.from({length: 20}).map((_, i) => ({
-        timestamp: new Date(Date.now() - (20-i)*30000).toISOString(),
+      timeline: Array.from({ length: 20 }).map((_, i) => ({
+        timestamp: new Date(Date.now() - (20 - i) * 30000).toISOString(),
         requestCount: Math.floor(Math.random() * 50)
       })),
-      recentRequests: Array.from({length: 15}).map((_, i) => ({
-        timestamp: new Date(Date.now() - i*15000).toISOString(),
+      recentRequests: Array.from({ length: 15 }).map((_, i) => ({
+        timestamp: new Date(Date.now() - i * 15000).toISOString(),
         method: 'GET',
         endpoint: '/api/v1/auth/verify',
         status: 403,
@@ -212,7 +214,7 @@ export const handlers = [
       blacklistInfo: null,
       aiProfile: {
         lastAssessment: 'User behavior indicates rapid, sequential token validations typical of credential stuffing attacks.',
-        anomalyScores: Array.from({length: 10}).map((_,i) => ({ timestamp: `t-${i}`, score: 0.6 + Math.random()*0.3 }))
+        anomalyScores: Array.from({ length: 10 }).map((_, i) => ({ timestamp: `t-${i}`, score: 0.6 + Math.random() * 0.3 }))
       }
     });
   })

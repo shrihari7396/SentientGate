@@ -1,0 +1,24 @@
+# =====================================================================
+# DEPRECATED
+# =====================================================================
+# The monolithic deployment.yml has been decomposed and migrated to
+# service-specific deploy folders for better modularity (SOLID).
+#
+# Please use the service-specific deploy.sh scripts or run the root-level
+# deploy.sh to orchestrate all deployments:
+#
+#   ./deploy.sh
+#
+# Migrated Service Directories:
+#   - Infrastructure/postgres/deploy/
+#   - Infrastructure/redis/deploy/
+#   - Infrastructure/zookeeper/deploy/
+#   - Infrastructure/kafka/deploy/
+#   - EurekaServer/deploy/
+#   - ApiGateway/deploy/
+#   - LoggingService/deploy/
+#   - MCPService/deploy/
+#   - AIService/deploy/
+#   - Dummy/deploy/
+#   - UI/deploy/
+# =====================================================================

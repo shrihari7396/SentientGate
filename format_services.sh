@@ -32,9 +32,9 @@ format_maven_service AIService
 format_maven_service ApiGateway
 
 # Format Gradle services
-format_gradle_service DummyService
+format_gradle_service Dummy
 format_gradle_service EurekaServer
-format_gradle_service LogingService
+format_gradle_service LoggingService
 format_gradle_service MCPService
 
 echo "----------------------------------------"

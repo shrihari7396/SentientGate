@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import edu.pict.dtos.AnomalyDetectionRequest;
 import edu.pict.dtos.AnomalyDetectionResponse;
+import edu.pict.dtos.LogEvent;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,14 +28,15 @@ class AnomalyDetectionServiceTest {
 
     @Test
     void analyze_ShouldReturnAnomaly_WhenScoreHigh() {
+        List<LogEvent> history = List.of(
+            LogEvent.builder().clientIp("127.0.0.1").statusCode(500).timestamp(System.currentTimeMillis() - 10000).path("/admin").build(),
+            LogEvent.builder().clientIp("127.0.0.2").statusCode(403).timestamp(System.currentTimeMillis()).path("/admin").build()
+        );
+
         AnomalyDetectionRequest request =
                 AnomalyDetectionRequest.builder()
-                        .failureRate(0.8f)
-                        .requestsPerMinute(500)
-                        .uniqueRoutesAccessed(50)
-                        .jwtReuseCount(10)
-                        .ipReputationScore(0.1f)
-                        .routeSensitivity("HIGH")
+                        .uuid("u-test-uuid")
+                        .history(history)
                         .build();
 
         when(ollamaService.predictAnomalyScore(anyString())).thenReturn(0.9);
@@ -46,14 +49,15 @@ class AnomalyDetectionServiceTest {
 
     @Test
     void analyze_ShouldNotReturnAnomaly_WhenScoreLow() {
+        List<LogEvent> history = List.of(
+            LogEvent.builder().clientIp("127.0.0.1").statusCode(200).timestamp(System.currentTimeMillis() - 10000).path("/home").build(),
+            LogEvent.builder().clientIp("127.0.0.1").statusCode(200).timestamp(System.currentTimeMillis()).path("/home").build()
+        );
+
         AnomalyDetectionRequest request =
                 AnomalyDetectionRequest.builder()
-                        .failureRate(0.01f)
-                        .requestsPerMinute(10)
-                        .uniqueRoutesAccessed(2)
-                        .jwtReuseCount(0)
-                        .ipReputationScore(0.9f)
-                        .routeSensitivity("LOW")
+                        .uuid("u-test-uuid")
+                        .history(history)
                         .build();
 
         when(ollamaService.predictAnomalyScore(anyString())).thenReturn(0.2);
