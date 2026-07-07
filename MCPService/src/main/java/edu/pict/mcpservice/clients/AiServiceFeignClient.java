@@ -16,16 +16,18 @@ public interface AiServiceFeignClient {
     ResponseEntity<AnomalyDetectionResponse> analyze(@RequestBody AnomalyDetectionRequest request);
 
     /**
-     * Fallback method when circuit breaker is open or service is unavailable.
-     * Returns a default response indicating the service is temporarily unavailable.
+     * Fallback method when circuit breaker is open or service is unavailable. Returns a default
+     * response indicating the service is temporarily unavailable.
      */
-    default ResponseEntity<AnomalyDetectionResponse> analyzeFallback(AnomalyDetectionRequest request, Exception ex) {
-        AnomalyDetectionResponse fallbackResponse = AnomalyDetectionResponse.builder()
-                .isAnomaly(false)
-                .confidenceScore(0.0)
-                .patternDetected("SERVICE_UNAVAILABLE")
-                .suggestedBlockMinutes(0)
-                .build();
+    default ResponseEntity<AnomalyDetectionResponse> analyzeFallback(
+            AnomalyDetectionRequest request, Exception ex) {
+        AnomalyDetectionResponse fallbackResponse =
+                AnomalyDetectionResponse.builder()
+                        .isAnomaly(false)
+                        .confidenceScore(0.0)
+                        .patternDetected("SERVICE_UNAVAILABLE")
+                        .suggestedBlockMinutes(0)
+                        .build();
 
         return ResponseEntity.ok(fallbackResponse);
     }
