@@ -4,51 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.codex" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/controller/AnomalyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/controller/AnomalyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/dtos/AnomalyDetectionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/dtos/AnomalyDetectionRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/dtos/AnomalyDetectionResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/dtos/AnomalyDetectionResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/service/AnomalyDetectionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/java/edu/pict/service/AnomalyDetectionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/src/test/java/edu/pict/service/AnomalyDetectionServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/test/java/edu/pict/service/AnomalyDetectionServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/controller/ManagementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/src/main/java/edu/pict/apigateway/controller/ManagementController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CURRENT_FLAWS_AND_VULNERABILITIES.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dummy/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dummy/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dummy/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Dummy/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EurekaServer/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServer/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EurekaServer/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServer/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IMPROVEMENT_AND_HARDENING_GUIDE.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Infrastructure/kafka/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/kafka/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Infrastructure/postgres/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/postgres/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Infrastructure/redis/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/redis/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Infrastructure/zookeeper/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Infrastructure/zookeeper/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/controller/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/controller/LogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/entity/GatewayLogEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/entity/GatewayLogEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/repository/GatewayLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/java/edu/pict/loggingservice/repository/GatewayLogRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCPService/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/MCPService/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SentientGate_UI_Master_Prompt.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/deploy/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/UI/deploy/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/sentinel-gateway-ui/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/UI/sentinel-gateway-ui/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/sentinel-gateway-ui/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/UI/sentinel-gateway-ui/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/sentinel-gateway-ui/src/mocks/handlers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/UI/sentinel-gateway-ui/src/mocks/handlers.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/format_services.sh" beforeDir="false" afterPath="$PROJECT_DIR$/format_services.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/push_images.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_tests.sh" beforeDir="false" />
-    </list>
+    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -306,6 +262,7 @@
       <workItem from="1783152799094" duration="635000" />
       <workItem from="1783153469704" duration="4000" />
       <workItem from="1783238113640" duration="646000" />
+      <workItem from="1783426649615" duration="298000" />
     </task>
     <servers />
   </component>
