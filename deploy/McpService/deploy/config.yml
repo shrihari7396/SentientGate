@@ -1,10 +1,10 @@
-apiVersion: v1 # Specifies the Kubernetes API version for this resource
-kind: ConfigMap # Declares the resource type as a ConfigMap for configuration data
-metadata: # Contains metadata parameters for identifying the resource
-  name: mcp-server-config # Unique name of the ConfigMap in the namespace
-data: # Holds the configuration key-value pairs as plain text strings
-  SPRING_DATA_REDIS_HOST: "redis" # Hostname parameter of the Redis server for caching data
-  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-service:29092" # Port/address details for Kafka message broker endpoints
-  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka" # Eureka service discovery registry registration zone
-  GRPC_CLIENT_LOGGING_SERVICE_ADDRESS: "discovery:///LOGGING-SERVICE" # Service endpoint target url using Eureka discovery for gRPC logs
-  SERVER_PORT: "8080" # Listening network port for MCP Server HTTP requests
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcp-server-config
+data:
+  SPRING_DATA_REDIS_HOST: "redis"
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-service:29092"
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+  GRPC_CLIENT_LOGGING_SERVICE_ADDRESS: "discovery:///LOGGING-SERVICE"
+  SERVER_PORT: "8080"
