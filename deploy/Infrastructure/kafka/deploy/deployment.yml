@@ -1,0 +1,85 @@
+apiVersion: apps/v1 # Specifies the Kubernetes API version for Deployments
+kind: Deployment # Declares the resource type as a Deployment
+metadata: # Contains metadata parameters for identifying the resource
+  name: kafka # Unique name of the Deployment in the namespace
+  labels: # Metadata tags used for grouping and identifying the resource
+    app: kafka # Label identifier for the application
+spec: # Details the desired state and settings of the Deployment
+  replicas: 1 # Specifies the number of concurrent Pod replicas to run
+  selector: # Defines how the Deployment finds the Pods it manages
+    matchLabels: # Lists label matching requirements for the target Pods
+      app: kafka # Match Pods containing the application label 'kafka'
+  template: # Templates the specification of Pods to be created
+    metadata: # Contains metadata parameters for the Pod template
+      labels: # Metadata tags applied to the created Pods
+        app: kafka # Label applied to Pods for grouping and selection
+    spec: # Details the actual workload specification for the Pods
+      containers: # Lists the containers running within the Pod
+        - name: kafka # Logical name of the container
+          image: confluentinc/cp-kafka:7.5.0 # Docker registry image path and version tag
+          env: # Environment variables to inject into the container
+            - name: KAFKA_BROKER_ID # Name of the environment variable for Broker ID
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_BROKER_ID # Specific key containing the Broker ID
+            - name: KAFKA_ZOOKEEPER_CONNECT # Name of the environment variable for Zookeeper connection string
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_ZOOKEEPER_CONNECT # Specific key containing Zookeeper coordinate
+            - name: KAFKA_LISTENERS # Name of the environment variable for socket listeners
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_LISTENERS # Specific key containing internal listeners
+            - name: KAFKA_ADVERTISED_LISTENERS # Name of the environment variable for external advertisement
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_ADVERTISED_LISTENERS # Specific key containing advertised listeners
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP # Name of the environment variable for security protocols
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP # Specific key containing mapping details
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME # Name of the environment variable for inter-broker protocol
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_INTER_BROKER_LISTENER_NAME # Specific key containing the protocol name
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR # Name of the environment variable for system replication factor
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR # Specific key containing the replication factor
+            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR # Name of the environment variable for minimum ISR
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR # Specific key containing the min ISR
+            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR # Name of the environment variable for transaction replication
+              valueFrom: # Specifies the source of the environment value
+                configMapKeyRef: # References a key within a ConfigMap resource
+                  name: kafka-config # Name of the ConfigMap source
+                  key: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR # Specific key containing replication factor
+          ports: # Ports exposed by the container
+            - name: internal # Logical name for the internal port
+              containerPort: 29092 # Port 29092 is exposed for internal cluster communication
+            - name: external # Logical name for the external port
+              containerPort: 9092 # Port 9092 is exposed for external clients/developers
+---
+apiVersion: v1 # Specifies the Kubernetes API version for Service resources
+kind: Service # Declares the resource type as a Service for network load balancing
+metadata: # Contains metadata parameters for identifying the resource
+  name: kafka-service # Unique name of the Service, used as DNS host name
+spec: # Details the network configuration for the Service
+  ports: # Ports exposed and routed by the Service
+    - name: plaintext-internal # Logical name for the internal port mapping
+      port: 29092 # Port exposed on the cluster-internal network
+      targetPort: 29092 # Container port where traffic is forwarded
+    - name: plaintext-external # Logical name for the external port mapping
+      port: 9092 # Port exposed on the cluster-internal network
+      targetPort: 9092 # Container port where traffic is forwarded
+  selector: # Determines the set of Pods targeted by this Service
+    app: kafka # Route traffic to Pods matching the 'kafka' label
