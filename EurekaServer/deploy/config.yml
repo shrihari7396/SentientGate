@@ -1,7 +1,0 @@
-apiVersion: v1 # Specifies the Kubernetes API version for this resource
-kind: ConfigMap # Declares the resource type as a ConfigMap for configuration data
-metadata: # Contains metadata parameters for identifying the resource
-  name: eureka-server-config # Unique name of the ConfigMap in the namespace
-data: # Holds the configuration key-value pairs as plain text strings
-  SPRING_PROFILES_ACTIVE: "docker" # Spring profile environment setting to enable docker settings
-  EUREKA_INSTANCE_HOSTNAME: "eureka-server" # Hostname of the current Eureka instance for registry discovery
