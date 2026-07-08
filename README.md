@@ -96,6 +96,7 @@ Sequence diagram:
 | AI Inference | Ollama (`gemma3:latest` configured in `AIService`) |
 | Frontend | React, Vite, Tailwind CSS |
 | Containerization | Docker, Docker Compose |
+| Orchestration | Kubernetes (Minikube for local, any K8s cluster for production) |
 | Build Tools | Maven and Gradle |
 
 ## Why This Design Matters
@@ -125,6 +126,122 @@ Stop all services:
 ```bash
 docker compose down
 ```
+
+## Kubernetes Deployment
+
+SentientGate includes production-ready Kubernetes manifests under the `deploy/` directory. Each service has its own set of manifests organized as follows:
+
+### Deploy Folder Structure
+
+```text
+deploy/
+├── Infrastructure/
+│   ├── kafka/deploy/        (config, deployment, service)
+│   ├── postgres/deploy/     (config, secret, pvc, deployment, service)
+│   ├── redis/deploy/        (deployment, service)
+│   └── zookeeper/deploy/    (config, deployment, service)
+├── AiService/deploy/        (config, deployment, service, hpa)
+├── ApiGateWay/deploy/       (config, deployment, service, hpa)
+├── EurekaServer/deploy/     (config, deployment, service)
+├── LoggingService/deploy/   (config, secret, deployment, service, hpa)
+├── McpService/deploy/       (config, deployment, service, hpa)
+├── UI/deploy/               (deployment, service, hpa)
+├── dummy/deploy/            (config, deployment, service, hpa)
+└── deploy.sh                (automated full-stack deploy script)
+```
+
+### Manifest Types Per Service
+
+| Manifest | Purpose |
+|---|---|
+| `config.yml` | ConfigMap with environment variables (URLs, ports, broker addresses) |
+| `secret.yml` | Secret with base64-encoded credentials (database passwords) |
+| `deployment.yml` | Deployment + Service definitions (container image, env injection, ports) |
+| `hpa.yml` | HorizontalPodAutoscaler for CPU-based autoscaling |
+| `pvc.yml` | PersistentVolumeClaim for stateful storage (PostgreSQL) |
+
+### Deployment Order
+
+The automated `deploy.sh` script deploys services in dependency order:
+
+1. **PostgreSQL** — database storage
+2. **Redis** — caching and TTL enforcement
+3. **Zookeeper** — Kafka coordination
+4. **Kafka** — event streaming (depends on Zookeeper)
+5. **EurekaServer** — service discovery registry
+6. **LoggingService** — log persistence and gRPC history (depends on Postgres, Kafka, Eureka)
+7. **ApiGateway** — edge gateway (depends on Redis, Kafka, Eureka)
+8. **MCPService** — security analysis brain (depends on Redis, Kafka, Eureka, LoggingService gRPC)
+9. **AIService** — local LLM inference (depends on Eureka)
+10. **DummyService** — test downstream service (depends on Eureka)
+11. **SentinelUI** — monitoring dashboard
+
+### Quick Start (Minikube)
+
+Prerequisites:
+
+- Minikube installed and running (`minikube start`)
+- `kubectl` configured to use the Minikube context
+- Docker images built and available (`./build_and_push_images.sh`)
+- Ollama running on the host for AIService
+
+Deploy all services:
+
+```bash
+chmod +x deploy/deploy.sh
+./deploy/deploy.sh
+```
+
+Deploy a single service manually:
+
+```bash
+kubectl apply -f deploy/AiService/deploy/config.yml
+kubectl apply -f deploy/AiService/deploy/deployment.yml
+kubectl apply -f deploy/AiService/deploy/hpa.yml
+```
+
+Verify deployments:
+
+```bash
+kubectl get pods
+kubectl get services
+kubectl get hpa
+```
+
+Access services via Minikube:
+
+```bash
+minikube service api-gateway --url
+minikube service sentinel-ui --url
+```
+
+### Service Exposure
+
+| Service | Type | Cluster Port |
+|---|---|---|
+| `api-gateway` | LoadBalancer | `8079 → 8080` |
+| `sentinel-ui` | LoadBalancer | `5173 → 80` |
+| `eureka-server` | ClusterIP | `8761` |
+| `ai-service` | ClusterIP | `8082 → 8080` |
+| `logging-service` | ClusterIP | `8080 (HTTP)`, `9090 (gRPC)` |
+| `mcp-server` | ClusterIP | `8080` |
+| `kafka-service` | ClusterIP | `29092 (internal)`, `9092 (external)` |
+| `postgres` | ClusterIP | `5432` |
+| `redis` | ClusterIP | `6379` |
+| `zookeeper` | ClusterIP | `2181` |
+
+### Autoscaling
+
+HPA is configured for application services with CPU-based scaling:
+
+| Service | Min Replicas | Max Replicas | CPU Target |
+|---|---|---|---|
+| `ai-service` | 1 | 3 | 80% |
+| `api-gateway` | 2 | 5 | 80% |
+| `logging-service` | 1 | 3 | 80% |
+| `mcp-server` | 2 | 5 | 80% |
+| `sentinel-ui` | 1 | 3 | 80% |
+| `dummy-service` | 1 | 3 | 80% |
 
 ## Local Development
 
@@ -168,8 +285,24 @@ SentientGate/
 ├── EurekaServer/
 ├── DummyService/
 ├── UI/sentinel-gateway-ui/
+├── deploy/
+│   ├── Infrastructure/
+│   │   ├── kafka/deploy/
+│   │   ├── postgres/deploy/
+│   │   ├── redis/deploy/
+│   │   └── zookeeper/deploy/
+│   ├── AiService/deploy/
+│   ├── ApiGateWay/deploy/
+│   ├── EurekaServer/deploy/
+│   ├── LoggingService/deploy/
+│   ├── McpService/deploy/
+│   ├── UI/deploy/
+│   ├── dummy/deploy/
+│   └── deploy.sh
 ├── Architectures/
 ├── docker-compose.yml
+├── build_and_push_images.sh
+├── deploy.sh
 ├── run_tests.sh
 └── README.md
 ```
