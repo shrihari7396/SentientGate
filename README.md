@@ -307,15 +307,6 @@ SentientGate/
 └── README.md
 ```
 
-## Additional Documents
-
-- `CURRENT_FLAWS_AND_VULNERABILITIES.md`
-- `ARCHITECTURAL_DESIGN_FLAWS.md`
-- `ARCHITECTURAL_SOLUTIONS.md`
-- `IMPROVEMENT_AND_HARDENING_GUIDE.md`
-- `FUTURE_README.md`
-- `SECURITY.md`
-
 ## License
 
 Apache 2.0. See `LICENSE`.
