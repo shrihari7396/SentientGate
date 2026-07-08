@@ -1,43 +1,43 @@
-apiVersion: apps/v1 # Specifies the Kubernetes API version for Deployments
-kind: Deployment # Declares the resource type as a Deployment
-metadata: # Contains metadata parameters for identifying the resource
-  name: zookeeper # Unique name of the Deployment in the namespace
-  labels: # Metadata tags used for grouping and identifying the resource
-    app: zookeeper # Label identifier for the application
-spec: # Details the desired state and settings of the Deployment
-  replicas: 1 # Specifies the number of concurrent Pod replicas to run
-  selector: # Defines how the Deployment finds the Pods it manages
-    matchLabels: # Lists label matching requirements for the target Pods
-      app: zookeeper # Match Pods containing the application label 'zookeeper'
-  template: # Templates the specification of Pods to be created
-    metadata: # Contains metadata parameters for the Pod template
-      labels: # Metadata tags applied to the created Pods
-        app: zookeeper # Label applied to Pods for grouping and selection
-    spec: # Details the actual workload specification for the Pods
-      containers: # Lists the containers running within the Pod
-        - name: zookeeper # Logical name of the container
-          image: confluentinc/cp-zookeeper:7.5.0 # Docker registry image path and version tag
-          env: # Environment variables to inject into the container
-            - name: ZOOKEEPER_CLIENT_PORT # Name of the environment variable for Zookeeper port
-              valueFrom: # Specifies the source of the environment value
-                configMapKeyRef: # References a key within a ConfigMap resource
-                  name: zookeeper-config # Name of the ConfigMap source
-                  key: ZOOKEEPER_CLIENT_PORT # Specific key containing the client port
-            - name: ZOOKEEPER_TICK_TIME # Name of the environment variable for Zookeeper tick time
-              valueFrom: # Specifies the source of the environment value
-                configMapKeyRef: # References a key within a ConfigMap resource
-                  name: zookeeper-config # Name of the ConfigMap source
-                  key: ZOOKEEPER_TICK_TIME # Specific key containing the tick time
-          ports: # Ports exposed by the container
-            - containerPort: 2181 # Port 2181 is exposed for Zookeeper traffic
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+  labels:
+    app: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: confluentinc/cp-zookeeper:7.5.0
+          env:
+            - name: ZOOKEEPER_CLIENT_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: zookeeper-config
+                  key: ZOOKEEPER_CLIENT_PORT
+            - name: ZOOKEEPER_TICK_TIME
+              valueFrom:
+                configMapKeyRef:
+                  name: zookeeper-config
+                  key: ZOOKEEPER_TICK_TIME
+          ports:
+            - containerPort: 2181
 ---
-apiVersion: v1 # Specifies the Kubernetes API version for Service resources
-kind: Service # Declares the resource type as a Service for network load balancing
-metadata: # Contains metadata parameters for identifying the resource
-  name: zookeeper # Unique name of the Service, used as DNS host name
-spec: # Details the network configuration for the Service
-  ports: # Ports exposed and routed by the Service
-    - port: 2181 # Port exposed on the cluster-internal network
-      targetPort: 2181 # Container port where traffic is forwarded
-  selector: # Determines the set of Pods targeted by this Service
-    app: zookeeper # Route traffic to Pods matching the 'zookeeper' label
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+spec:
+  ports:
+    - port: 2181
+      targetPort: 2181
+  selector:
+    app: zookeeper
