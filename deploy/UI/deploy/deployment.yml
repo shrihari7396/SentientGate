@@ -1,34 +1,34 @@
-apiVersion: apps/v1 # Specifies the Kubernetes API version for Deployments
-kind: Deployment # Declares the resource type as a Deployment
-metadata: # Contains metadata parameters for identifying the resource
-  name: sentinel-ui # Unique name of the Deployment in the namespace
-  labels: # Metadata tags used for grouping and identifying the resource
-    app: sentinel-ui # Label identifier for the application
-spec: # Details the desired state and settings of the Deployment
-  replicas: 1 # Specifies the number of concurrent Pod replicas to run
-  selector: # Defines how the Deployment finds the Pods it manages
-    matchLabels: # Lists label matching requirements for the target Pods
-      app: sentinel-ui # Match Pods containing the application label 'sentinel-ui'
-  template: # Templates the specification of Pods to be created
-    metadata: # Contains metadata parameters for the Pod template
-      labels: # Metadata tags applied to the created Pods
-        app: sentinel-ui # Label applied to Pods for grouping and selection
-    spec: # Details the actual workload specification for the Pods
-      containers: # Lists the containers running within the Pod
-        - name: sentinel-ui # Logical name of the container
-          image: shrihari7396/sentinel-ui:latest # Docker registry image path and version tag
-          imagePullPolicy: IfNotPresent # Pull the image from registry only if it doesn't exist locally
-          ports: # Ports exposed by the container
-            - containerPort: 80 # Port 80 is exposed for web server/UI traffic
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentinel-ui
+  labels:
+    app: sentinel-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sentinel-ui
+  template:
+    metadata:
+      labels:
+        app: sentinel-ui
+    spec:
+      containers:
+        - name: sentinel-ui
+          image: shrihari7396/sentinel-ui:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
 ---
-apiVersion: v1 # Specifies the Kubernetes API version for Service resources
-kind: Service # Declares the resource type as a Service for network load balancing
-metadata: # Contains metadata parameters for identifying the resource
-  name: sentinel-ui # Unique name of the Service, used as DNS host name
-spec: # Details the network configuration for the Service
-  type: LoadBalancer # Exposes the service externally using a cloud provider's load balancer
-  ports: # Ports exposed and routed by the Service
-    - port: 5173 # External entry port exposed by the load balancer for web interface
-      targetPort: 80 # Internal container port where web traffic is forwarded
-  selector: # Determines the set of Pods targeted by this Service
-    app: sentinel-ui # Route traffic to Pods matching the 'sentinel-ui' label
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentinel-ui
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 5173
+      targetPort: 80
+  selector:
+    app: sentinel-ui
