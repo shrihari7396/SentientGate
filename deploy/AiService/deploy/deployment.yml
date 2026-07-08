@@ -1,49 +1,49 @@
-apiVersion: apps/v1 # Specifies the Kubernetes API version for Deployments
-kind: Deployment # Declares the resource type as a Deployment
-metadata: # Contains metadata parameters for identifying the resource
-  name: ai-service # Unique name of the Deployment in the namespace
-  labels: # Metadata tags used for grouping and identifying the resource
-    app: ai-service # Label identifier for the application
-spec: # Details the desired state and settings of the Deployment
-  replicas: 1 # Specifies the number of concurrent Pod replicas to run
-  selector: # Defines how the Deployment finds the Pods it manages
-    matchLabels: # Lists label matching requirements for the target Pods
-      app: ai-service # Match Pods containing the application label 'ai-service'
-  template: # Templates the specification of Pods to be created
-    metadata: # Contains metadata parameters for the Pod template
-      labels: # Metadata tags applied to the created Pods
-        app: ai-service # Label applied to Pods for grouping and selection
-    spec: # Details the actual workload specification for the Pods
-      containers: # Lists the containers running within the Pod
-        - name: ai-service # Logical name of the container
-          image: shrihari7396/ai-service:latest # Docker registry image path and version tag
-          imagePullPolicy: IfNotPresent # Pull the image from registry only if it doesn't exist locally
-          env: # Environment variables to inject into the container
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE # Name of the environment variable for Eureka connection
-              valueFrom: # Specifies the source of the environment value
-                configMapKeyRef: # References a key within a ConfigMap resource
-                  name: ai-service-config # Name of the ConfigMap source
-                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE # Specific key containing the Eureka service registry URL
-            - name: OLLAMA_BASE_URL # Name of the environment variable for Ollama endpoint URL
-              valueFrom: # Specifies the source of the environment value
-                configMapKeyRef: # References a key within a ConfigMap resource
-                  name: ai-service-config # Name of the ConfigMap source
-                  key: OLLAMA_BASE_URL # Specific key containing the Ollama base URL
-            - name: SERVER_PORT # Name of the environment variable for container server port
-              valueFrom: # Specifies the source of the environment value
-                configMapKeyRef: # References a key within a ConfigMap resource
-                  name: ai-service-config # Name of the ConfigMap source
-                  key: SERVER_PORT # Specific key containing the port number
-          ports: # Ports exposed by the container
-            - containerPort: 8080 # Port 8080 is exposed for AI Service REST API traffic
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-service
+  labels:
+    app: ai-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-service
+  template:
+    metadata:
+      labels:
+        app: ai-service
+    spec:
+      containers:
+        - name: ai-service
+          image: shrihari7396/ai-service:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              valueFrom:
+                configMapKeyRef:
+                  name: ai-service-config
+                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+            - name: OLLAMA_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ai-service-config
+                  key: OLLAMA_BASE_URL
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: ai-service-config
+                  key: SERVER_PORT
+          ports:
+            - containerPort: 8080
 ---
-apiVersion: v1 # Specifies the Kubernetes API version for Service resources
-kind: Service # Declares the resource type as a Service for network load balancing
-metadata: # Contains metadata parameters for identifying the resource
-  name: ai-service # Unique name of the Service, used as DNS host name
-spec: # Details the network configuration for the Service
-  ports: # Ports exposed and routed by the Service
-    - port: 8082 # Port exposed on the cluster-internal network
-      targetPort: 8080 # Container port where traffic is forwarded
-  selector: # Determines the set of Pods targeted by this Service
-    app: ai-service # Route traffic to Pods matching the 'ai-service' label
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-service
+spec:
+  ports:
+    - port: 8082
+      targetPort: 8080
+  selector:
+    app: ai-service

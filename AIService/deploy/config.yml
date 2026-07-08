@@ -1,8 +1,0 @@
-apiVersion: v1 # Specifies the Kubernetes API version for this resource
-kind: ConfigMap # Declares the resource type as a ConfigMap for configuration data
-metadata: # Contains metadata parameters for identifying the resource
-  name: ai-service-config # Unique name of the ConfigMap in the namespace
-data: # Holds the configuration key-value pairs as plain text strings
-  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka" # Eureka service discovery registry registration zone
-  OLLAMA_BASE_URL: "http://host.minikube.internal:11434" # Host base URL endpoint for running Ollama model requests
-  SERVER_PORT: "8080" # Listening network port for AI Service HTTP requests
