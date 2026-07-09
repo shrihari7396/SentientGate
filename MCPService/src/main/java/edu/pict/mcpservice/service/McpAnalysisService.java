@@ -22,7 +22,7 @@ public class McpAnalysisService {
     private static final String DEDUP_PREFIX = "mcp:dedup:";
     private static final String CHECKED_PREFIX = "mcp:checked:";
     private static final Duration DEDUP_WINDOW = Duration.ofSeconds(30);
-    private static final Duration CHECKED_WINDOW = Duration.ofSeconds(30);
+    private static final Duration CHECKED_WINDOW = Duration.ofSeconds(200);
 
     private final EventHistoryService eventHistoryService;
     private final EnforcementService enforcementService;
@@ -62,8 +62,8 @@ public class McpAnalysisService {
      */
     public void analyze(String uuid, List<SecurityAlertEvent> alerts) {
 
-        if (wasRecentlyChecked(uuid)) return;
         if (isAlreadyBlocked(uuid)) return;
+        if (wasRecentlyChecked(uuid)) return;
 
         markAsChecked(uuid);
 
