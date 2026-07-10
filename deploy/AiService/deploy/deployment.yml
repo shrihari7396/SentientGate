@@ -19,22 +19,9 @@ spec:
         - name: ai-service
           image: shrihari7396/ai-service:latest
           imagePullPolicy: IfNotPresent
-          env:
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              valueFrom:
-                configMapKeyRef:
-                  name: ai-service-config
-                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-            - name: OLLAMA_BASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: ai-service-config
-                  key: OLLAMA_BASE_URL
-            - name: SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: ai-service-config
-                  key: SERVER_PORT
+          envFrom:
+            - configMapRef:
+                name: ai-service-config
           ports:
             - containerPort: 8080
 ---

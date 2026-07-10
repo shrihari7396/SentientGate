@@ -19,32 +19,9 @@ spec:
         - name: mcp-server
           image: shrihari7396/mcp-server:latest
           imagePullPolicy: IfNotPresent
-          env:
-            - name: SPRING_DATA_REDIS_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: mcp-server-config
-                  key: SPRING_DATA_REDIS_HOST
-            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-              valueFrom:
-                configMapKeyRef:
-                  name: mcp-server-config
-                  key: SPRING_KAFKA_BOOTSTRAP_SERVERS
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              valueFrom:
-                configMapKeyRef:
-                  name: mcp-server-config
-                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-            - name: GRPC_CLIENT_LOGGING_SERVICE_ADDRESS
-              valueFrom:
-                configMapKeyRef:
-                  name: mcp-server-config
-                  key: GRPC_CLIENT_LOGGING_SERVICE_ADDRESS
-            - name: SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: mcp-server-config
-                  key: SERVER_PORT
+          envFrom:
+            - configMapRef:
+                name: mcp-server-config
           ports:
             - containerPort: 8080
 ---
