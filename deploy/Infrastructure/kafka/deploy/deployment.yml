@@ -16,58 +16,25 @@ spec:
     spec:
       containers:
         - name: kafka
-          image: confluentinc/cp-kafka:7.5.0
-          env:
-            - name: KAFKA_BROKER_ID
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_BROKER_ID
-            - name: KAFKA_ZOOKEEPER_CONNECT
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_ZOOKEEPER_CONNECT
-            - name: KAFKA_LISTENERS
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_LISTENERS
-            - name: KAFKA_ADVERTISED_LISTENERS
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_ADVERTISED_LISTENERS
-            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-            - name: KAFKA_INTER_BROKER_LISTENER_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_INTER_BROKER_LISTENER_NAME
-            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
-            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
-            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
-              valueFrom:
-                configMapKeyRef:
-                  name: kafka-config
-                  key: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+          image: confluentinc/cp-kafka:7.7.1
+          envFrom:
+            - configMapRef:
+                name: kafka-config
           ports:
-            - name: internal
-              containerPort: 29092
-            - name: external
+            - name: broker
               containerPort: 9092
+            - name: controller
+              containerPort: 9093
+          readinessProbe:
+            tcpSocket:
+              port: 9092
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9092
+            initialDelaySeconds: 60
+            periodSeconds: 15
 ---
 apiVersion: v1
 kind: Service
@@ -75,10 +42,7 @@ metadata:
   name: kafka-service
 spec:
   ports:
-    - name: plaintext-internal
-      port: 29092
-      targetPort: 29092
-    - name: plaintext-external
+    - name: broker
       port: 9092
       targetPort: 9092
   selector:
