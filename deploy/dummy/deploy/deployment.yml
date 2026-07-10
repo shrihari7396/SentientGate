@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dummy-service
+  namespace: sentientgate
   labels:
     app: dummy-service
 spec:
@@ -36,6 +37,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: dummy-service
+  namespace: sentientgate
 spec:
   ports:
     - port: 8080

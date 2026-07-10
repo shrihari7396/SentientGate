@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mcp-server
+  namespace: sentientgate
   labels:
     app: mcp-server
 spec:
@@ -51,6 +52,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mcp-server
+  namespace: sentientgate
 spec:
   ports:
     - port: 8080
