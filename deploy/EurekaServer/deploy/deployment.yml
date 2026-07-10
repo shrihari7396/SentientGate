@@ -19,17 +19,9 @@ spec:
         - name: eureka-server
           image: shrihari7396/eureka-server:latest
           imagePullPolicy: IfNotPresent
-          env:
-            - name: SPRING_PROFILES_ACTIVE
-              valueFrom:
-                configMapKeyRef:
-                  name: eureka-server-config
-                  key: SPRING_PROFILES_ACTIVE
-            - name: EUREKA_INSTANCE_HOSTNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: eureka-server-config
-                  key: EUREKA_INSTANCE_HOSTNAME
+          envFrom:
+            - configMapRef:
+                name: eureka-server-config
           ports:
             - containerPort: 8761
 ---

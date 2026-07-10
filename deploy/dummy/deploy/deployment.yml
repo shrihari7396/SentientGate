@@ -19,17 +19,9 @@ spec:
         - name: dummy-service
           image: shrihari7396/dummy-service:latest
           imagePullPolicy: IfNotPresent
-          env:
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              valueFrom:
-                configMapKeyRef:
-                  name: dummy-service-config
-                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-            - name: SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: dummy-service-config
-                  key: SERVER_PORT
+          envFrom:
+            - configMapRef:
+                name: dummy-service-config
           ports:
             - containerPort: 8080
 ---

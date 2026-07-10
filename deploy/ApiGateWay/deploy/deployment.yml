@@ -19,27 +19,9 @@ spec:
         - name: api-gateway
           image: shrihari7396/api-gateway:latest
           imagePullPolicy: IfNotPresent
-          env:
-            - name: SPRING_DATA_REDIS_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: api-gateway-config
-                  key: SPRING_DATA_REDIS_HOST
-            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-              valueFrom:
-                configMapKeyRef:
-                  name: api-gateway-config
-                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
-              valueFrom:
-                configMapKeyRef:
-                  name: api-gateway-config
-                  key: SPRING_KAFKA_BOOTSTRAP_SERVERS
-            - name: SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: api-gateway-config
-                  key: SERVER_PORT
+          envFrom:
+            - configMapRef:
+                name: api-gateway-config
           ports:
             - containerPort: 8080
 ---
