@@ -16,13 +16,11 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:16.2
+          image: postgres:17
+          envFrom:
+            - configMapRef:
+                name: postgres-config
           env:
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-config
-                  key: POSTGRES_DB
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
@@ -35,6 +33,22 @@ spec:
                   key: POSTGRES_PASSWORD
           ports:
             - containerPort: 5432
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 30
+            periodSeconds: 10
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data

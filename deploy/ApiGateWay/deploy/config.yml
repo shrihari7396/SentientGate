@@ -5,5 +5,5 @@ metadata:
 data:
   SPRING_DATA_REDIS_HOST: "redis"
   EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
-  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-service:29092"
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-service:9092"
   SERVER_PORT: "8080"
