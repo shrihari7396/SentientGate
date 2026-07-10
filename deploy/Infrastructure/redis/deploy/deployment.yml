@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
+  namespace: sentientgate
   labels:
     app: redis
 spec:
@@ -38,6 +39,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: redis
+  namespace: sentientgate
 spec:
   ports:
     - port: 6379

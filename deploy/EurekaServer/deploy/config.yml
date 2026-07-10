@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: eureka-server-config
+  namespace: sentientgate
 data:
   SPRING_PROFILES_ACTIVE: "docker"
   EUREKA_INSTANCE_HOSTNAME: "eureka-server"
