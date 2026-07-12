@@ -1,25 +1,33 @@
+# ──────────────────────────────────────────────
+# Stage 1: Build
+# ──────────────────────────────────────────────
 FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /app
 
-COPY . .
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle/ gradle/
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon || true
 
-RUN chmod +x gradlew
+COPY src/ src/
 
-# Generate Java classes from .proto files
 RUN ./gradlew generateProto --no-daemon
 
-# Build Spring Boot JAR
 RUN ./gradlew bootJar -x test --no-daemon
 
+# ──────────────────────────────────────────────
 # Stage 2: Run
+# ──────────────────────────────────────────────
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
 COPY --from=build /app/build/libs/*-SNAPSHOT.jar app.jar
 
+ENV SPRING_PROFILES_ACTIVE=prod
 ENV SERVER_PORT=8080
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+
 EXPOSE 8080 9090
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
