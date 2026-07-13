@@ -55,6 +55,11 @@ spring:
       type: batch
       ack-mode: batch
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 eureka:
   client:
     service-url:
