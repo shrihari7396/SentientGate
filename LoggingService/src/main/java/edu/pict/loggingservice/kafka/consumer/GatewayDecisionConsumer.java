@@ -1,25 +1,5 @@
+// DEPRECATED: This consumer has been replaced by two independent consumers:
+// - RedisLogConsumer (group: logging-redis-writer) — fast Redis cache writes
+// - DatabaseLogConsumer (group: logging-db-writer) — durable PostgreSQL writes
+// This file should be deleted. It is kept empty to avoid compilation errors during cleanup.
 package edu.pict.loggingservice.kafka.consumer;
-
-import edu.pict.loggingservice.kafka.model.GatewayDecisionEvent;
-import edu.pict.loggingservice.service.KafkaBatchService;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.stereotype.Component;
-
-@Component
-@RequiredArgsConstructor
-@Slf4j
-public class GatewayDecisionConsumer {
-
-    private final KafkaBatchService kafkaBatchService;
-
-    @KafkaListener(
-            topics = "#{T(edu.pict.loggingservice.config.KafkaTopics).USER_LOGS.topic()}",
-            containerFactory = "kafkaListenerContainerFactory")
-    public void consume(List<GatewayDecisionEvent> events) {
-        log.info("Received gateway decision events: " + events);
-        kafkaBatchService.consumeBatch(events);
-    }
-}
