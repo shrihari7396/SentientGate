@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="dataSourceStorageLocal" created-in="IU-261.26222.65">
+  <component name="dataSourceStorageLocal" created-in="IU-262.8665.337">
     <data-source name="mydb@localhost" uuid="b95b25dd-e87b-4b32-931a-a18c391432f0">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="POSTGRES" />
       <schema-mapping />
