@@ -29,10 +29,38 @@ spring:
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka-service:9092}
 
+    consumer:
+      group-id: sentientgate-logging-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 500
+
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: true
+        spring.json.type.mapping: "edu.pict.apigateway.kafkaEvent.LogEvent:edu.pict.loggingservice.kafka.model.GatewayDecisionEvent"
+
+    listener:
+      concurrency: 3
+      type: batch
+      ack-mode: batch
+
   data:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:redis}
       port: ${SPRING_DATA_REDIS_PORT:6379}
+      timeout: ${SPRING_DATA_REDIS_TIMEOUT:2000ms}
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+          max-wait: 2000ms
 
   cache:
     type: redis
@@ -58,3 +86,12 @@ management:
   endpoint:
     health:
       show-details: always
+
+logging:
+  level:
+    root: INFO
+    edu.pict.loggingservice: INFO
+    edu.pict.loggingservice.kafka: INFO
+    edu.pict.loggingservice.service.strategy: INFO
+    org.springframework.kafka: WARN
+    org.hibernate.SQL: WARN
