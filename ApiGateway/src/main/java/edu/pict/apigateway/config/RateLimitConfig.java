@@ -1,6 +1,8 @@
 package edu.pict.apigateway.config;
 
+import edu.pict.apigateway.service.SentinelSecurityService;
 import edu.pict.apigateway.util.Constants;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,23 +19,6 @@ public class RateLimitConfig {
             if (visitorId != null && !visitorId.isBlank()) {
                 return Mono.just(visitorId);
             }
-
-            HttpCookie visitorCookie =
-                    exchange.getRequest().getCookies().getFirst(Constants.VISITOR_ID);
-            if (visitorCookie != null && visitorCookie.getValue() != null) {
-                String cookieValue = visitorCookie.getValue().trim();
-                if (!cookieValue.isBlank()) {
-                    return Mono.just(cookieValue);
-                }
-            }
-
-            if (exchange.getRequest().getRemoteAddress() != null
-                    && exchange.getRequest().getRemoteAddress().getAddress() != null) {
-                return Mono.just(
-                        exchange.getRequest().getRemoteAddress().getAddress().getHostAddress());
-            }
-
-            // Last-resort key to ensure limiter still functions instead of silently skipping.
             return Mono.just("anonymous");
         };
     }
