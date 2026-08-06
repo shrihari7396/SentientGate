@@ -48,6 +48,7 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
             return chain.filter(mutatedExchange);
         }
 
+        // This executes when Cookie is not present their (User is coming first time)
         String signedId = sentinelSecurityService.generateSignedId();
         String uuid = sentinelSecurityService.verifyAndExtractId(signedId);
 
