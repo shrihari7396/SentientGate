@@ -5,41 +5,35 @@ import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
 import edu.pict.mcpservice.stratagies.blocking.AiAnomalyStrategy;
 import edu.pict.mcpservice.stratagies.blocking.ThreatStrategy;
-import java.time.Duration;
+import edu.pict.mcpservice.util.LogEventMapper;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class McpAnalysisService {
 
-    private static final String DEDUP_PREFIX = "mcp:dedup:";
-    private static final String CHECKED_PREFIX = "mcp:checked:";
-    private static final Duration DEDUP_WINDOW = Duration.ofSeconds(30);
-    private static final Duration CHECKED_WINDOW = Duration.ofSeconds(200);
-
     private final EventHistoryService eventHistoryService;
     private final EnforcementService enforcementService;
     private final List<ThreatStrategy> strategies;
-    private final StringRedisTemplate stringRedisTemplate;
+    private final edu.pict.mcpservice.util.RedisGuardService redisGuardService;
     private final Executor aiExecutor;
 
     public McpAnalysisService(
             EventHistoryService eventHistoryService,
             EnforcementService enforcementService,
             List<ThreatStrategy> strategies,
-            StringRedisTemplate stringRedisTemplate,
+            edu.pict.mcpservice.util.RedisGuardService redisGuardService,
             @Qualifier("aiExecutor") Executor aiExecutor) {
         this.eventHistoryService = eventHistoryService;
         this.enforcementService = enforcementService;
         this.strategies = strategies;
-        this.stringRedisTemplate = stringRedisTemplate;
+        this.redisGuardService = redisGuardService;
         this.aiExecutor = aiExecutor;
     }
 
@@ -51,21 +45,22 @@ public class McpAnalysisService {
      * Analyzes a batch of security alerts for a single UUID.
      *
      * <p>Flow:
+     *
      * <ol>
-     *   <li>Skip if MCP recently checked this UUID</li>
-     *   <li>Skip if UUID is already blocked</li>
-     *   <li>Mark UUID as checked</li>
-     *   <li>Fetch user history once via gRPC</li>
-     *   <li>Run rule strategies per alert — first block stops everything</li>
-     *   <li>If no rule matched — run AI analysis asynchronously</li>
+     *   <li>Skip if MCP recently checked this UUID
+     *   <li>Skip if UUID is already blocked
+     *   <li>Mark UUID as checked
+     *   <li>Fetch user history once via gRPC
+     *   <li>Run rule strategies per alert — first block stops everything
+     *   <li>If no rule matched — run AI analysis asynchronously
      * </ol>
      */
     public void analyze(String uuid, List<SecurityAlertEvent> alerts) {
 
         if (isAlreadyBlocked(uuid)) return;
-        if (wasRecentlyChecked(uuid)) return;
+        if (redisGuardService.wasRecentlyChecked(uuid)) return;
 
-        markAsChecked(uuid);
+        redisGuardService.markAsChecked(uuid);
 
         log.info("Analyzing {} alerts for UUID: {}", alerts.size(), uuid);
 
@@ -82,16 +77,6 @@ public class McpAnalysisService {
     //  GUARD CHECKS
     // ═══════════════════════════════════════════════════════════════════════
 
-    /** Returns true if this UUID was already processed by MCP within the checked window. */
-    private boolean wasRecentlyChecked(String uuid) {
-        String checkedKey = CHECKED_PREFIX + uuid;
-        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(checkedKey))) {
-            log.debug("UUID {} was recently checked by MCP, skipping", uuid);
-            return true;
-        }
-        return false;
-    }
-
     /** Returns true if this UUID is currently on the Redis blacklist. */
     private boolean isAlreadyBlocked(String uuid) {
         if (Boolean.TRUE.equals(enforcementService.isBlocked(uuid))) {
@@ -101,61 +86,15 @@ public class McpAnalysisService {
         return false;
     }
 
-    /** Marks this UUID as checked so subsequent batches within the window are skipped. */
-    private void markAsChecked(String uuid) {
-        String checkedKey = CHECKED_PREFIX + uuid;
-        stringRedisTemplate
-                .opsForValue()
-                .set(checkedKey, String.valueOf(System.currentTimeMillis()), CHECKED_WINDOW);
-    }
-
     // ═══════════════════════════════════════════════════════════════════════
     //  HISTORY
     // ═══════════════════════════════════════════════════════════════════════
 
     /** Fetches the last 10 minutes of user request history via gRPC and maps to LogEvent. */
     private List<LogEvent> fetchHistory(String uuid) {
-        List<UserLogEvent> grpcList =
-                eventHistoryService.getAllEventsInDuration(uuid, 10);
+        List<UserLogEvent> grpcList = eventHistoryService.getAllEventsInDuration(uuid, 10);
 
-        return grpcList.stream()
-                .map(
-                        grpcEvent ->
-                                LogEvent.builder()
-                                        .uuid(grpcEvent.getUuid())
-                                        .path(grpcEvent.getPath())
-                                        .method(grpcEvent.getMethod())
-                                        .latencyMs(grpcEvent.getLatencyMs())
-                                        .queryParams(grpcEvent.getQueryParams())
-                                        .clientIp(grpcEvent.getClientIp())
-                                        .statusCode(grpcEvent.getStatusCode())
-                                        .requestSize(grpcEvent.getRequestSize())
-                                        .timestamp(grpcEvent.getTimestamp())
-                                        .userAgent(grpcEvent.getUserAgent())
-                                        .build())
-                .toList();
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    //  DEDUP
-    // ═══════════════════════════════════════════════════════════════════════
-
-    /** Returns true if this exact uuid+errorCode combination was NOT seen recently (first time). */
-    private boolean isFirstOccurrence(String uuid, int errorCode) {
-        String dedupKey = DEDUP_PREFIX + uuid + ":" + errorCode;
-        Boolean isFirstSeen =
-                stringRedisTemplate
-                        .opsForValue()
-                        .setIfAbsent(
-                                dedupKey,
-                                String.valueOf(System.currentTimeMillis()),
-                                DEDUP_WINDOW);
-
-        if (!Boolean.TRUE.equals(isFirstSeen)) {
-            log.debug("Dedup: skipping duplicate event for {}", dedupKey);
-            return false;
-        }
-        return true;
+        return LogEventMapper.fromGrpcList(grpcList);
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -172,7 +111,7 @@ public class McpAnalysisService {
 
         for (SecurityAlertEvent alert : alerts) {
 
-            if (!isFirstOccurrence(uuid, alert.getErrorCode())) {
+            if (!redisGuardService.isFirstOccurrence(uuid, alert.getErrorCode())) {
                 continue;
             }
 
@@ -218,8 +157,12 @@ public class McpAnalysisService {
                 .ifPresent(
                         aiStrategy ->
                                 CompletableFuture.runAsync(
-                                        () -> executeAiStrategy(uuid, representativeAlert,
-                                                history, aiStrategy),
+                                        () ->
+                                                executeAiStrategy(
+                                                        uuid,
+                                                        representativeAlert,
+                                                        history,
+                                                        aiStrategy),
                                         aiExecutor));
     }
 

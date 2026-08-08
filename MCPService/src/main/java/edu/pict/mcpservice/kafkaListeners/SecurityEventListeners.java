@@ -27,7 +27,8 @@ public class SecurityEventListeners {
 
     @KafkaListener(topics = "security-events", groupId = "mcp-analysis-group")
     public void onSecurityAlertBatch(List<SecurityAlertEvent> alerts) {
-        log.info("📦 Kafka Batch Received: {} events — dispatching to analysis pool", alerts.size());
+        log.info(
+                "📦 Kafka Batch Received: {} events — dispatching to analysis pool", alerts.size());
 
         Map<String, List<SecurityAlertEvent>> eventsByUuid =
                 alerts.stream().collect(Collectors.groupingBy(SecurityAlertEvent::getUuid));
