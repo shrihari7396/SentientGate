@@ -24,8 +24,7 @@ public class PatternMatchStrategy implements ThreatStrategy {
                     Pattern.compile("(?<![\\w-])insert(?![\\w-])", Pattern.CASE_INSENSITIVE),
                     Pattern.compile("(?<![\\w-])drop(?![\\w-])", Pattern.CASE_INSENSITIVE),
                     Pattern.compile(
-                            "(?<![\\w-])waitfor\\s+delay(?![\\w-])",
-                            Pattern.CASE_INSENSITIVE));
+                            "(?<![\\w-])waitfor\\s+delay(?![\\w-])", Pattern.CASE_INSENSITIVE));
 
     // ── Unambiguous payload markers — plain substring match is sufficient ──
     // These strings are almost never legitimate path components.

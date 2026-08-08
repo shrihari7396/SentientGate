@@ -5,9 +5,7 @@ import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Utility class for mapping gRPC UserLogEvent objects to internal LogEvent objects.
- */
+/** Utility class for mapping gRPC UserLogEvent objects to internal LogEvent objects. */
 public final class LogEventMapper {
 
     private LogEventMapper() {
@@ -48,8 +46,6 @@ public final class LogEventMapper {
         if (grpcEvents == null) {
             return List.of();
         }
-        return grpcEvents.stream()
-                .map(LogEventMapper::fromGrpc)
-                .collect(Collectors.toList());
+        return grpcEvents.stream().map(LogEventMapper::fromGrpc).collect(Collectors.toList());
     }
 }

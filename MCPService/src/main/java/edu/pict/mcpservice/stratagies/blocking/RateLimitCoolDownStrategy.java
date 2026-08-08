@@ -21,8 +21,7 @@ public class RateLimitCoolDownStrategy implements ThreatStrategy {
         }
 
         // Check history for repeated rate-limit violations
-        long rateLimitCount =
-                history.stream().filter(log -> log.getStatusCode() == 429).count();
+        long rateLimitCount = history.stream().filter(log -> log.getStatusCode() == 429).count();
         return rateLimitCount >= RATE_LIMIT_HISTORY_THRESHOLD;
     }
 
