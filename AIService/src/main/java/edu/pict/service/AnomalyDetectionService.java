@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class AnomalyDetectionService {
 
     private final OllamaService ollamaService;
 
-    public AnomalyDetectionResponse analyze(AnomalyDetectionRequest req) {
+    public Mono<AnomalyDetectionResponse> analyze(AnomalyDetectionRequest req) {
         long start = System.currentTimeMillis();
 
         List<LogEvent> history = req.getHistory();
@@ -86,20 +87,20 @@ public class AnomalyDetectionService {
         // Convert features -> model prompt
         String prompt = buildPrompt(failureRate, requestsPerMinute, uniqueRoutesAccessed, jwtReuseCount, ipReputationScore, routeSensitivity);
 
-        double score = ollamaService.predictAnomalyScore(prompt);
+        return ollamaService.predictAnomalyScore(prompt).map(score -> {
+            boolean anomaly = score > 0.7;
 
-        boolean anomaly = score > 0.7;
-
-        return AnomalyDetectionResponse.builder()
-                .anomaly(anomaly)
-                .confidence(score)
-                .modelVersion("v1.0")
-                .inferenceTimeMs(System.currentTimeMillis() - start)
-                .isAnomaly(anomaly)
-                .confidenceScore(score)
-                .patternDetected(anomaly ? "AI_BEHAVIORAL_ANOMALY" : "NORMAL")
-                .suggestedBlockMinutes(anomaly ? 60 : 0)
-                .build();
+            return AnomalyDetectionResponse.builder()
+                    .anomaly(anomaly)
+                    .confidence(score)
+                    .modelVersion("v1.0")
+                    .inferenceTimeMs(System.currentTimeMillis() - start)
+                    .isAnomaly(anomaly)
+                    .confidenceScore(score)
+                    .patternDetected(anomaly ? "AI_BEHAVIORAL_ANOMALY" : "NORMAL")
+                    .suggestedBlockMinutes(anomaly ? 60 : 0)
+                    .build();
+        });
     }
 
     private String buildPrompt(double failureRate, double requestsPerMinute, long uniqueRoutes, long jwtReuse, double ipReputation, String routeSensitivity) {
