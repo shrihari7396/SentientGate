@@ -2,9 +2,7 @@ package edu.pict.mcpservice.stratagies.blocking;
 
 import edu.pict.mcpservice.kafkaEvents.LogEvent;
 import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.text.Normalizer;
+import edu.pict.mcpservice.util.InputNormalizer;
 import java.time.Duration;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -14,13 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(1)
 public class PatternMatchStrategy implements ThreatStrategy {
-
-    // ── Maximum URL-decode iterations to catch double/triple encoding ──
-    private static final int MAX_DECODE_PASSES = 3;
-
-    // ── Inline SQL comment pattern: /* ... */ (non-greedy) ──
-    private static final Pattern SQL_COMMENT_PATTERN =
-            Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
 
     // ── Word-boundary-aware patterns for SQL / command keywords ──
     // Custom lookaround treats hyphens as word characters so that
@@ -43,22 +34,34 @@ public class PatternMatchStrategy implements ThreatStrategy {
 
     @Override
     public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
-        String normalized = normalize(alert.getAttemptedPath());
+        // Check the current alert path first
+        if (containsMaliciousPattern(InputNormalizer.normalize(alert.getAttemptedPath()))) {
+            return true;
+        }
 
-        // Check unambiguous substring markers first (cheap)
+        // Scan historical request paths — catches attackers spreading
+        // encoded payloads across multiple requests
+        for (LogEvent log : history) {
+            if (log.getPath() != null
+                    && containsMaliciousPattern(InputNormalizer.normalize(log.getPath()))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean containsMaliciousPattern(String normalized) {
         for (String marker : SUBSTRING_MARKERS) {
             if (normalized.contains(marker)) {
                 return true;
             }
         }
-
-        // Check word-boundary-aware keyword patterns
         for (Pattern pattern : KEYWORD_PATTERNS) {
             if (pattern.matcher(normalized).find()) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -70,54 +73,5 @@ public class PatternMatchStrategy implements ThreatStrategy {
     @Override
     public String getReason() {
         return "CRITICAL_INJECTION_ATTEMPT";
-    }
-
-    // ── Internal normalization pipeline ──────────────────────────────────
-    // 1. Iterative URL-decode (handles double/triple encoding)
-    // 2. Strip inline SQL comments (/* ... */)
-    // 3. Unicode NFKC normalization (collapses fullwidth chars, etc.)
-    // 4. Lowercase
-
-    /**
-     * Normalizes the input through iterative URL-decoding, SQL comment removal,
-     * Unicode NFKC normalization, and lowercasing. Package-private for testability.
-     */
-    String normalize(String input) {
-        if (input == null) {
-            return "";
-        }
-
-        // Step 1: Iterative URL-decode (capped to avoid DoS on crafted inputs)
-        String decoded = iterativeDecode(input);
-
-        // Step 2: Strip inline SQL comment sequences
-        decoded = SQL_COMMENT_PATTERN.matcher(decoded).replaceAll("");
-
-        // Step 3: Unicode NFKC normalization
-        decoded = Normalizer.normalize(decoded, Normalizer.Form.NFKC);
-
-        // Step 4: Lowercase
-        return decoded.toLowerCase();
-    }
-
-    private String iterativeDecode(String input) {
-        String current = input;
-        for (int i = 0; i < MAX_DECODE_PASSES; i++) {
-            String decoded = urlDecode(current);
-            if (decoded.equals(current)) {
-                break; // No further decoding possible
-            }
-            current = decoded;
-        }
-        return current;
-    }
-
-    private String urlDecode(String input) {
-        try {
-            return URLDecoder.decode(input, StandardCharsets.UTF_8);
-        } catch (IllegalArgumentException e) {
-            // Malformed percent-encoding — return as-is
-            return input;
-        }
     }
 }
