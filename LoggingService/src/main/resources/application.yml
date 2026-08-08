@@ -32,7 +32,7 @@ spring:
           batch_size: 100
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:10000
 
     consumer:
       group-id: sentientgate-logging-service
@@ -68,3 +68,16 @@ eureka:
     prefer-ip-address: true
     metadata-map:
       gRPC.port: 9090
+
+grpc:
+  server:
+    port: 9090
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
