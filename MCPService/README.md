@@ -186,31 +186,31 @@ sequenceDiagram
 
 ## Threat Analysis Pipeline & Strategy Cost Model
 
-### Short-Circuit Guards
+### Short-Circuit Guards (`RedisGuardService`)
 
-Before fetching history or running strategies, `McpAnalysisService` applies three fast-path short-circuits:
+Before fetching history or running strategies, the dedicated `RedisGuardService` applies three fast-path short-circuits:
 
 1. **Blacklist Short-Circuit**: Checks `blacklist:{uuid}` in Redis. If the user is already blocked, processing aborts immediately.
 2. **Checked-Window Short-Circuit**: Checks `mcp:checked:{uuid}` in Redis (200-second window). If the UUID was recently checked and not blocked, duplicate checks in the same window are skipped.
 3. **Alert Deduplication**: Checks `mcp:dedup:{uuid}:{errorCode}` via atomic `setIfAbsent` with a 30-second TTL. Prevents redundant strategy evaluation for repeated alerts of the same type within 30 seconds.
 
+### Input Normalization (`InputNormalizer`)
+
+To prevent encoding-based bypasses, all incoming alerts and historical logs are passed through a centralized, 4-step normalization pipeline before rule evaluation:
+1. Iterative URL-decoding (up to 3 passes to prevent DoS)
+2. SQL comment stripping (`/* ... */`)
+3. Unicode NFKC normalization
+4. Lowercasing
+
 ### Strategy Ordering & Matrix
 
-Strategies implement the [`ThreatStrategy`](src/main/java/edu/pict/mcpservice/stratagies/blocking/ThreatStrategy.java) interface and use Spring's `@Order` annotation to establish strict priority. Cheap, deterministic rules run first; expensive AI inference runs last.
-
-```java
-public interface ThreatStrategy {
-    boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history);
-    Duration getBlockDuration();
-    String getReason();
-}
-```
+Strategies implement the [`ThreatStrategy`](src/main/java/edu/pict/mcpservice/stratagies/blocking/ThreatStrategy.java) interface and use Spring's `@Order` annotation to establish strict priority. Cheap, deterministic rules run first; expensive AI inference runs last. **Crucially, every strategy analyzes both the current alert AND the historical logs** to detect fragmented attacks.
 
 | Order | Strategy Class | Primary Trigger & Logic | Block TTL | Severity | Reason Code |
 |-------|----------------|-------------------------|-----------|----------|-------------|
-| **1** | `PatternMatchStrategy` | URL path contains SQLi (`select`, `union`, `' or 1=1`), XSS (`<script>`, `alert(`), Path Traversal (`../`, `etc/passwd`), or Command Injection patterns. | 1 Day | `CRITICAL` | `CRITICAL_INJECTION_ATTEMPT` |
-| **2** | `SensitivePathStrategy` | URL path starts with sensitive targets: `/wp-admin`, `/.env`, `/config.php`, `/admin/login`, `/.git`, `/actuator`. | 7 Days | `CRITICAL` | `SENSITIVE_PATH_RECONNAISSANCE` |
-| **3** | `RateLimitCoolDownStrategy` | Incoming alert `errorCode` equals `429` (Too Many Requests). | 15 Minutes | `LOW` | `Aggressive polling detected. 15m cool-down.` |
+| **1** | `PatternMatchStrategy` | Compiled regex patterns for SQLi (`(?<![\w-])select(?![\w-])`, `union`), XSS (`<script>`), Path Traversal, and Command Injection. Scans both current alert and log history. | 1 Day | `CRITICAL` | `CRITICAL_INJECTION_ATTEMPT` |
+| **2** | `SensitivePathStrategy` | 14 compiled regex patterns for recon targets: `/wp-admin`, `/.env`, `/config.php`, `/admin/login`, `/.git`, `/actuator`, etc. Scans both alert and log history. | 7 Days | `CRITICAL` | `SENSITIVE_PATH_RECONNAISSANCE` |
+| **3** | `RateLimitCoolDownStrategy` | Incoming alert `errorCode` equals `429` AND history contains >= 3 previous `429` errors (differentiates persistent scanners from accidental bursts). | 15 Minutes | `LOW` | `Aggressive polling detected. 15m cool-down.` |
 | **4** | `HighErrorRateStrategy` | History contains > 5 requests AND HTTP error status codes (>=400) account for > 70% of requests. | 2 Hours | `MEDIUM` | `HIGH_ERROR_RATE_SCANNER_DETECTED` |
 | **5** | `BurstTrafficStrategy` | History contains >= 20 requests where the time delta between the first and last request is < 5000ms (5 seconds). | 30 Minutes | `LOW` | `BURST_TRAFFIC_DETECTED_BOT_SUSPECT` |
 | **6** | `AiAnomalyStrategy` | Invokes `AIClient` via Feign. Matched when `isAnomaly == true` AND `confidenceScore > 0.85`. Requires history size >= 5. | 6 Hours | `MEDIUM` | `AI_BEHAVIORAL_ANOMALY_DETECTED` |
