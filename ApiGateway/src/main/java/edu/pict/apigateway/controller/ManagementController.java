@@ -6,9 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -18,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping({"/api/mgmt/blacklist", "/api/threat/blacklist"})
 @RequiredArgsConstructor
+@Slf4j
 public class ManagementController {
 
     private final ReactiveStringRedisTemplate redisTemplate;
@@ -50,11 +54,15 @@ public class ManagementController {
     public Mono<ResponseEntity<List<BlacklistEntry>>> getBlacklist() {
         return redisTemplate
                 .keys(BLACKLIST_PREFIX + "*")
+                .onErrorResume(e -> {
+                    log.error("Failed to fetch blacklist keys from Redis", e);
+                    return Flux.empty();
+                })
                 .flatMap(key -> {
                     String uuid = key.substring(BLACKLIST_PREFIX.length());
                     return Mono.zip(
-                        redisTemplate.opsForValue().get(key),
-                        redisTemplate.getExpire(key)
+                        redisTemplate.opsForValue().get(key).onErrorReturn(""),
+                        redisTemplate.getExpire(key).onErrorReturn(Duration.ofSeconds(3600))
                     ).map(tuple -> {
                         String json = tuple.getT1();
                         Duration expire = tuple.getT2();
@@ -97,12 +105,24 @@ public class ManagementController {
             return redisTemplate
                     .opsForValue()
                     .set(BLACKLIST_PREFIX + uuid, jsonVal, Duration.ofHours(1))
-                    .map(success -> ResponseEntity.ok().<Void>build());
+                    .onErrorResume(e -> {
+                        log.error("Failed to block uuid in Redis: {}", uuid, e);
+                        return Mono.just(false);
+                    })
+                    .map(success -> Boolean.TRUE.equals(success) ? 
+                               ResponseEntity.ok().<Void>build() :
+                               ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<Void>build());
         } catch (Exception e) {
             return redisTemplate
                     .opsForValue()
                     .set(BLACKLIST_PREFIX + uuid, "true", Duration.ofHours(1))
-                    .map(success -> ResponseEntity.ok().<Void>build());
+                    .onErrorResume(err -> {
+                        log.error("Failed to fallback block uuid in Redis: {}", uuid, err);
+                        return Mono.just(false);
+                    })
+                    .map(success -> Boolean.TRUE.equals(success) ? 
+                               ResponseEntity.ok().<Void>build() :
+                               ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<Void>build());
         }
     }
 
@@ -110,6 +130,12 @@ public class ManagementController {
     public Mono<ResponseEntity<Void>> unblock(@PathVariable String uuid) {
         return redisTemplate
                 .delete(BLACKLIST_PREFIX + uuid)
-                .map(count -> ResponseEntity.ok().<Void>build());
+                .onErrorResume(e -> {
+                    log.error("Failed to unblock uuid in Redis: {}", uuid, e);
+                    return Mono.just(-1L);
+                })
+                .map(count -> count >= 0 ? 
+                               ResponseEntity.ok().<Void>build() :
+                               ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<Void>build());
     }
 }
