@@ -180,7 +180,6 @@ class PatternMatchStrategyTest {
         }
     }
 
-
     // ═══════════════════════════════════════════════════════════════════
     // Edge cases
     // ═══════════════════════════════════════════════════════════════════
@@ -200,8 +199,7 @@ class PatternMatchStrategyTest {
         @DisplayName("path traversal with backslashes")
         void backslashTraversal() {
             // ../ is the marker — backslash variant doesn't apply unless normalized
-            assertFalse(
-                    strategy.isAvailable(alertWithPath("/api/..\\etc\\passwd"), emptyHistory));
+            assertFalse(strategy.isAvailable(alertWithPath("/api/..\\etc\\passwd"), emptyHistory));
         }
 
         @Test
@@ -222,8 +220,7 @@ class PatternMatchStrategyTest {
         @Test
         @DisplayName("SQL keyword NOT at word boundary should not trigger")
         void sqlKeywordNotAtBoundary() {
-            assertFalse(
-                    strategy.isAvailable(alertWithPath("/reselection/overview"), emptyHistory));
+            assertFalse(strategy.isAvailable(alertWithPath("/reselection/overview"), emptyHistory));
         }
     }
 
@@ -236,7 +233,8 @@ class PatternMatchStrategyTest {
     class HistoryScanning {
 
         @Test
-        @DisplayName("triggers when history contains a malicious path even if current alert is clean")
+        @DisplayName(
+                "triggers when history contains a malicious path even if current alert is clean")
         void maliciousHistoryPath() {
             SecurityAlertEvent cleanAlert = alertWithPath("/api/v1/users");
             List<LogEvent> history =

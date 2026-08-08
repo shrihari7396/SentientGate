@@ -45,13 +45,14 @@ public class McpAnalysisService {
      * Analyzes a batch of security alerts for a single UUID.
      *
      * <p>Flow:
+     *
      * <ol>
-     *   <li>Skip if MCP recently checked this UUID</li>
-     *   <li>Skip if UUID is already blocked</li>
-     *   <li>Mark UUID as checked</li>
-     *   <li>Fetch user history once via gRPC</li>
-     *   <li>Run rule strategies per alert — first block stops everything</li>
-     *   <li>If no rule matched — run AI analysis asynchronously</li>
+     *   <li>Skip if MCP recently checked this UUID
+     *   <li>Skip if UUID is already blocked
+     *   <li>Mark UUID as checked
+     *   <li>Fetch user history once via gRPC
+     *   <li>Run rule strategies per alert — first block stops everything
+     *   <li>If no rule matched — run AI analysis asynchronously
      * </ol>
      */
     public void analyze(String uuid, List<SecurityAlertEvent> alerts) {
@@ -91,8 +92,7 @@ public class McpAnalysisService {
 
     /** Fetches the last 10 minutes of user request history via gRPC and maps to LogEvent. */
     private List<LogEvent> fetchHistory(String uuid) {
-        List<UserLogEvent> grpcList =
-                eventHistoryService.getAllEventsInDuration(uuid, 10);
+        List<UserLogEvent> grpcList = eventHistoryService.getAllEventsInDuration(uuid, 10);
 
         return LogEventMapper.fromGrpcList(grpcList);
     }
@@ -157,8 +157,12 @@ public class McpAnalysisService {
                 .ifPresent(
                         aiStrategy ->
                                 CompletableFuture.runAsync(
-                                        () -> executeAiStrategy(uuid, representativeAlert,
-                                                history, aiStrategy),
+                                        () ->
+                                                executeAiStrategy(
+                                                        uuid,
+                                                        representativeAlert,
+                                                        history,
+                                                        aiStrategy),
                                         aiExecutor));
     }
 

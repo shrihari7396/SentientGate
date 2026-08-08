@@ -6,8 +6,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
- * Service responsible for Redis-based deduplication and guard checks
- * to prevent redundant processing in MCP Analysis.
+ * Service responsible for Redis-based deduplication and guard checks to prevent redundant
+ * processing in MCP Analysis.
  */
 @Slf4j
 @Service
@@ -24,9 +24,7 @@ public class RedisGuardService {
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
-    /**
-     * Returns true if this UUID was already processed by MCP within the checked window.
-     */
+    /** Returns true if this UUID was already processed by MCP within the checked window. */
     public boolean wasRecentlyChecked(String uuid) {
         String checkedKey = CHECKED_PREFIX + uuid;
         if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(checkedKey))) {
@@ -36,9 +34,7 @@ public class RedisGuardService {
         return false;
     }
 
-    /**
-     * Marks this UUID as checked so subsequent batches within the window are skipped.
-     */
+    /** Marks this UUID as checked so subsequent batches within the window are skipped. */
     public void markAsChecked(String uuid) {
         String checkedKey = CHECKED_PREFIX + uuid;
         stringRedisTemplate
@@ -46,18 +42,14 @@ public class RedisGuardService {
                 .set(checkedKey, String.valueOf(System.currentTimeMillis()), CHECKED_WINDOW);
     }
 
-    /**
-     * Returns true if this exact uuid+errorCode combination was NOT seen recently (first time).
-     */
+    /** Returns true if this exact uuid+errorCode combination was NOT seen recently (first time). */
     public boolean isFirstOccurrence(String uuid, int errorCode) {
         String dedupKey = DEDUP_PREFIX + uuid + ":" + errorCode;
         Boolean isFirstSeen =
                 stringRedisTemplate
                         .opsForValue()
                         .setIfAbsent(
-                                dedupKey,
-                                String.valueOf(System.currentTimeMillis()),
-                                DEDUP_WINDOW);
+                                dedupKey, String.valueOf(System.currentTimeMillis()), DEDUP_WINDOW);
 
         if (!Boolean.TRUE.equals(isFirstSeen)) {
             log.debug("Dedup: skipping duplicate event for {}", dedupKey);
