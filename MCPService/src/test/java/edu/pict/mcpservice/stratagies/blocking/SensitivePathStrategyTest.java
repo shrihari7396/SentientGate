@@ -234,8 +234,7 @@ class SensitivePathStrategyTest {
         void encodedForbiddenInHistory() {
             SecurityAlertEvent cleanAlert = alertWithPath("/dashboard");
             List<LogEvent> history =
-                    List.of(
-                            LogEvent.builder().path("/%2eenv").timestamp(1000L).build());
+                    List.of(LogEvent.builder().path("/%2eenv").timestamp(1000L).build());
             assertTrue(strategy.isAvailable(cleanAlert, history));
         }
 
