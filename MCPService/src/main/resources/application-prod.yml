@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  data:
+    redis:
+      # In production, NO default fallback to localhost
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: ${SPRING_KAFKA_CONSUMER_GROUP_ID:sentientgate-mcp-service}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+  instance:
+    prefer-ip-address: true
+    # In Kubernetes, the pod IP is used, hostname is dynamic
+    hostname: ${HOSTNAME}
+
+# Disable ANSI coloring for production log aggregators (e.g. Fluentd/ELK/Datadog)
+  output:
+    ansi:
+      enabled: NEVER
+
+logging:
+  level:
+    root: INFO
+    edu.pict.mcpservice: INFO
+    org.springframework.kafka: WARN
+    org.springframework.data.redis: WARN
+    io.grpc: WARN
+
+# Configure actuator to be less verbose or only expose health
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
