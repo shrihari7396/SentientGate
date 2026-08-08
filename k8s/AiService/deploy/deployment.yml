@@ -19,6 +19,9 @@ spec:
         - name: ai-service
           image: shrihari7396/ai-service:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
           envFrom:
             - configMapRef:
                 name: ai-service-config
