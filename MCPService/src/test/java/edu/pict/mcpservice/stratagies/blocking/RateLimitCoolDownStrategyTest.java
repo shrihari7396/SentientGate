@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class RateLimitCoolDownStrategyTest {
@@ -89,14 +90,64 @@ class RateLimitCoolDownStrategyTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // History is ignored
+    // History-based 429 detection
     // ═══════════════════════════════════════════════════════════════════
 
-    @Test
-    @DisplayName("history does not affect the decision")
-    void historyIgnored() {
-        LogEvent log = LogEvent.builder().statusCode(200).timestamp(1000L).build();
-        assertTrue(strategy.isAvailable(alertWithErrorCode(429), List.of(log)));
-        assertFalse(strategy.isAvailable(alertWithErrorCode(200), List.of(log)));
+    @Nested
+    @DisplayName("History scanning for repeated 429s")
+    class HistoryScanning {
+
+        @Test
+        @DisplayName("triggers when history has >=3 rate-limit (429) responses")
+        void triggersOnRepeated429sInHistory() {
+            List<LogEvent> history =
+                    List.of(
+                            LogEvent.builder().statusCode(429).timestamp(1000L).build(),
+                            LogEvent.builder().statusCode(429).timestamp(2000L).build(),
+                            LogEvent.builder().statusCode(429).timestamp(3000L).build());
+            assertTrue(strategy.isAvailable(alertWithErrorCode(200), history));
+        }
+
+        @Test
+        @DisplayName("does NOT trigger with only 2 429s in history (below threshold)")
+        void doesNotTriggerBelowThreshold() {
+            List<LogEvent> history =
+                    List.of(
+                            LogEvent.builder().statusCode(429).timestamp(1000L).build(),
+                            LogEvent.builder().statusCode(429).timestamp(2000L).build());
+            assertFalse(strategy.isAvailable(alertWithErrorCode(200), history));
+        }
+
+        @Test
+        @DisplayName("triggers on current 429 regardless of clean history")
+        void current429StillTriggers() {
+            List<LogEvent> cleanHistory =
+                    List.of(LogEvent.builder().statusCode(200).timestamp(1000L).build());
+            assertTrue(strategy.isAvailable(alertWithErrorCode(429), cleanHistory));
+        }
+
+        @Test
+        @DisplayName("does NOT trigger with non-429 errors in history")
+        void nonRateLimitErrorsInHistory() {
+            List<LogEvent> history =
+                    List.of(
+                            LogEvent.builder().statusCode(400).timestamp(1000L).build(),
+                            LogEvent.builder().statusCode(403).timestamp(2000L).build(),
+                            LogEvent.builder().statusCode(500).timestamp(3000L).build());
+            assertFalse(strategy.isAvailable(alertWithErrorCode(200), history));
+        }
+
+        @Test
+        @DisplayName("triggers with mixed statuses when 429 count >= 3")
+        void mixedStatusesWithEnough429s() {
+            List<LogEvent> history =
+                    List.of(
+                            LogEvent.builder().statusCode(200).timestamp(1000L).build(),
+                            LogEvent.builder().statusCode(429).timestamp(2000L).build(),
+                            LogEvent.builder().statusCode(404).timestamp(3000L).build(),
+                            LogEvent.builder().statusCode(429).timestamp(4000L).build(),
+                            LogEvent.builder().statusCode(429).timestamp(5000L).build());
+            assertTrue(strategy.isAvailable(alertWithErrorCode(200), history));
+        }
     }
 }

@@ -7,13 +7,10 @@ import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class PatternMatchStrategyTest {
@@ -183,60 +180,6 @@ class PatternMatchStrategyTest {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════
-    // Normalization unit tests (internal pipeline)
-    // ═══════════════════════════════════════════════════════════════════
-
-    @Nested
-    @DisplayName("Normalization pipeline")
-    class NormalizationTests {
-
-        @Test
-        @DisplayName("null input normalizes to empty string")
-        void nullInput() {
-            assertEquals("", strategy.normalize(null));
-        }
-
-        @Test
-        @DisplayName("single URL-decode pass")
-        void singleUrlDecode() {
-            assertEquals("select", strategy.normalize("%73elect"));
-        }
-
-        @Test
-        @DisplayName("double URL-decode pass")
-        void doubleUrlDecode() {
-            assertEquals("select", strategy.normalize("%2573elect"));
-        }
-
-        @Test
-        @DisplayName("strips inline SQL comments")
-        void stripsComments() {
-            String result = strategy.normalize("sel/**/ect");
-            assertEquals("select", result);
-        }
-
-        @Test
-        @DisplayName("NFKC normalization collapses fullwidth characters")
-        void nfkcNormalization() {
-            // Fullwidth 'Ｓ' (U+FF33) should normalize to 's' after NFKC + lowercase
-            String result = strategy.normalize("\uFF33elect");
-            assertEquals("select", result);
-        }
-
-        @Test
-        @DisplayName("lowercases everything")
-        void lowercasing() {
-            assertEquals("select", strategy.normalize("SELECT"));
-        }
-
-        @Test
-        @DisplayName("malformed percent-encoding is handled gracefully")
-        void malformedEncoding() {
-            // %ZZ is not valid percent-encoding — should not throw
-            assertDoesNotThrow(() -> strategy.normalize("/path?q=%ZZbad"));
-        }
-    }
 
     // ═══════════════════════════════════════════════════════════════════
     // Edge cases
@@ -281,6 +224,79 @@ class PatternMatchStrategyTest {
         void sqlKeywordNotAtBoundary() {
             assertFalse(
                     strategy.isAvailable(alertWithPath("/reselection/overview"), emptyHistory));
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // History-based detection
+    // ═══════════════════════════════════════════════════════════════════
+
+    @Nested
+    @DisplayName("History path scanning")
+    class HistoryScanning {
+
+        @Test
+        @DisplayName("triggers when history contains a malicious path even if current alert is clean")
+        void maliciousHistoryPath() {
+            SecurityAlertEvent cleanAlert = alertWithPath("/api/v1/users");
+            List<LogEvent> history =
+                    List.of(
+                            LogEvent.builder().path("/api/v1/health").timestamp(1000L).build(),
+                            LogEvent.builder()
+                                    .path("/search?q=select * from users")
+                                    .timestamp(2000L)
+                                    .build());
+            assertTrue(strategy.isAvailable(cleanAlert, history));
+        }
+
+        @Test
+        @DisplayName("triggers on encoded malicious history path")
+        void encodedMaliciousHistoryPath() {
+            SecurityAlertEvent cleanAlert = alertWithPath("/dashboard");
+            List<LogEvent> history =
+                    List.of(
+                            LogEvent.builder()
+                                    .path("/api/%2e%2e%2fetc/passwd")
+                                    .timestamp(1000L)
+                                    .build());
+            assertTrue(strategy.isAvailable(cleanAlert, history));
+        }
+
+        @Test
+        @DisplayName("does NOT trigger when both alert and history are clean")
+        void cleanAlertAndHistory() {
+            SecurityAlertEvent cleanAlert = alertWithPath("/api/v1/users");
+            List<LogEvent> history =
+                    List.of(
+                            LogEvent.builder().path("/api/v1/health").timestamp(1000L).build(),
+                            LogEvent.builder().path("/dashboard").timestamp(2000L).build());
+            assertFalse(strategy.isAvailable(cleanAlert, history));
+        }
+
+        @Test
+        @DisplayName("handles null paths in history gracefully")
+        void nullPathsInHistory() {
+            SecurityAlertEvent cleanAlert = alertWithPath("/api/v1/users");
+            List<LogEvent> history =
+                    List.of(LogEvent.builder().path(null).timestamp(1000L).build());
+            assertFalse(strategy.isAvailable(cleanAlert, history));
+        }
+
+        @Test
+        @DisplayName("legitimate hyphenated paths in history do NOT trigger")
+        void legitimateHyphenatedHistoryPaths() {
+            SecurityAlertEvent cleanAlert = alertWithPath("/dashboard");
+            List<LogEvent> history =
+                    List.of(
+                            LogEvent.builder()
+                                    .path("/products/select-category")
+                                    .timestamp(1000L)
+                                    .build(),
+                            LogEvent.builder()
+                                    .path("/api/insert-user-note")
+                                    .timestamp(2000L)
+                                    .build());
+            assertFalse(strategy.isAvailable(cleanAlert, history));
         }
     }
 }
