@@ -14,7 +14,7 @@ spring:
     ansi:
       enabled: always
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:10000
 
     consumer:
       group-id: sentientgate-mcp-service
