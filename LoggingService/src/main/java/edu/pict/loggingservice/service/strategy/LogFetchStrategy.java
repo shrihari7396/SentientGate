@@ -5,20 +5,21 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * Strategy interface for fetching log events. Implementations provide different data sources
- * (Redis cache, PostgreSQL) and the resolver chains them: Redis first for speed, DB as fallback.
+ * Strategy interface for fetching log events. Implementations provide different data sources (Redis
+ * cache, PostgreSQL) and the resolver chains them: Redis first for speed, DB as fallback.
  */
 public interface LogFetchStrategy {
 
     /**
-     * Fetch log events for a given visitor UUID that occurred after the specified instant.
-     * Maps directly to the gRPC {@code UserLogEventsRequest} parameters:
+     * Fetch log events for a given visitor UUID that occurred after the specified instant. Maps
+     * directly to the gRPC {@code UserLogEventsRequest} parameters:
+     *
      * <ul>
-     *   <li>{@code uuid} — the visitor's unique identifier (gRPC field: uuid)</li>
-     *   <li>{@code since} — computed from gRPC field: {@code Instant.now() - duration minutes}</li>
+     *   <li>{@code uuid} — the visitor's unique identifier (gRPC field: uuid)
+     *   <li>{@code since} — computed from gRPC field: {@code Instant.now() - duration minutes}
      * </ul>
      *
-     * @param uuid  the visitor UUID to query logs for
+     * @param uuid the visitor UUID to query logs for
      * @param since the earliest timestamp to include
      * @return list of matching log entities, or empty list if no data found
      */

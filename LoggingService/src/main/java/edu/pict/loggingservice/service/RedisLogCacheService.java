@@ -13,13 +13,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
- * Caches log events into Redis for near-instant gRPC reads. Each event is stored as a JSON
- * string in a Redis list keyed by the visitor UUID: {@code log:events:{uuid}}.
+ * Caches log events into Redis for near-instant gRPC reads. Each event is stored as a JSON string
+ * in a Redis list keyed by the visitor UUID: {@code log:events:{uuid}}.
  *
  * <p>The JSON structure matches the gRPC {@code UserLogEvent} proto fields (uuid, path, method,
- * latencyMs, queryParams, clientIp, statusCode, requestSize, timestamp, userAgent) so the
- * {@link edu.pict.loggingservice.service.strategy.RedisFetchStrategy} can deserialize and
- * return them directly — queryable by the gRPC request parameters (uuid + duration).
+ * latencyMs, queryParams, clientIp, statusCode, requestSize, timestamp, userAgent) so the {@link
+ * edu.pict.loggingservice.service.strategy.RedisFetchStrategy} can deserialize and return them
+ * directly — queryable by the gRPC request parameters (uuid + duration).
  *
  * <p>Each key has a sliding 10-minute TTL that resets on every new event write.
  */
@@ -50,8 +50,8 @@ public class RedisLogCacheService {
 
     /**
      * Builds a map whose keys exactly match the gRPC UserLogEvent proto fields, so the
-     * RedisFetchStrategy can query and return them using the gRPC request parameters
-     * (uuid for key lookup, duration/timestamp for filtering).
+     * RedisFetchStrategy can query and return them using the gRPC request parameters (uuid for key
+     * lookup, duration/timestamp for filtering).
      */
     private Map<String, Object> toRedisMap(GatewayDecisionEvent event) {
         Map<String, Object> map = new HashMap<>();

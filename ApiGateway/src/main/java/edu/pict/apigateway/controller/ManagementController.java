@@ -1,6 +1,9 @@
 package edu.pict.apigateway.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,10 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
 
 @RestController
 @RequestMapping({"/api/mgmt/blacklist", "/api/threat/blacklist"})
@@ -54,75 +53,97 @@ public class ManagementController {
     public Mono<ResponseEntity<List<BlacklistEntry>>> getBlacklist() {
         return redisTemplate
                 .keys(BLACKLIST_PREFIX + "*")
-                .onErrorResume(e -> {
-                    log.error("Failed to fetch blacklist keys from Redis", e);
-                    return Flux.empty();
-                })
-                .flatMap(key -> {
-                    String uuid = key.substring(BLACKLIST_PREFIX.length());
-                    return Mono.zip(
-                        redisTemplate.opsForValue().get(key).onErrorReturn(""),
-                        redisTemplate.getExpire(key).onErrorReturn(Duration.ofSeconds(3600))
-                    ).map(tuple -> {
-                        String json = tuple.getT1();
-                        Duration expire = tuple.getT2();
-                        long ttlSeconds = expire != null ? expire.getSeconds() : 3600;
+                .onErrorResume(
+                        e -> {
+                            log.error("Failed to fetch blacklist keys from Redis", e);
+                            return Flux.empty();
+                        })
+                .flatMap(
+                        key -> {
+                            String uuid = key.substring(BLACKLIST_PREFIX.length());
+                            return Mono.zip(
+                                            redisTemplate.opsForValue().get(key).onErrorReturn(""),
+                                            redisTemplate
+                                                    .getExpire(key)
+                                                    .onErrorReturn(Duration.ofSeconds(3600)))
+                                    .map(
+                                            tuple -> {
+                                                String json = tuple.getT1();
+                                                Duration expire = tuple.getT2();
+                                                long ttlSeconds =
+                                                        expire != null ? expire.getSeconds() : 3600;
 
-                        String reason = "AI_ESCALATION";
-                        String blockedAt = Instant.now().toString();
+                                                String reason = "AI_ESCALATION";
+                                                String blockedAt = Instant.now().toString();
 
-                        try {
-                            BlockRecord record = objectMapper.readValue(json, BlockRecord.class);
-                            reason = record.getReason();
-                            blockedAt = Instant.ofEpochMilli(record.getBlockedAt()).toString();
-                        } catch (Exception e) {
-                            reason = "MANUAL_BLOCK";
-                            blockedAt = Instant.now().toString();
-                        }
+                                                try {
+                                                    BlockRecord record =
+                                                            objectMapper.readValue(
+                                                                    json, BlockRecord.class);
+                                                    reason = record.getReason();
+                                                    blockedAt =
+                                                            Instant.ofEpochMilli(
+                                                                            record.getBlockedAt())
+                                                                    .toString();
+                                                } catch (Exception e) {
+                                                    reason = "MANUAL_BLOCK";
+                                                    blockedAt = Instant.now().toString();
+                                                }
 
-                        return BlacklistEntry.builder()
-                                .uuid(uuid)
-                                .reason(reason)
-                                .blockedAt(blockedAt)
-                                .ttlSeconds(ttlSeconds)
-                                .build();
-                    });
-                })
+                                                return BlacklistEntry.builder()
+                                                        .uuid(uuid)
+                                                        .reason(reason)
+                                                        .blockedAt(blockedAt)
+                                                        .ttlSeconds(ttlSeconds)
+                                                        .build();
+                                            });
+                        })
                 .collectList()
                 .map(ResponseEntity::ok);
     }
 
     @PostMapping("/{uuid}")
     public Mono<ResponseEntity<Void>> block(@PathVariable String uuid) {
-        BlockRecord record = BlockRecord.builder()
-                .reason("MANUAL_BLOCK")
-                .severity("MEDIUM")
-                .blockedAt(Instant.now().toEpochMilli())
-                .expiresAt(Instant.now().plus(Duration.ofHours(1)).toEpochMilli())
-                .build();
+        BlockRecord record =
+                BlockRecord.builder()
+                        .reason("MANUAL_BLOCK")
+                        .severity("MEDIUM")
+                        .blockedAt(Instant.now().toEpochMilli())
+                        .expiresAt(Instant.now().plus(Duration.ofHours(1)).toEpochMilli())
+                        .build();
         try {
             String jsonVal = objectMapper.writeValueAsString(record);
             return redisTemplate
                     .opsForValue()
                     .set(BLACKLIST_PREFIX + uuid, jsonVal, Duration.ofHours(1))
-                    .onErrorResume(e -> {
-                        log.error("Failed to block uuid in Redis: {}", uuid, e);
-                        return Mono.just(false);
-                    })
-                    .map(success -> Boolean.TRUE.equals(success) ? 
-                               ResponseEntity.ok().<Void>build() :
-                               ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<Void>build());
+                    .onErrorResume(
+                            e -> {
+                                log.error("Failed to block uuid in Redis: {}", uuid, e);
+                                return Mono.just(false);
+                            })
+                    .map(
+                            success ->
+                                    Boolean.TRUE.equals(success)
+                                            ? ResponseEntity.ok().<Void>build()
+                                            : ResponseEntity.status(
+                                                            HttpStatus.INTERNAL_SERVER_ERROR)
+                                                    .<Void>build());
         } catch (Exception e) {
             return redisTemplate
                     .opsForValue()
                     .set(BLACKLIST_PREFIX + uuid, "true", Duration.ofHours(1))
-                    .onErrorResume(err -> {
-                        log.error("Failed to fallback block uuid in Redis: {}", uuid, err);
-                        return Mono.just(false);
-                    })
-                    .map(success -> Boolean.TRUE.equals(success) ? 
-                               ResponseEntity.ok().<Void>build() :
-                               ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<Void>build());
+                    .onErrorResume(
+                            err -> {
+                                log.error("Failed to fallback block uuid in Redis: {}", uuid, err);
+                                return Mono.just(false);
+                            })
+                    .map(
+                            success ->
+                                    Boolean.TRUE.equals(success)
+                                            ? ResponseEntity.ok().<Void>build()
+                                            : ResponseEntity.status(
+                                                            HttpStatus.INTERNAL_SERVER_ERROR)
+                                                    .<Void>build());
         }
     }
 
@@ -130,12 +151,16 @@ public class ManagementController {
     public Mono<ResponseEntity<Void>> unblock(@PathVariable String uuid) {
         return redisTemplate
                 .delete(BLACKLIST_PREFIX + uuid)
-                .onErrorResume(e -> {
-                    log.error("Failed to unblock uuid in Redis: {}", uuid, e);
-                    return Mono.just(-1L);
-                })
-                .map(count -> count >= 0 ? 
-                               ResponseEntity.ok().<Void>build() :
-                               ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).<Void>build());
+                .onErrorResume(
+                        e -> {
+                            log.error("Failed to unblock uuid in Redis: {}", uuid, e);
+                            return Mono.just(-1L);
+                        })
+                .map(
+                        count ->
+                                count >= 0
+                                        ? ResponseEntity.ok().<Void>build()
+                                        : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                                .<Void>build());
     }
 }

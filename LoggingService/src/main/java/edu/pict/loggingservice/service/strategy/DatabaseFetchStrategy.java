@@ -9,14 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
- * Fallback strategy that fetches log events from PostgreSQL. Used when the Redis cache misses
- * (key expired or data not yet cached). This is the authoritative data source for long-term
- * stored logs.
+ * Fallback strategy that fetches log events from PostgreSQL. Used when the Redis cache misses (key
+ * expired or data not yet cached). This is the authoritative data source for long-term stored logs.
  *
  * <p>Supports gRPC query parameters:
+ *
  * <ul>
- *   <li><b>uuid</b> — maps to {@code visitorId} column</li>
- *   <li><b>duration</b> (via {@code since}) — maps to {@code occurredAt > since} filter</li>
+ *   <li><b>uuid</b> — maps to {@code visitorId} column
+ *   <li><b>duration</b> (via {@code since}) — maps to {@code occurredAt > since} filter
  * </ul>
  */
 @Component

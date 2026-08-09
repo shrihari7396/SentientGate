@@ -1,8 +1,15 @@
 package edu.pict.loggingservice.service.strategy;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.pict.loggingservice.entity.GatewayLogEntity;
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,31 +18,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class RedisFetchStrategyTest {
 
-    @Mock
-    private RedisTemplate<String, String> redisTemplate;
+    @Mock private RedisTemplate<String, String> redisTemplate;
 
-    @Mock
-    private ListOperations<String, String> listOperations;
+    @Mock private ListOperations<String, String> listOperations;
 
-    @Mock
-    private ObjectMapper objectMapper;
+    @Mock private ObjectMapper objectMapper;
 
-    @InjectMocks
-    private RedisFetchStrategy redisFetchStrategy;
+    @InjectMocks private RedisFetchStrategy redisFetchStrategy;
 
     @Test
     void testFetchLogs_CacheMiss() {
@@ -57,11 +49,12 @@ class RedisFetchStrategyTest {
 
         when(redisTemplate.hasKey("log:events:" + uuid)).thenReturn(true);
         when(redisTemplate.opsForList()).thenReturn(listOperations);
-        
+
         String validJson = "{\"json\":\"valid\"}";
         String oldJson = "{\"json\":\"old\"}";
-        
-        when(listOperations.range("log:events:" + uuid, 0, -1)).thenReturn(List.of(validJson, oldJson));
+
+        when(listOperations.range("log:events:" + uuid, 0, -1))
+                .thenReturn(List.of(validJson, oldJson));
 
         Map<String, Object> validMap = Map.of("uuid", uuid, "timestamp", now);
         Map<String, Object> oldMap = Map.of("uuid", uuid, "timestamp", now - 20000);

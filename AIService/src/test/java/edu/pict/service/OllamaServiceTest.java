@@ -69,10 +69,13 @@ class OllamaServiceTest {
         when(responseSpecMock.bodyToMono(Map.class)).thenReturn(Mono.empty());
 
         StepVerifier.create(ollamaService.predictAnomalyScore("Test prompt"))
-                .expectNext(0.0) // Empty Mono usually results in onComplete, but timeout/empty might throw or not. Wait, the map() would skip if empty. 
+                .expectNext(
+                        0.0) // Empty Mono usually results in onComplete, but timeout/empty might
+                // throw or not. Wait, the map() would skip if empty.
                 // Ah, wait! If bodyToMono is empty, map won't execute, it will just complete empty!
-                // Wait, if it completes empty, Mono.empty() is returned. Let's see if generate() returns Mono.empty(). 
-                // It's better to test Mono.just(null) or Mono.error. 
+                // Wait, if it completes empty, Mono.empty() is returned. Let's see if generate()
+                // returns Mono.empty().
+                // It's better to test Mono.just(null) or Mono.error.
                 // Let's use Mono.error for this edge case to test onErrorResume.
                 .verifyComplete();
     }
@@ -80,7 +83,8 @@ class OllamaServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void testPredictAnomalyScore_NetworkError() {
-        when(responseSpecMock.bodyToMono(Map.class)).thenReturn(Mono.error(new RuntimeException("Connection refused")));
+        when(responseSpecMock.bodyToMono(Map.class))
+                .thenReturn(Mono.error(new RuntimeException("Connection refused")));
 
         StepVerifier.create(ollamaService.predictAnomalyScore("Test prompt"))
                 .expectNext(0.0)

@@ -31,10 +31,14 @@ public class BlacklistFilter implements GlobalFilter, Ordered {
 
         return reactiveStringRedisTemplate
                 .hasKey(BLACKLIST_PREFIX + uuid)
-                .onErrorResume(e -> {
-                    log.error("Redis connection failed in BlacklistFilter for UUID {}. Allowing request to proceed.", uuid, e);
-                    return Mono.just(false);
-                })
+                .onErrorResume(
+                        e -> {
+                            log.error(
+                                    "Redis connection failed in BlacklistFilter for UUID {}. Allowing request to proceed.",
+                                    uuid,
+                                    e);
+                            return Mono.just(false);
+                        })
                 .flatMap(
                         isBlocked -> {
                             if (Boolean.TRUE.equals(isBlocked)) {

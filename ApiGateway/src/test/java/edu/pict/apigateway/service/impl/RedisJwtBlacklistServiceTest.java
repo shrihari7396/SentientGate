@@ -1,5 +1,7 @@
 package edu.pict.apigateway.service.impl;
 
+import static org.mockito.Mockito.*;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,16 +11,12 @@ import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 public class RedisJwtBlacklistServiceTest {
 
-    @Mock
-    private ReactiveStringRedisTemplate redisTemplate;
+    @Mock private ReactiveStringRedisTemplate redisTemplate;
 
-    @InjectMocks
-    private RedisJwtBlacklistService redisJwtBlacklistService;
+    @InjectMocks private RedisJwtBlacklistService redisJwtBlacklistService;
 
     private static final String PREFIX = "jwt:blacklist:";
 
@@ -55,7 +53,8 @@ public class RedisJwtBlacklistServiceTest {
     @Test
     void testIsBlocked_RedisExceptionFailsOpen() {
         String jti = "test-jti-error";
-        when(redisTemplate.hasKey(PREFIX + jti)).thenReturn(Mono.error(new RuntimeException("Redis connection error")));
+        when(redisTemplate.hasKey(PREFIX + jti))
+                .thenReturn(Mono.error(new RuntimeException("Redis connection error")));
 
         StepVerifier.create(redisJwtBlacklistService.isBlocked(jti))
                 .expectNext(false) // onErrorResume(false)

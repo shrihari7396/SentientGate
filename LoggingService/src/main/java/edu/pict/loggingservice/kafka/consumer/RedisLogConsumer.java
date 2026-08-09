@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * Independent Kafka consumer (group: logging-redis-writer) that writes log events to Redis
- * immediately upon receipt. This consumer resolves the race condition where MCPService queries
- * gRPC for logs before the slower PostgreSQL batch insert completes — Redis writes finish in
- * ~1ms, making data available for gRPC queries almost instantly.
+ * immediately upon receipt. This consumer resolves the race condition where MCPService queries gRPC
+ * for logs before the slower PostgreSQL batch insert completes — Redis writes finish in ~1ms,
+ * making data available for gRPC queries almost instantly.
  */
 @Component
 @RequiredArgsConstructor

@@ -1,32 +1,28 @@
 package edu.pict.loggingservice.service.strategy;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
 import edu.pict.loggingservice.entity.GatewayLogEntity;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 class LogFetchStrategyResolverTest {
 
-    @Mock
-    private RedisFetchStrategy redisFetchStrategy;
+    @Mock private RedisFetchStrategy redisFetchStrategy;
 
-    @Mock
-    private DatabaseFetchStrategy databaseFetchStrategy;
+    @Mock private DatabaseFetchStrategy databaseFetchStrategy;
 
-    @InjectMocks
-    private LogFetchStrategyResolver strategyResolver;
+    @InjectMocks private LogFetchStrategyResolver strategyResolver;
 
     @Test
     void testFetchLogs_FastPath_RedisHits() {
