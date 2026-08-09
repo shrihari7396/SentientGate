@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ..
 
 # Base directory
 BASE_DIR=$(pwd)
