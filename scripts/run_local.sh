@@ -10,9 +10,9 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}🚀 Starting SentientGate Services locally (without Docker for services)...${NC}"
 
 # Step 1: Start Infrastructure services
-echo -e "${BLUE}📦 Starting Infrastructure (Postgres, Redis, Kafka, Zookeeper)...${NC}"
+echo -e "${BLUE}📦 Starting Infrastructure (Postgres, Redis, Kafka, Kafka-UI)...${NC}"
 cd TOOLS
-docker compose up -d postgres redis zookeeper kafka
+docker compose up -d postgres redis kafka kafka-ui
 cd ..
 
 # Step 2: Wait for Postgres to be healthy

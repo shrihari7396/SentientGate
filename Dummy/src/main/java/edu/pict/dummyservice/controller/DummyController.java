@@ -10,17 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DummyController {
     @GetMapping("/")
-    public String index() {
+    public ResponseEntity<String> index() {
         long temp = 0;
         for (int i = 0; i < 1000; i++) {
             temp += i;
         }
         log.info("{}", temp);
-        return "Hello World!";
+        return ResponseEntity.status(HttpStatus.OK).body("Hello World!");
     }
 
     @GetMapping("/temp")
     public ResponseEntity<String> dummy() {
-        return ResponseEntity.status(HttpStatus.OK).body("Service Is running Successfully!    ");
+        return ResponseEntity.status(HttpStatus.OK).body("Service Is running Successfully! ");
     }
 }
