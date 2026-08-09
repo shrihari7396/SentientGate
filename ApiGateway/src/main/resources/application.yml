@@ -35,6 +35,7 @@ spring:
                     redis-rate-limiter.replenishRate: 10
                     redis-rate-limiter.burstCapacity: 20
                     key-resolver: "#{@visitorKeyResolver}"
+
             - id: LOGGING-SERVICE
               uri: lb://LOGGING-SERVICE
               predicates:
@@ -71,27 +72,16 @@ spring:
                     redis-rate-limiter.burstCapacity: 10
                     key-resolver: "#{@visitorKeyResolver}"
 
-            - id: auth-service
-              uri: lb://AUTH-SERVICE
-              predicates:
-                - Path=/api/auth/**
-              filters:
-                - name: RequestRateLimiter
-                  args:
-                    redis-rate-limiter.replenishRate: 5
-                    redis-rate-limiter.burstCapacity: 10
-                    key-resolver: "#{@visitorKeyResolver}"
-
-            - id: after_route
-              uri: lb://DUMMY-SERVICE
-              predicates:
-                - Path=/dummy/**
-              filters:
-                - name: RequestRateLimiter
-                  args:
-                    redis-rate-limiter.replenishRate: 10
-                    redis-rate-limiter.burstCapacity: 20
-                    key-resolver: "#{@visitorKeyResolver}"
+#            - id: after_route
+#              uri: lb://DUMMY-SERVICE
+#              predicates:
+#                - Path=/dummy/**
+#              filters:
+#                - name: RequestRateLimiter
+#                  args:
+#                    redis-rate-limiter.replenishRate: 10
+#                    redis-rate-limiter.burstCapacity: 20
+#                    key-resolver: "#{@visitorKeyResolver}"
 
 
   kafka:
@@ -102,7 +92,7 @@ spring:
 
     properties:
       spring.json.trusted.packages: "edu.pict.apigateway.kafkaEvent"
-    bootstrap-servers: 10000
+    bootstrap-servers: localhost:10000
 
   output:
     ansi:
