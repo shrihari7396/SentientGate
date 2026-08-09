@@ -1,0 +1,6 @@
+GET http://localhost:8090/dummy/dummy
+
+###
+GET http://localhost:8090/dummy/dummy
+
+###

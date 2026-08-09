@@ -1,6 +1,8 @@
 package edu.pict.dummyservice.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +19,8 @@ public class DummyController {
         return "Hello World!";
     }
 
-    @GetMapping("/dummy")
-    public String dummy() {
-        return "Service Is running Successfully!    ";
+    @GetMapping("/temp")
+    public ResponseEntity<String> dummy() {
+        return ResponseEntity.status(HttpStatus.OK).body("Service Is running Successfully!    ");
     }
 }
