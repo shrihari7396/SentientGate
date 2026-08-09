@@ -1,6 +1,7 @@
 #!/bin/bash # Specifies the shell environment to run the script using bash
 # Exit immediately if any command inside the script returns a non-zero status code
 set -e
+cd ..
 # Setup a handler function to capture and report errors if any command fails
 trap 'echo "[-] Deployment failed at line $LINENO. Exiting."; exit 1' ERR
 # Define the root workspace directory based on the absolute path of this script

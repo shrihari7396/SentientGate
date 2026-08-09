@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ..
 
 # Configuration
 REGISTRY_USER="shrihari7396"

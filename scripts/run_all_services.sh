@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ..
 
 # Colors for output
 GREEN='\033[0;32m'
