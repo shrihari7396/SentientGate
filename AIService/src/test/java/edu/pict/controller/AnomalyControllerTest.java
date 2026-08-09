@@ -17,43 +17,51 @@ import reactor.core.publisher.Mono;
 @WebFluxTest(AnomalyController.class)
 class AnomalyControllerTest {
 
-    @Autowired
-    private WebTestClient webTestClient;
+    @Autowired private WebTestClient webTestClient;
 
-    @MockBean
-    private AnomalyDetectionService anomalyService;
+    @MockBean private AnomalyDetectionService anomalyService;
 
     @Test
     void testAnalyze_Success() {
-        AnomalyDetectionResponse mockResponse = AnomalyDetectionResponse.builder()
-                .anomaly(true)
-                .confidence(0.9)
-                .modelVersion("v1.0")
-                .inferenceTimeMs(150)
-                .isAnomaly(true)
-                .confidenceScore(0.9)
-                .patternDetected("AI_BEHAVIORAL_ANOMALY")
-                .suggestedBlockMinutes(60)
-                .build();
+        AnomalyDetectionResponse mockResponse =
+                AnomalyDetectionResponse.builder()
+                        .anomaly(true)
+                        .confidence(0.9)
+                        .modelVersion("v1.0")
+                        .inferenceTimeMs(150)
+                        .isAnomaly(true)
+                        .confidenceScore(0.9)
+                        .patternDetected("AI_BEHAVIORAL_ANOMALY")
+                        .suggestedBlockMinutes(60)
+                        .build();
 
         when(anomalyService.analyze(any(AnomalyDetectionRequest.class)))
                 .thenReturn(Mono.just(mockResponse));
 
         AnomalyDetectionRequest request = new AnomalyDetectionRequest();
 
-        webTestClient.post()
+        webTestClient
+                .post()
                 .uri("/api/v1/analyze")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus()
+                .isOk()
                 .expectBody()
-                .jsonPath("$.anomaly").isEqualTo(true)
-                .jsonPath("$.confidence").isEqualTo(0.9)
-                .jsonPath("$.modelVersion").isEqualTo("v1.0")
-                .jsonPath("$.inferenceTimeMs").isEqualTo(150)
-                .jsonPath("$.confidenceScore").isEqualTo(0.9)
-                .jsonPath("$.patternDetected").isEqualTo("AI_BEHAVIORAL_ANOMALY")
-                .jsonPath("$.suggestedBlockMinutes").isEqualTo(60);
+                .jsonPath("$.anomaly")
+                .isEqualTo(true)
+                .jsonPath("$.confidence")
+                .isEqualTo(0.9)
+                .jsonPath("$.modelVersion")
+                .isEqualTo("v1.0")
+                .jsonPath("$.inferenceTimeMs")
+                .isEqualTo(150)
+                .jsonPath("$.confidenceScore")
+                .isEqualTo(0.9)
+                .jsonPath("$.patternDetected")
+                .isEqualTo("AI_BEHAVIORAL_ANOMALY")
+                .jsonPath("$.suggestedBlockMinutes")
+                .isEqualTo(60);
     }
 }

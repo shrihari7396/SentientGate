@@ -1,5 +1,5 @@
 server:
-  port: 8079
+  port: 8080
 
 spring:
   application:
@@ -102,6 +102,8 @@ spring:
 
     properties:
       spring.json.trusted.packages: "edu.pict.apigateway.kafkaEvent"
+    bootstrap-servers: 10000
+
   output:
     ansi:
       enabled: always

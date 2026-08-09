@@ -28,9 +28,7 @@ public class AnomalyDetectionService {
 
         // Calculate failureRate: count of logs with status code >= 400
         double failureRate = 0.0;
-        long failureCount = history.stream()
-                .filter(log -> log.getStatusCode() >= 400)
-                .count();
+        long failureCount = history.stream().filter(log -> log.getStatusCode() >= 400).count();
         if (totalRequests > 0) {
             failureRate = (double) failureCount / totalRequests;
         }
@@ -48,18 +46,20 @@ public class AnomalyDetectionService {
         }
 
         // Calculate uniqueRoutesAccessed
-        long uniqueRoutesAccessed = history.stream()
-                .map(LogEvent::getPath)
-                .filter(java.util.Objects::nonNull)
-                .distinct()
-                .count();
+        long uniqueRoutesAccessed =
+                history.stream()
+                        .map(LogEvent::getPath)
+                        .filter(java.util.Objects::nonNull)
+                        .distinct()
+                        .count();
 
         // Calculate jwtReuseCount (using client IP switches as heuristic)
-        long uniqueIps = history.stream()
-                .map(LogEvent::getClientIp)
-                .filter(java.util.Objects::nonNull)
-                .distinct()
-                .count();
+        long uniqueIps =
+                history.stream()
+                        .map(LogEvent::getClientIp)
+                        .filter(java.util.Objects::nonNull)
+                        .distinct()
+                        .count();
         long jwtReuseCount = Math.max(0, uniqueIps - 1);
 
         // Calculate ipReputationScore
@@ -70,14 +70,26 @@ public class AnomalyDetectionService {
 
         // Determine routeSensitivity based on paths
         String routeSensitivity = "LOW";
-        boolean hasHighSensitivity = history.stream()
-                .map(LogEvent::getPath)
-                .filter(java.util.Objects::nonNull)
-                .anyMatch(path -> path.contains("/admin") || path.contains("/mgmt") || path.contains("/db") || path.contains("/actuator") || path.contains("/security"));
-        boolean hasMediumSensitivity = history.stream()
-                .map(LogEvent::getPath)
-                .filter(java.util.Objects::nonNull)
-                .anyMatch(path -> path.contains("/auth") || path.contains("/login") || path.contains("/private"));
+        boolean hasHighSensitivity =
+                history.stream()
+                        .map(LogEvent::getPath)
+                        .filter(java.util.Objects::nonNull)
+                        .anyMatch(
+                                path ->
+                                        path.contains("/admin")
+                                                || path.contains("/mgmt")
+                                                || path.contains("/db")
+                                                || path.contains("/actuator")
+                                                || path.contains("/security"));
+        boolean hasMediumSensitivity =
+                history.stream()
+                        .map(LogEvent::getPath)
+                        .filter(java.util.Objects::nonNull)
+                        .anyMatch(
+                                path ->
+                                        path.contains("/auth")
+                                                || path.contains("/login")
+                                                || path.contains("/private"));
         if (hasHighSensitivity) {
             routeSensitivity = "HIGH";
         } else if (hasMediumSensitivity) {
@@ -85,25 +97,41 @@ public class AnomalyDetectionService {
         }
 
         // Convert features -> model prompt
-        String prompt = buildPrompt(failureRate, requestsPerMinute, uniqueRoutesAccessed, jwtReuseCount, ipReputationScore, routeSensitivity);
+        String prompt =
+                buildPrompt(
+                        failureRate,
+                        requestsPerMinute,
+                        uniqueRoutesAccessed,
+                        jwtReuseCount,
+                        ipReputationScore,
+                        routeSensitivity);
 
-        return ollamaService.predictAnomalyScore(prompt).map(score -> {
-            boolean anomaly = score > 0.7;
+        return ollamaService
+                .predictAnomalyScore(prompt)
+                .map(
+                        score -> {
+                            boolean anomaly = score > 0.7;
 
-            return AnomalyDetectionResponse.builder()
-                    .anomaly(anomaly)
-                    .confidence(score)
-                    .modelVersion("v1.0")
-                    .inferenceTimeMs(System.currentTimeMillis() - start)
-                    .isAnomaly(anomaly)
-                    .confidenceScore(score)
-                    .patternDetected(anomaly ? "AI_BEHAVIORAL_ANOMALY" : "NORMAL")
-                    .suggestedBlockMinutes(anomaly ? 60 : 0)
-                    .build();
-        });
+                            return AnomalyDetectionResponse.builder()
+                                    .anomaly(anomaly)
+                                    .confidence(score)
+                                    .modelVersion("v1.0")
+                                    .inferenceTimeMs(System.currentTimeMillis() - start)
+                                    .isAnomaly(anomaly)
+                                    .confidenceScore(score)
+                                    .patternDetected(anomaly ? "AI_BEHAVIORAL_ANOMALY" : "NORMAL")
+                                    .suggestedBlockMinutes(anomaly ? 60 : 0)
+                                    .build();
+                        });
     }
 
-    private String buildPrompt(double failureRate, double requestsPerMinute, long uniqueRoutes, long jwtReuse, double ipReputation, String routeSensitivity) {
+    private String buildPrompt(
+            double failureRate,
+            double requestsPerMinute,
+            long uniqueRoutes,
+            long jwtReuse,
+            double ipReputation,
+            String routeSensitivity) {
         return """
         You are an anomaly detection model.
         Given numeric behavior signals, return ONLY a number between 0 and 1.

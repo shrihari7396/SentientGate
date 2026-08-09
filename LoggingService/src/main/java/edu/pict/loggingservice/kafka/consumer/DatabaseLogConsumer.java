@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Independent Kafka consumer (group: logging-db-writer) that batch-inserts log events into
- * PostgreSQL for durable, long-term storage. Operates independently from the Redis consumer
- * so each can process at its own pace without blocking the other.
+ * PostgreSQL for durable, long-term storage. Operates independently from the Redis consumer so each
+ * can process at its own pace without blocking the other.
  */
 @Component
 @RequiredArgsConstructor

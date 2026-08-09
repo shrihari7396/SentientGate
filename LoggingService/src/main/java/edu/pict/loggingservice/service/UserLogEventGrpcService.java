@@ -28,8 +28,7 @@ public class UserLogEventGrpcService extends UserLogEventServiceGrpc.UserLogEven
         Instant since = Instant.now().minus(Duration.ofMinutes(request.getDuration()));
 
         // Strategy Pattern: tries Redis first (fast), falls back to PostgreSQL on cache miss
-        List<GatewayLogEntity> logs =
-                strategyResolver.fetchLogs(request.getUuid(), since);
+        List<GatewayLogEntity> logs = strategyResolver.fetchLogs(request.getUuid(), since);
 
         UserLogEventResponse.Builder responseBuilder = UserLogEventResponse.newBuilder();
 

@@ -17,5 +17,4 @@ public class AnomalyDetectionResponse {
     private double confidenceScore;
     private String patternDetected;
     private int suggestedBlockMinutes;
-
 }

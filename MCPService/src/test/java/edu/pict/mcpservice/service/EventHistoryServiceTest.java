@@ -40,7 +40,8 @@ class EventHistoryServiceTest {
     void setup() {
         // Required for mock setup of StringRedisTemplate operations
         lenient().when(stringRedisTemplate.opsForValue()).thenReturn(valueOperations);
-        org.springframework.test.util.ReflectionTestUtils.setField(eventHistoryService, "stub", stub);
+        org.springframework.test.util.ReflectionTestUtils.setField(
+                eventHistoryService, "stub", stub);
     }
 
     @Nested

@@ -14,7 +14,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UUID> {
 
-    @Query("""
+    @Query(
+            """
         SELECT l FROM GatewayLogEntity l
         WHERE (:path IS NULL OR :path = '' OR l.path LIKE %:path%)
           AND (:uuid IS NULL OR :uuid = '' OR l.visitorId = :uuid)
@@ -27,11 +28,7 @@ public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UU
           )
     """)
     Page<GatewayLogEntity> findWithFilters(
-            String path,
-            String uuid,
-            String statusType,
-            Integer statusCodeVal,
-            Pageable pageable);
+            String path, String uuid, String statusType, Integer statusCodeVal, Pageable pageable);
 
     List<GatewayLogEntity> findByClientIp(String clientIp);
 

@@ -25,10 +25,10 @@ public class LogController {
             @RequestParam(required = false) String path,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String uuid) {
-        
+
         String statusType = "";
         Integer statusCodeVal = null;
-        
+
         if (status != null && !status.isEmpty()) {
             if (status.equals("2xx") || status.equals("4xx") || status.equals("5xx")) {
                 statusType = status;
@@ -45,6 +45,7 @@ public class LogController {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(
-                gatewayLogRepository.findWithFilters(path, uuid, statusType, statusCodeVal, pageRequest));
+                gatewayLogRepository.findWithFilters(
+                        path, uuid, statusType, statusCodeVal, pageRequest));
     }
 }

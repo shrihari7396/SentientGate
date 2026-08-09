@@ -1,7 +1,10 @@
 package edu.pict.apigateway.filters.global;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
 import edu.pict.apigateway.util.Constants;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,21 +19,14 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 public class BlacklistFilterTest {
 
-    @Mock
-    private ReactiveStringRedisTemplate redisTemplate;
+    @Mock private ReactiveStringRedisTemplate redisTemplate;
 
-    @Mock
-    private GatewayFilterChain filterChain;
+    @Mock private GatewayFilterChain filterChain;
 
-    @InjectMocks
-    private BlacklistFilter blacklistFilter;
+    @InjectMocks private BlacklistFilter blacklistFilter;
 
     private static final String BLACKLIST_PREFIX = "blacklist:";
 
@@ -39,8 +35,7 @@ public class BlacklistFilterTest {
         MockServerHttpRequest request = MockServerHttpRequest.get("/api/test").build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
 
-        StepVerifier.create(blacklistFilter.filter(exchange, filterChain))
-                .verifyComplete();
+        StepVerifier.create(blacklistFilter.filter(exchange, filterChain)).verifyComplete();
 
         assert exchange.getResponse().getStatusCode() == HttpStatus.UNAUTHORIZED;
         verify(redisTemplate, never()).hasKey(anyString());
@@ -50,15 +45,13 @@ public class BlacklistFilterTest {
     @Test
     void testFilter_VisitorIsBlacklisted() {
         String uuid = "blocked-uuid";
-        MockServerHttpRequest request = MockServerHttpRequest.get("/api/test")
-                .header(Constants.VISITOR_ID, uuid)
-                .build();
+        MockServerHttpRequest request =
+                MockServerHttpRequest.get("/api/test").header(Constants.VISITOR_ID, uuid).build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
 
         when(redisTemplate.hasKey(BLACKLIST_PREFIX + uuid)).thenReturn(Mono.just(true));
 
-        StepVerifier.create(blacklistFilter.filter(exchange, filterChain))
-                .verifyComplete();
+        StepVerifier.create(blacklistFilter.filter(exchange, filterChain)).verifyComplete();
 
         assert exchange.getResponse().getStatusCode() == HttpStatus.FORBIDDEN;
         verify(filterChain, never()).filter(any());
@@ -67,34 +60,32 @@ public class BlacklistFilterTest {
     @Test
     void testFilter_VisitorIsNotBlacklisted() {
         String uuid = "allowed-uuid";
-        MockServerHttpRequest request = MockServerHttpRequest.get("/api/test")
-                .header(Constants.VISITOR_ID, uuid)
-                .build();
+        MockServerHttpRequest request =
+                MockServerHttpRequest.get("/api/test").header(Constants.VISITOR_ID, uuid).build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
 
         when(redisTemplate.hasKey(BLACKLIST_PREFIX + uuid)).thenReturn(Mono.just(false));
         when(filterChain.filter(exchange)).thenReturn(Mono.empty());
 
-        StepVerifier.create(blacklistFilter.filter(exchange, filterChain))
-                .verifyComplete();
+        StepVerifier.create(blacklistFilter.filter(exchange, filterChain)).verifyComplete();
 
-        assert exchange.getResponse().getStatusCode() == null || exchange.getResponse().getStatusCode() == HttpStatus.OK;
+        assert exchange.getResponse().getStatusCode() == null
+                || exchange.getResponse().getStatusCode() == HttpStatus.OK;
         verify(filterChain, times(1)).filter(exchange);
     }
 
     @Test
     void testFilter_RedisHasKeyFailure() {
         String uuid = "error-uuid";
-        MockServerHttpRequest request = MockServerHttpRequest.get("/api/test")
-                .header(Constants.VISITOR_ID, uuid)
-                .build();
+        MockServerHttpRequest request =
+                MockServerHttpRequest.get("/api/test").header(Constants.VISITOR_ID, uuid).build();
         ServerWebExchange exchange = MockServerWebExchange.from(request);
 
-        when(redisTemplate.hasKey(BLACKLIST_PREFIX + uuid)).thenReturn(Mono.error(new RuntimeException("Redis error")));
+        when(redisTemplate.hasKey(BLACKLIST_PREFIX + uuid))
+                .thenReturn(Mono.error(new RuntimeException("Redis error")));
         when(filterChain.filter(exchange)).thenReturn(Mono.empty());
 
-        StepVerifier.create(blacklistFilter.filter(exchange, filterChain))
-                .verifyComplete();
+        StepVerifier.create(blacklistFilter.filter(exchange, filterChain)).verifyComplete();
 
         // Expect it to fail open and proceed with the filter chain
         verify(filterChain, times(1)).filter(exchange);

@@ -18,9 +18,10 @@ import org.springframework.stereotype.Component;
  * strings in a Redis list keyed by {@code log:events:{uuid}}.
  *
  * <p>This strategy supports the gRPC query parameters:
+ *
  * <ul>
- *   <li><b>uuid</b> — used as the Redis key suffix for direct lookup</li>
- *   <li><b>duration</b> (via {@code since} Instant) — used to filter cached entries by timestamp</li>
+ *   <li><b>uuid</b> — used as the Redis key suffix for direct lookup
+ *   <li><b>duration</b> (via {@code since} Instant) — used to filter cached entries by timestamp
  * </ul>
  *
  * <p>Returns an empty list on cache miss (key doesn't exist or no entries match the time window),

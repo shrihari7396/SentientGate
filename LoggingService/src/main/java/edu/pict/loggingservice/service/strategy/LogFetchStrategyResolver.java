@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
  * Orchestrates the Strategy Pattern for log fetching. Chains the strategies in priority order:
  *
  * <ol>
- *   <li><b>RedisFetchStrategy</b> — fast path (~1ms), checks the Redis cache first</li>
- *   <li><b>DatabaseFetchStrategy</b> — fallback, queries PostgreSQL if Redis returns empty</li>
+ *   <li><b>RedisFetchStrategy</b> — fast path (~1ms), checks the Redis cache first
+ *   <li><b>DatabaseFetchStrategy</b> — fallback, queries PostgreSQL if Redis returns empty
  * </ol>
  *
- * <p>This resolver maps directly to the gRPC {@code GetUserEvents} call. The gRPC handler passes
- * in {@code uuid} and {@code since} (computed from the request's {@code duration} field), and
- * the resolver returns log entities from whichever strategy succeeds first.
+ * <p>This resolver maps directly to the gRPC {@code GetUserEvents} call. The gRPC handler passes in
+ * {@code uuid} and {@code since} (computed from the request's {@code duration} field), and the
+ * resolver returns log entities from whichever strategy succeeds first.
  */
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class LogFetchStrategyResolver {
     /**
      * Fetch logs using the strategy chain: Redis first, then DB fallback.
      *
-     * @param uuid  the visitor UUID (gRPC request field)
+     * @param uuid the visitor UUID (gRPC request field)
      * @param since the earliest timestamp (computed from gRPC request's duration field)
      * @return list of log entities from the fastest available source
      */
