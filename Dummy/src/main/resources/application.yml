@@ -3,8 +3,8 @@ spring:
     name: dummy-service
 server:
   port: 8090
-  servlet:
-    context-path: /dummy/
+#  servlet:
+#    context-path: /dummy/
 
 
 eureka:
