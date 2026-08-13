@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: postgres-config
-  namespace: sentientgate
-data:
-  POSTGRES_DB: mydb
