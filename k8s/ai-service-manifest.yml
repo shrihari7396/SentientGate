@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-service-config
+  namespace: sentientgate
+data:
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
+  OLLAMA_BASE_URL: "http://host.minikube.internal:11434"
+  SERVER_PORT: "8080"
+  OLLAMA_MODEL: "gemma3.2:latest"
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,7 +46,27 @@ metadata:
   namespace: sentientgate
 spec:
   ports:
-    - port: 8082
+    - port: 8080
       targetPort: 8080
   selector:
     app: ai-service
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ai-service-hpa
+  namespace: sentientgate
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ai-service
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80

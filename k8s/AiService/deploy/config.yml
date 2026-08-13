@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ai-service-config
-  namespace: sentientgate
-data:
-  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
-  OLLAMA_BASE_URL: "http://host.minikube.internal:11434"
-  SERVER_PORT: "8080"

@@ -30,7 +30,27 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 5173
+    - port: 8080
       targetPort: 80
   selector:
     app: sentinel-ui
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sentinel-ui-hpa
+  namespace: sentientgate
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sentinel-ui
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
