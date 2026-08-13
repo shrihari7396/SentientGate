@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+
+import edu.pict.mcpservice.util.RedisGuardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class McpAnalysisService {
     private final EventHistoryService eventHistoryService;
     private final EnforcementService enforcementService;
     private final List<ThreatStrategy> strategies;
-    private final edu.pict.mcpservice.util.RedisGuardService redisGuardService;
+    private final RedisGuardService redisGuardService;
     private final Executor aiExecutor;
 
     public McpAnalysisService(
@@ -57,16 +59,23 @@ public class McpAnalysisService {
      */
     public void analyze(String uuid, List<SecurityAlertEvent> alerts) {
 
-        if (isAlreadyBlocked(uuid)) return;
-        if (redisGuardService.wasRecentlyChecked(uuid)) return;
-
-        redisGuardService.markAsChecked(uuid);
+        if (isAlreadyBlocked(uuid)) {
+            log.info("Already Blocked by MCP Service: {}", uuid);
+            return;
+        }
+        if (redisGuardService.wasRecentlyChecked(uuid)) {
+            log.info("Recent check has been detected for {}", uuid);
+            return;
+        }
 
         log.info("Analyzing {} alerts for UUID: {}", alerts.size(), uuid);
 
         List<LogEvent> history = fetchHistory(uuid);
 
-        if (runRuleStrategies(uuid, alerts, history)) return;
+        if (runRuleStrategies(uuid, alerts, history)) {
+            redisGuardService.markAsChecked(uuid);
+            return;
+        }
 
         log.info("No synchronous malicious patterns found for UUID: {}", uuid);
 

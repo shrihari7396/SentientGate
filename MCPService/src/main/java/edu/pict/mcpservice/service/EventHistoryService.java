@@ -84,7 +84,7 @@ public class EventHistoryService {
         UserLogEventResponse response = stub.getUserEvents(request);
         log.info(
                 "✅ Successfully fetched {} events for UUID: {}",
-                response.getUserLogEventsCount(),
+                response.getUserLogEventsList().size(),
                 uuid);
 
         return response.getUserLogEventsList();
