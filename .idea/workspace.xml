@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -19,6 +19,11 @@
       <entry key="_/home/shrihari/Desktop/Interview/SentientGate" value="3C7uYQXPENaL47oJlcsOp7RGKAo" />
       <entry key="_/home/shrihari/Documents/PersonalProjects/SentientGate" value="3FOQsgcszZb5DxcvIM1TIe26asW" />
     </persistenceIdMap>
+  </component>
+  <component name="DatabaseLocalColorSettings">
+    <colors>
+      <entry key="b95b25dd-e87b-4b32-931a-a18c391432f0" value="" />
+    </colors>
   </component>
   <component name="EmbeddingIndexingInfo">
     <option name="cachedIndexableFilesCount" value="428" />
@@ -60,7 +65,7 @@
   }
 }</component>
   <component name="HttpClientEndpointsTabState">
-    <option name="cachedRequestData" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;abef2cfe3a5ffd18d93a491a404574cab69d438f&quot; value=&quot;###&amp;#10;GET http://localhost:8090/temp&quot; /&gt;&#10;  &lt;entry key=&quot;e1201884fb740061c5624e248f0b2d4ca2ecd551&quot; value=&quot;###&amp;#10;GET http://localhost:8090/&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
+    <option name="cachedRequestData" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;61d50b6b77cea4a5184d7051b47fce1ea84b1469&quot; value=&quot;###&amp;#10;GET http://localhost:8010/&amp;#10;    dum/giveAll&quot; /&gt;&#10;  &lt;entry key=&quot;abef2cfe3a5ffd18d93a491a404574cab69d438f&quot; value=&quot;###&amp;#10;GET http://localhost:8090/temp&quot; /&gt;&#10;  &lt;entry key=&quot;e1201884fb740061c5624e248f0b2d4ca2ecd551&quot; value=&quot;###&amp;#10;GET http://localhost:8090/&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
   </component>
   <component name="HttpClientOnboardingState">{
   &quot;isOnboardingCommentShown&quot;: true
@@ -212,6 +217,22 @@
         <option value="QuarkusRunConfigurationType" />
         <option value="SpringBootApplicationConfigurationType" />
       </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="AiServiceApplication" value="FAILED" />
+              <entry key="ApiGatewayApplication" value="FAILED" />
+              <entry key="DummyServiceApplication" value="FAILED" />
+              <entry key="EurekaServerApplication" value="FAILED" />
+              <entry key="LoggingServiceApplication" value="FAILED" />
+              <entry key="McpServiceApplication" value="FAILED" />
+            </map>
+          </value>
+        </entry>
+      </map>
     </option>
   </component>
   <component name="RunManager" selected="HTTP Request.All in SentientGate-endpoints_1">
