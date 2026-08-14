@@ -1,9 +1,15 @@
 server:
   port: ${SERVER_PORT:8080}
   servlet:
-    context-path: /
+    context-path: /logging-service
 
 spring:
+  config:
+    activate:
+      on-profile: prod
+  output:
+    ansi:
+      enabled: never
   application:
     name: logging-service
   datasource:
