@@ -42,45 +42,7 @@ SentientGate is a microservice security fabric with these core capabilities:
   <img src="Architectures/architectural_diagram.png" alt="SentientGate Architecture" width="800"/>
 </div>
 
-```mermaid
-graph TD
-    classDef client fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#000;
-    classDef gateway fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000;
-    classDef infra fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px,color:#000;
-    classDef service fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000;
-    classDef mcp fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#000;
 
-    Client[Client / UI]:::client -->|HTTP/HTTPS| Gateway[API Gateway]:::gateway
-    
-    subgraph Infrastructure
-        Kafka[Apache Kafka]:::infra
-        Redis[(Redis Cache)]:::infra
-        Postgres[(PostgreSQL)]:::infra
-    end
-    
-    subgraph SentientGate Services
-        Gateway
-        Dummy[Target Services]:::service
-        Logging[Logging Service]:::service
-        MCP[MCP Service]:::mcp
-        AI[AI Service]:::service
-    end
-    
-    Gateway -->|Forwards Valid Traffic| Dummy
-    Gateway -.->|Checks Blacklist| Redis
-    Gateway -->|Publishes USER_LOGS| Kafka
-    Gateway -->|Publishes SECURITY_EVENTS| Kafka
-    
-    Kafka -->|Consumes USER_LOGS| Logging
-    Logging -->|Stores Logs| Postgres
-    Logging -->|Caches Logs| Redis
-    
-    Kafka -->|Consumes SECURITY_EVENTS| MCP
-    MCP -.->|Fetches History via gRPC| Logging
-    MCP -->|Analyzes via Rules| MCP
-    MCP -->|Async AI Analysis| AI
-    MCP -.->|Writes Blacklist| Redis
-```
 
 SentientGate utilizes an **Event-Driven, Out-of-Band Analysis** architecture. 
 1. **API Gateway** checks Redis for active blocks. If allowed, it forwards traffic and asynchronously logs the event to Kafka.
@@ -95,69 +57,7 @@ SentientGate utilizes an **Event-Driven, Out-of-Band Analysis** architecture.
   <img src="Architectures/sequence_diagram.png" alt="SentientGate Sequence Flow" width="800"/>
 </div>
 
-```mermaid
-sequenceDiagram
-    box rgba(225, 245, 254, 0.4) External
-        actor User as Client
-    end
-    box rgba(255, 249, 196, 0.4) Gateway Layer
-        participant AG as API Gateway
-    end
-    box rgba(243, 229, 245, 0.4) Infrastructure
-        participant RS as Redis
-        participant K as Kafka
-    end
-    box rgba(232, 245, 233, 0.4) Core Microservices
-        participant TS as Target Service
-        participant LS as Logging Service
-    end
-    box rgba(255, 235, 238, 0.4) Security Brain
-        participant MCP as MCP Service
-        participant AI as AI Service
-    end
 
-    User->>AG: HTTP Request
-    AG->>RS: Check if UUID is in Blacklist
-    
-    alt is Blocked
-        RS-->>AG: return True
-        AG-->>User: 403 Forbidden
-    else is Not Blocked
-        RS-->>AG: return False
-        AG->>TS: Forward Request
-        TS-->>AG: HTTP Response
-        
-        par Async Logging
-            AG-)K: Publish to USER_LOGS
-            K-)LS: Consume USER_LOGS
-            LS->>RS: Cache in Redis
-        end
-        
-        AG-->>User: HTTP Response
-        
-        opt If Response is Error (4xx, 5xx)
-            AG-)K: Publish to SECURITY_EVENTS
-            K-)MCP: Consume SECURITY_EVENTS
-            
-            MCP->>RS: Check Deduplication (RedisGuard)
-            RS-->>MCP: Allow if First Occurrence
-            
-            MCP->>LS: Fetch History (gRPC)
-            LS-->>MCP: Returns last 10m Logs
-            
-            MCP->>MCP: Run Synchronous Rules
-            alt Rules Match Threat
-                MCP->>RS: blockUser (Write to Blacklist)
-            else No Rules Match
-                MCP-)AI: Async AI Analysis Request
-                AI-->>MCP: AI Response (Threat Score)
-                opt If AI Detects Threat
-                    MCP->>RS: blockUser (Write to Blacklist)
-                end
-            end
-        end
-    end
-```
 
 ## Services
 
