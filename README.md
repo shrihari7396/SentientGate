@@ -5,307 +5,237 @@ SentientGate is a distributed security platform that sits in front of microservi
 ## The Story
 
 Most API security setups fail in one of two ways:
-
 1. They are static and rule-only, so they miss evolving attacks.
 2. They are powerful but expensive, slow, and hard to run privately.
 
-SentientGate is built to solve that gap. It combines fast gateway enforcement with event-driven analysis, historical context, and local AI inference to make security decisions that are both fast and adaptive.
+SentientGate is built to solve that gap. It combines fast gateway enforcement with event-driven analysis, historical context, and local AI inference to make security decisions that are both fast and adaptive. 
 
 Instead of blocking forever, it applies TTL-based temporary blocks, learns from behavior, and keeps services available under load.
 
 ## What SentientGate Is
 
 SentientGate is a microservice security fabric with these core capabilities:
+- **Real-time request filtering** at the gateway edge (WebFlux/Reactor)
+- **Event-driven threat analysis** with Kafka
+- **Behavioral history analysis** via gRPC
+- **Layered detection** with strategy-based scoring (Burst, Pattern, Config Paths)
+- **Dynamic temporary blocking** via Redis TTL
+- **Local LLM anomaly checks** using Ollama
+- **Operational visibility** through a React dashboard
 
-- Real-time request filtering at the gateway edge
-- Event-driven threat analysis with Kafka
-- Behavioral history analysis via gRPC
-- Layered detection with strategy-based scoring
-- Dynamic temporary blocking via Redis TTL
-- Optional local LLM anomaly checks using Ollama
-- Operational visibility through a React dashboard
+## Technologies Used
 
-## How the System Works
+- [![Java](https://img.shields.io/badge/Java-21-ED8B00?style=flat-square&logo=java&logoColor=white)](https://openjdk.org/projects/jdk/21/)
+- [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=flat-square&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
+- [![Apache Kafka](https://img.shields.io/badge/Apache_Kafka-231F20?style=flat-square&logo=apache-kafka&logoColor=white)](https://kafka.apache.org/)
+- [![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)](https://redis.io/)
+- [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+- [![gRPC](https://img.shields.io/badge/gRPC-244c5a?style=flat-square&logo=google&logoColor=white)](https://grpc.io/)
+- [![Ollama](https://img.shields.io/badge/Ollama-000000?style=flat-square&logo=ollama&logoColor=white)](https://ollama.com/)
+- [![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
+- [![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+- [![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 
-Request journey:
+## Architecture & Data Flow
 
-1. A client request enters `ApiGateway`.
-2. Gateway filters validate request context and check Redis blacklist state.
-3. Security events are published to Kafka for asynchronous analysis.
-4. `MCPService` consumes events and fetches recent user/IP behavior from `LogingService` through gRPC.
-5. MCP applies layered strategies:
-   - `PatternMatchStrategy` for signature-like payload threats
-   - `BurstTrafficStrategy` for abusive traffic patterns
-   - `AiAnomalyStrategy` for behavioral anomalies
-6. If risk crosses threshold, MCP writes a TTL block record to Redis.
-7. Next malicious requests are denied quickly at gateway level.
-8. Logs and decision outcomes are visible to operators in the UI.
+<div align="center">
+  <img src="Architectures/architectural_diagram.png" alt="SentientGate Architecture" width="800"/>
+</div>
 
-This keeps the hot request path fast while moving deeper intelligence to async services.
+```mermaid
+graph TD
+    classDef client fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#000;
+    classDef gateway fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000;
+    classDef infra fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px,color:#000;
+    classDef service fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000;
+    classDef mcp fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#000;
 
-## Industry Impact
+    Client[Client / UI]:::client -->|HTTP/HTTPS| Gateway[API Gateway]:::gateway
+    
+    subgraph Infrastructure
+        Kafka[Apache Kafka]:::infra
+        Redis[(Redis Cache)]:::infra
+        Postgres[(PostgreSQL)]:::infra
+    end
+    
+    subgraph SentientGate Services
+        Gateway
+        Dummy[Target Services]:::service
+        Logging[Logging Service]:::service
+        MCP[MCP Service]:::mcp
+        AI[AI Service]:::service
+    end
+    
+    Gateway -->|Forwards Valid Traffic| Dummy
+    Gateway -.->|Checks Blacklist| Redis
+    Gateway -->|Publishes USER_LOGS| Kafka
+    Gateway -->|Publishes SECURITY_EVENTS| Kafka
+    
+    Kafka -->|Consumes USER_LOGS| Logging
+    Logging -->|Stores Logs| Postgres
+    Logging -->|Caches Logs| Redis
+    
+    Kafka -->|Consumes SECURITY_EVENTS| MCP
+    MCP -.->|Fetches History via gRPC| Logging
+    MCP -->|Analyzes via Rules| MCP
+    MCP -->|Async AI Analysis| AI
+    MCP -.->|Writes Blacklist| Redis
+```
 
-SentientGate targets practical impact in production environments:
+SentientGate utilizes an **Event-Driven, Out-of-Band Analysis** architecture. 
+1. **API Gateway** checks Redis for active blocks. If allowed, it forwards traffic and asynchronously logs the event to Kafka.
+2. **Logging Service** persists logs to PostgreSQL and exposes a rapid gRPC API for history queries.
+3. **MCP Service (Malicious Client Protection)** consumes Kafka security events, fetches history via gRPC, and runs rapid synchronous heuristics using isolated Thread Pools.
+4. **AI Service** provides deep asynchronous behavioral analysis using local LLMs.
+5. Detected threats result in immediate TTL-based blocks written back to Redis.
 
-- Financial services: reduces fraud and bot abuse blast radius with fast temporary bans
-- E-commerce: protects checkout and login surfaces during traffic spikes and bot storms
-- SaaS platforms: provides centralized protection for many internal services behind one gateway
-- Regulated industries: enables privacy-first AI analysis using local models (no external LLM dependency)
-- Platform engineering teams: improves resilience by decoupling detection, storage, and enforcement
+### Sequence Flow
 
-Business-level outcomes:
+<div align="center">
+  <img src="Architectures/sequence_diagram.png" alt="SentientGate Sequence Flow" width="800"/>
+</div>
 
-- Lower incident response time
-- Fewer successful automated attacks
-- Better uptime during abusive traffic windows
-- Stronger auditability of security decisions
+```mermaid
+sequenceDiagram
+    box rgba(225, 245, 254, 0.4) External
+        actor User as Client
+    end
+    box rgba(255, 249, 196, 0.4) Gateway Layer
+        participant AG as API Gateway
+    end
+    box rgba(243, 229, 245, 0.4) Infrastructure
+        participant RS as Redis
+        participant K as Kafka
+    end
+    box rgba(232, 245, 233, 0.4) Core Microservices
+        participant TS as Target Service
+        participant LS as Logging Service
+    end
+    box rgba(255, 235, 238, 0.4) Security Brain
+        participant MCP as MCP Service
+        participant AI as AI Service
+    end
 
-## Architecture
-
-High-level diagram:
-
-![SentientGate Architecture](Architectures/Sentigate_Architectural_Diagram.png)
-
-Sequence diagram:
-
-![SentientGate Sequence](Architectures/Sentigate_Sequence_Diagram.png)
+    User->>AG: HTTP Request
+    AG->>RS: Check if UUID is in Blacklist
+    
+    alt is Blocked
+        RS-->>AG: return True
+        AG-->>User: 403 Forbidden
+    else is Not Blocked
+        RS-->>AG: return False
+        AG->>TS: Forward Request
+        TS-->>AG: HTTP Response
+        
+        par Async Logging
+            AG-)K: Publish to USER_LOGS
+            K-)LS: Consume USER_LOGS
+            LS->>RS: Cache in Redis
+        end
+        
+        AG-->>User: HTTP Response
+        
+        opt If Response is Error (4xx, 5xx)
+            AG-)K: Publish to SECURITY_EVENTS
+            K-)MCP: Consume SECURITY_EVENTS
+            
+            MCP->>RS: Check Deduplication (RedisGuard)
+            RS-->>MCP: Allow if First Occurrence
+            
+            MCP->>LS: Fetch History (gRPC)
+            LS-->>MCP: Returns last 10m Logs
+            
+            MCP->>MCP: Run Synchronous Rules
+            alt Rules Match Threat
+                MCP->>RS: blockUser (Write to Blacklist)
+            else No Rules Match
+                MCP-)AI: Async AI Analysis Request
+                AI-->>MCP: AI Response (Threat Score)
+                opt If AI Detects Threat
+                    MCP->>RS: blockUser (Write to Blacklist)
+                end
+            end
+        end
+    end
+```
 
 ## Services
 
-| Service | Purpose | Default Port |
-|---|---|---|
-| `ApiGateway` | Entry point, filtering, rate limiting, Redis enforcement | `8079` |
-| `MCPService` | Security brain, strategy analysis, enforcement decisions | `9991` |
-| `AIService` | Local LLM-based anomaly analysis via Ollama | `8082` |
-| `LogingService` | Log persistence, gRPC behavior history, dashboard data | `8010` |
-| `EurekaServer` | Service discovery registry | `8761` |
-| `DummyService` | Protected downstream test service | `8090` |
-| `sentinel-ui` | Monitoring dashboard | `5173` |
-
-## Technology Used
-
-| Layer | Tech |
-|---|---|
-| Language/Runtime | Java 21 |
-| Frameworks | Spring Boot, Spring Cloud Gateway, Spring WebFlux |
-| Messaging | Apache Kafka |
-| Caching/Enforcement | Redis |
-| Persistence | PostgreSQL |
-| Service Discovery | Netflix Eureka |
-| Inter-service RPC | gRPC |
-| AI Inference | Ollama (`gemma3:latest` configured in `AIService`) |
-| Frontend | React, Vite, Tailwind CSS |
-| Containerization | Docker, Docker Compose |
-| Orchestration | Kubernetes (Minikube for local, any K8s cluster for production) |
-| Build Tools | Maven and Gradle |
-
-## Why This Design Matters
-
-- Detection is decoupled from enforcement, so analysis can evolve without slowing the gateway.
-- AI is local and optional, so teams keep data control and reduce vendor/API dependency.
-- TTL blocks reduce false-positive damage compared with permanent bans.
-- Strategy pattern allows easy extension for new threat heuristics.
-- Event-driven architecture supports high-throughput and horizontal growth.
-
-## Quick Start (Docker Compose)
-
-Prerequisites:
-
-- Docker and Docker Compose
-- Ollama running locally (for AIService), default endpoint: `http://localhost:11434`
-- Optional model pull: `ollama pull gemma3:latest`
-
-Start all services:
-
-```bash
-docker compose up -d
-```
-
-Stop all services:
-
-```bash
-docker compose down
-```
-
-## Kubernetes Deployment
-
-SentientGate includes production-ready Kubernetes manifests under the `deploy/` directory. Each service has its own set of manifests organized as follows:
-
-### Deploy Folder Structure
-
-```text
-deploy/
-├── Infrastructure/
-│   ├── kafka/deploy/        (config, deployment, service)
-│   ├── postgres/deploy/     (config, secret, pvc, deployment, service)
-│   ├── redis/deploy/        (deployment, service)
-│   └── zookeeper/deploy/    (config, deployment, service)
-├── AiService/deploy/        (config, deployment, service, hpa)
-├── ApiGateWay/deploy/       (config, deployment, service, hpa)
-├── EurekaServer/deploy/     (config, deployment, service)
-├── LoggingService/deploy/   (config, secret, deployment, service, hpa)
-├── McpService/deploy/       (config, deployment, service, hpa)
-├── UI/deploy/               (deployment, service, hpa)
-├── dummy/deploy/            (config, deployment, service, hpa)
-└── deploy.sh                (automated full-stack deploy script)
-```
-
-### Manifest Types Per Service
-
-| Manifest | Purpose |
-|---|---|
-| `config.yml` | ConfigMap with environment variables (URLs, ports, broker addresses) |
-| `secret.yml` | Secret with base64-encoded credentials (database passwords) |
-| `deployment.yml` | Deployment + Service definitions (container image, env injection, ports) |
-| `hpa.yml` | HorizontalPodAutoscaler for CPU-based autoscaling |
-| `pvc.yml` | PersistentVolumeClaim for stateful storage (PostgreSQL) |
-
-### Deployment Order
-
-The automated `deploy.sh` script deploys services in dependency order:
-
-1. **PostgreSQL** — database storage
-2. **Redis** — caching and TTL enforcement
-3. **Zookeeper** — Kafka coordination
-4. **Kafka** — event streaming (depends on Zookeeper)
-5. **EurekaServer** — service discovery registry
-6. **LoggingService** — log persistence and gRPC history (depends on Postgres, Kafka, Eureka)
-7. **ApiGateway** — edge gateway (depends on Redis, Kafka, Eureka)
-8. **MCPService** — security analysis brain (depends on Redis, Kafka, Eureka, LoggingService gRPC)
-9. **AIService** — local LLM inference (depends on Eureka)
-10. **DummyService** — test downstream service (depends on Eureka)
-11. **SentinelUI** — monitoring dashboard
-
-### Quick Start (Minikube)
-
-Prerequisites:
-
-- Minikube installed and running (`minikube start`)
-- `kubectl` configured to use the Minikube context
-- Docker images built and available (`./build_and_push_images.sh`)
-- Ollama running on the host for AIService
-
-Deploy all services:
-
-```bash
-chmod +x deploy/deploy.sh
-./deploy/deploy.sh
-```
-
-Deploy a single service manually:
-
-```bash
-kubectl apply -f deploy/AiService/deploy/config.yml
-kubectl apply -f deploy/AiService/deploy/deployment.yml
-kubectl apply -f deploy/AiService/deploy/hpa.yml
-```
-
-Verify deployments:
-
-```bash
-kubectl get pods
-kubectl get services
-kubectl get hpa
-```
-
-Access services via Minikube:
-
-```bash
-minikube service api-gateway --url
-minikube service sentinel-ui --url
-```
-
-### Service Exposure
-
-| Service | Type | Cluster Port |
-|---|---|---|
-| `api-gateway` | LoadBalancer | `8079 → 8080` |
-| `sentinel-ui` | LoadBalancer | `5173 → 80` |
-| `eureka-server` | ClusterIP | `8761` |
-| `ai-service` | ClusterIP | `8082 → 8080` |
-| `logging-service` | ClusterIP | `8080 (HTTP)`, `9090 (gRPC)` |
-| `mcp-server` | ClusterIP | `8080` |
-| `kafka-service` | ClusterIP | `29092 (internal)`, `9092 (external)` |
-| `postgres` | ClusterIP | `5432` |
-| `redis` | ClusterIP | `6379` |
-| `zookeeper` | ClusterIP | `2181` |
-
-### Autoscaling
-
-HPA is configured for application services with CPU-based scaling:
-
-| Service | Min Replicas | Max Replicas | CPU Target |
+| Service | Purpose | Default Port | Framework |
 |---|---|---|---|
-| `ai-service` | 1 | 3 | 80% |
-| `api-gateway` | 2 | 5 | 80% |
-| `logging-service` | 1 | 3 | 80% |
-| `mcp-server` | 2 | 5 | 80% |
-| `sentinel-ui` | 1 | 3 | 80% |
-| `dummy-service` | 1 | 3 | 80% |
+| `ApiGateway` | Entry point, filtering, rate limiting, Redis enforcement | `8079` | Spring WebFlux |
+| `MCPService` | Security brain, strategy analysis, enforcement decisions | `8080` | Spring Boot (Isolated Thread Pools) |
+| `AIService` | Local LLM-based anomaly analysis via Ollama | `8082` | Spring WebFlux |
+| `LoggingService` | Log persistence, gRPC behavior history | `8010` | Spring Boot + gRPC |
+| `EurekaServer` | Service discovery registry | `8761` | Spring Cloud Netflix |
+| `Dummy` | Protected downstream test service | `8090` | Spring Boot |
+| `sentinel-gateway-ui`| Monitoring dashboard | `5173` | React, Vite |
 
-## Local Development
-
-Each service is independently buildable:
-
-- Maven services: `ApiGateway`, `AIService`
-- Gradle services: `MCPService`, `LogingService`, `EurekaServer`, `DummyService`
-
-Typical local order:
-
-1. Start infrastructure: PostgreSQL, Redis, Kafka, Eureka
-2. Start `LogingService` and `MCPService`
-3. Start `AIService`
-4. Start `DummyService`
-5. Start `ApiGateway`
-6. Start UI from `UI/sentinel-gateway-ui`
-
-## Testing
-
-Run multi-service tests:
-
-```bash
-./run_tests.sh
-```
-
-Run gateway tests separately:
-
-```bash
-cd ApiGateway
-./mvnw test
-```
-
-## Project Structure
+## Repository Structure
 
 ```text
 SentientGate/
 ├── ApiGateway/
 ├── MCPService/
 ├── AIService/
-├── LogingService/
+├── LoggingService/
 ├── EurekaServer/
-├── DummyService/
+├── Dummy/
 ├── UI/sentinel-gateway-ui/
-├── deploy/
-│   ├── Infrastructure/
-│   │   ├── kafka/deploy/
-│   │   ├── postgres/deploy/
-│   │   ├── redis/deploy/
-│   │   └── zookeeper/deploy/
-│   ├── AiService/deploy/
-│   ├── ApiGateWay/deploy/
-│   ├── EurekaServer/deploy/
-│   ├── LoggingService/deploy/
-│   ├── McpService/deploy/
-│   ├── UI/deploy/
-│   ├── dummy/deploy/
-│   └── deploy.sh
-├── Architectures/
-├── docker-compose.yml
-├── build_and_push_images.sh
-├── deploy.sh
-├── run_tests.sh
+├── k8s/                     # Consolidated Kubernetes manifests
+├── scripts/                 # Automation scripts (test, build, deploy)
+├── TOOLS/                   # Local infrastructure docker-compose
+├── .github/workflows/       # CI/CD Pipelines
+├── ARCHITECTURE.md          # In-depth Mermaid diagrams
 └── README.md
 ```
+
+## Quick Start (Local Development)
+
+### 1. Start Infrastructure & Services
+We provide automation scripts to easily spin up Postgres, Redis, Kafka, and the microservices locally.
+```bash
+./scripts/run_local.sh
+```
+*Note: This script launches the infrastructure and sequentially boots up all microservices.*
+
+### 2. Run Tests
+Execute the full integration test suite across all services:
+```bash
+./scripts/test_local.sh
+```
+
+### 3. Stop Environment
+```bash
+./scripts/stop_local.sh
+```
+
+## Kubernetes Deployment (Production Ready)
+
+SentientGate includes consolidated, production-ready Kubernetes manifests in the `k8s/` directory. Instead of fragmented folders, we use consolidated `manifest.yml` files for each service (e.g., `k8s/api-gateway-manifest.yml`) containing all necessary ConfigMaps, Deployments, Services, and HPAs.
+
+### Deploying to Minikube or any K8s Cluster
+
+1. Start Minikube:
+```bash
+minikube start
+```
+
+2. Build and push your Docker images to your registry:
+```bash
+./scripts/build_and_push_images.sh
+```
+
+3. Deploy all services to Kubernetes:
+```bash
+./scripts/deploy.sh
+```
+
+## CI/CD Automation
+
+SentientGate utilizes GitHub Actions for seamless continuous integration:
+- **Tests Workflow** (`.github/workflows/test.yml`): Runs the entire local test suite on every commit and PR.
+- **Docker Publish** (`.github/workflows/docker-publish.yml`): Automatically builds and pushes all microservice Docker images to Docker Hub when merging into `main` or `master`.
 
 ## License
 
