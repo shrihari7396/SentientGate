@@ -19,8 +19,8 @@ public class DummyController {
         return ResponseEntity.status(HttpStatus.OK).body("Hello World!");
     }
 
-    @GetMapping("/temp")
+    @GetMapping("/dummy")
     public ResponseEntity<String> dummy() {
-        return ResponseEntity.status(HttpStatus.OK).body("Service Is running Successfully! ");
+        return ResponseEntity.status(HttpStatus.OK).body("Service Is running Successfully!    ");
     }
 }

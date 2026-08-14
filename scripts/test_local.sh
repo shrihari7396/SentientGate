@@ -12,7 +12,13 @@ echo -e "${BLUE}🚀 Starting SentientGate Services Tests...${NC}"
 # Start Infrastructure for integration tests
 echo -e "${BLUE}📦 Starting Infrastructure (Postgres, Redis, Kafka, Zookeeper)...${NC}"
 cd TOOLS
-docker compose up -d postgres redis zookeeper kafka
+docker compose up -d 
+
+cd ..
+cd UI
+cd sentinel-gateway-ui  
+npm install
+cd ..
 cd ..
 
 echo -e "${BLUE}⏳ Waiting for Postgres database to be healthy...${NC}"
