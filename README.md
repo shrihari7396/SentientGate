@@ -140,3 +140,4 @@ SentientGate utilizes GitHub Actions for seamless continuous integration:
 ## License
 
 Apache 2.0. See `LICENSE`.
+
