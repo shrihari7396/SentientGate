@@ -79,6 +79,7 @@ public class McpAnalysisService {
 
         log.info("No synchronous malicious patterns found for UUID: {}", uuid);
 
+        redisGuardService.markAsChecked(uuid);
         runAiAnalysisAsync(uuid, alerts, history);
     }
 

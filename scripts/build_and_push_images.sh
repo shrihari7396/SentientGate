@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ..
+cd "$(dirname "$0")/.."
 
 # Configuration
 REGISTRY_USER="shrihari7396"
