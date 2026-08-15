@@ -92,10 +92,10 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
 
                                     sendLogEvent(logEvent);
 
-                                    // 2. Security Pipeline: Trigger for non-200s (Redirection,
+                                    // 2. Security Pipeline: Trigger for 4xx and 5xx
                                     // Client/Server
                                     // Errors)
-                                    if (statusCode < 200 || statusCode >= 300) {
+                                    if (statusCode >= 400) {
                                         SecurityAlertEvent alertEvent =
                                                 SecurityAlertEvent.builder()
                                                         .uuid(uuid)

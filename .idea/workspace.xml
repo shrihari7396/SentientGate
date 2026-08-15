@@ -5,31 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/k8s/dummy-service.yml.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AIService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EurekaServer/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServer/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EurekaServer/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServer/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCPService/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/MCPService/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCPService/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/MCPService/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MCPService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/MCPService/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/api-gateway-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/api-gateway-manifest.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/dummy/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/dummy/deploy/config.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/dummy/deploy/deployment.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/dummy/deploy/hpa.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/logging-service-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/logging-service-manifest.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

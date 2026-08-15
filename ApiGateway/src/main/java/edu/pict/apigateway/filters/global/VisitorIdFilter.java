@@ -31,21 +31,18 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
             String fullToken = cookie.getValue();
             String uuid = sentinelSecurityService.verifyAndExtractId(fullToken);
 
-            if (uuid == null) {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
+            if (uuid != null) {
+                ServerWebExchange mutatedExchange =
+                        exchange.mutate()
+                                .request(
+                                        exchange.getRequest()
+                                                .mutate()
+                                                .headers(headers -> headers.set(Constants.VISITOR_ID, uuid))
+                                                .build())
+                                .build();
+
+                return chain.filter(mutatedExchange);
             }
-
-            ServerWebExchange mutatedExchange =
-                    exchange.mutate()
-                            .request(
-                                    exchange.getRequest()
-                                            .mutate()
-                                            .header(Constants.VISITOR_ID, uuid)
-                                            .build())
-                            .build();
-
-            return chain.filter(mutatedExchange);
         }
 
         // This executes when Cookie is not present their (User is coming first time)
@@ -67,7 +64,7 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
                         .request(
                                 exchange.getRequest()
                                         .mutate()
-                                        .header(Constants.VISITOR_ID, uuid)
+                                        .headers(headers -> headers.set(Constants.VISITOR_ID, uuid))
                                         .build())
                         .build();
 
