@@ -6,12 +6,11 @@ import edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent;
 import edu.pict.mcpservice.stratagies.blocking.AiAnomalyStrategy;
 import edu.pict.mcpservice.stratagies.blocking.ThreatStrategy;
 import edu.pict.mcpservice.util.LogEventMapper;
+import edu.pict.mcpservice.util.RedisGuardService;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-
-import edu.pict.mcpservice.util.RedisGuardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
