@@ -1,7 +1,0 @@
-{
-    "java.compile.nullAnalysis.mode": "automatic",
-    "java.configuration.updateBuildConfiguration": "automatic",
-    "yaml.schemas": {
-        "https://www.schemastore.org/sourcehut-build-0.65.0.json": "file:///home/shrihari/Documents/PersonalProjects/SentientGate/deployment.yml"
-    }
-}
