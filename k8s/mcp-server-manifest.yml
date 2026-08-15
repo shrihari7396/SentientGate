@@ -8,7 +8,7 @@ data:
   SPRING_DATA_REDIS_HOST: "redis"
   SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-service:9092"
   EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
-  GRPC_CLIENT_LOGGING_SERVICE_ADDRESS: "discovery:///LOGGING-SERVICE"
+  GRPC_CLIENT_LOGGING_SERVICE_ADDRESS: "dns:///logging-service:9090"
   SERVER_PORT: "8080"
 ---
 apiVersion: apps/v1
@@ -37,6 +37,25 @@ spec:
                 name: mcp-server-config
           ports:
             - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /mcp-service/actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /mcp-service/actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service

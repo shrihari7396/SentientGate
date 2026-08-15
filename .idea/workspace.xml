@@ -4,7 +4,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="" />
+    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/k8s/dummy-service.yml.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/resources/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AIService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/AIService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/src/main/resources/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ApiGateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ApiGateway/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EurekaServer/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServer/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EurekaServer/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/EurekaServer/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/resources/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MCPService/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/MCPService/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MCPService/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/MCPService/src/main/resources/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MCPService/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/MCPService/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/api-gateway-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/api-gateway-manifest.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/dummy/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/dummy/deploy/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/dummy/deploy/deployment.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/dummy/deploy/hpa.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/logging-service-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/logging-service-manifest.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -46,30 +72,7 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Dummy" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Dummy" type="f1a62948:ProjectNode" />
-                <item name="app" type="2d1252cf:ModuleNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Dummy" type="f1a62948:ProjectNode" />
-                <item name="app" type="2d1252cf:ModuleNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Dummy" type="f1a62948:ProjectNode" />
-                <item name="app" type="2d1252cf:ModuleNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build" type="c8890929:TasksNode$1" />
-              </path>
-            </expand>
+            <expand />
             <select />
           </tree_state>
         </projects_view>
@@ -105,15 +108,24 @@
   &quot;isOnboardingCommentShown&quot;: true
 }</component>
   <component name="KubernetesApiPersistence">{}</component>
-  <component name="KubernetesApiProvider">{
-  &quot;configuredContextKeys&quot;: [
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "configuredContextKeys": [
     {
-      &quot;name&quot;: &quot;minikube&quot;,
-      &quot;configFileUrl&quot;: &quot;file:///home/shrihari/.kube/config&quot;,
-      &quot;namespace&quot;: &quot;default&quot;
+      "name": "minikube",
+      "configFileUrl": "file:///home/shrihari/.kube/config",
+      "namespace": "default"
     }
   ]
-}</component>
+}]]></component>
+  <component name="KubernetesSettings">
+    <option name="selectedContext">
+      <SelectedContextState>
+        <option name="configFileUrl" value="file://$USER_HOME$/.kube/config" />
+        <option name="name" value="minikube" />
+        <option name="namespace" value="default" />
+      </SelectedContextState>
+    </option>
+  </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -208,48 +220,55 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Build Dummy.executor": "Run",
-    "Gradle.Build EurekaServer.executor": "Run",
-    "Gradle.Build LoggingService.executor": "Run",
-    "Gradle.Build MCPService.executor": "Run",
-    "Gradle.Dummy [:app:compileJava].executor": "Run",
-    "Gradle.Dummy [:app:jar].executor": "Run",
-    "Gradle.Dummy [bootJar].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.AiServiceApplication.executor": "Run",
-    "Spring Boot.ApiGatewayApplication.executor": "Run",
-    "Spring Boot.DummyServiceApplication.executor": "Run",
-    "Spring Boot.EurekaServerApplication.executor": "Run",
-    "Spring Boot.LoggingServiceApplication.executor": "Run",
-    "Spring Boot.McpServiceApplication.executor": "Run",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "kubernates-deployment",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/shrihari/Documents/PersonalProjects/SentientGate",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build Dummy.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build EurekaServer.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build LoggingService.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build MCPService.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Dummy [:app:compileJava].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Dummy [:app:jar].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Dummy [bootJar].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.AiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.DummyServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.EurekaServerApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.LoggingServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.McpServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/shrihari/Documents/PersonalProjects/SentientGate&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/k8s" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="configurationTypes">
       <set>

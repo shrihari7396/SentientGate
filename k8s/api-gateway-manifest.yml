@@ -4,10 +4,10 @@ metadata:
   name: api-gateway-config
   namespace: sentientgate
 data:
-  REDIS_HOST: "redis"
-  REDIS_PORT: "6379"
-  KAFKA_BOOTSTRAP_SERVERS: "kafka-service:9092"
-  EUREKA_URL: "http://eureka-server:8761/eureka"
+  SPRING_DATA_REDIS_HOST: "redis"
+  SPRING_DATA_REDIS_PORT: "6379"
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-service:9092"
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eureka-server:8761/eureka"
 ---
 apiVersion: v1
 kind: Secret
@@ -16,8 +16,8 @@ metadata:
   namespace: sentientgate
 type: Opaque
 stringData:
-  SENTINEL_SECRET_KEY: "prod-sentinel-secret-key-placeholder"
-  JWT_SECRET_KEY: "prod-jwt-secret-key-placeholder"
+  SENTINEL_SECRET_KEY: "8f4c2a9d7e1b6f3a0c8d5e2f9a7b1c6d4e8f2a0b7c5d9e1f3a6c8b0d2e4f7a9"
+  JWT_SECRET_KEY: "3b7e9a1c5f8d2a6e0b4c9f1d7e3a8b5c2f6d0e9a4b1c7f3d8a2e5b9c6f0d4"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -50,10 +50,22 @@ spec:
                 name: api-gateway-secret
           ports:
             - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 15
           resources:
             requests:
               cpu: "100m"
-              memory: "256Mi"
+              memory: "512Mi"
             limits:
               cpu: "500m"
               memory: "512Mi"
