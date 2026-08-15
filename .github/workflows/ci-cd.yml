@@ -33,6 +33,13 @@ jobs:
           chmod +x scripts/*.sh
           find . -name "*.sh" -exec chmod +x {} \;
 
+      - name: Set up Infrastructure
+        run: |
+          cd scripts
+          ./infrastructure.sh
+          cd ..
+          sleep 10
+
       - name: Run Tests
         run: ./scripts/test_local.sh
 
