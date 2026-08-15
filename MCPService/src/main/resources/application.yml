@@ -101,7 +101,9 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,circuitbreakerevents,retry,timelimiter
+        include: health,info,metrics,prometheus,circuitbreakerevents,retry,timelimiter
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true

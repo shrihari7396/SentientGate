@@ -43,6 +43,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 
     // ---------------- Spring Cloud ----------------
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -91,13 +92,6 @@ protobuf {
             artifact = "io.grpc:protoc-gen-grpc-java:1.63.0"
         }
     }
-//    generateProtoTasks {
-//        all().each { task ->
-//            task.plugins {
-//                grpc {}
-//            }
-//        }
-//    }
     generateProtoTasks {
         all().each { task ->
             task.plugins {
