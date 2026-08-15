@@ -9,7 +9,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpCookie;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -37,7 +36,10 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
                                 .request(
                                         exchange.getRequest()
                                                 .mutate()
-                                                .headers(headers -> headers.set(Constants.VISITOR_ID, uuid))
+                                                .headers(
+                                                        headers ->
+                                                                headers.set(
+                                                                        Constants.VISITOR_ID, uuid))
                                                 .build())
                                 .build();
 
