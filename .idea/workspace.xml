@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b95b25dd-e87b-4b32-931a-a18c391432f0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/b95b25dd-e87b-4b32-931a-a18c391432f0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/ai-service-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/ai-service-manifest.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/api-gateway-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/api-gateway-manifest.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/eureka-server-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/eureka-server-manifest.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/logging-service-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/logging-service-manifest.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/mcp-server-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/mcp-server-manifest.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/postgres-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/postgres-manifest.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k8s/sentinel-ui-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/sentinel-ui-manifest.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/run_all_services.sh" beforeDir="false" />
-    </list>
+    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
