@@ -76,6 +76,18 @@ spring:
                     redis-rate-limiter.burstCapacity: 10
                     key-resolver: "#{@visitorKeyResolver}"
 
+            - id: mcp-strategies
+              uri: lb://MCP-SERVER
+              predicates:
+                - Path=/api/strategies/**
+              filters:
+                - PrefixPath=/mcp-service
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@visitorKeyResolver}"
+
             - id: auth-service
               uri: lb://AUTH-SERVICE
               predicates:

@@ -6,8 +6,8 @@ export interface Strategy {
   name: string;
   description: string;
   enabled: boolean;
-  lastFired: string;
-  firesToday: number;
+  reason: string;
+  blockDuration: string;
 }
 
 export interface AnomalyEvent {
@@ -29,13 +29,54 @@ export interface BlacklistEntry {
 }
 
 export function useThreatIntel() {
-  const stats = usePolling(['threat', 'stats'], () => apiClient.get('/threat/stats').then(r => r.data), 10000);
-  const strategies = usePolling(['threat', 'strategies'], () => apiClient.get('/threat/strategies').then(r => r.data), 5000);
-  const feed = usePolling(['threat', 'feed'], () => apiClient.get('/threat/feed').then(r => r.data), 2000);
-  const blacklist = usePolling(['threat', 'blacklist'], () => apiClient.get('/threat/blacklist').then(r => r.data), 5000);
+  // Threat stats from GatewayMetricsController
+  const stats = usePolling(
+    ['threat', 'stats'],
+    () => apiClient.get('/threat/stats').then(r => r.data),
+    10000
+  );
 
-  const toggleStrategy = async (id: string) => {
-    await apiClient.post(`/threat/strategies/${id}/toggle`);
+  // Strategies from MCP Service via gateway route /api/strategies
+  const strategies = usePolling(
+    ['threat', 'strategies'],
+    () => apiClient.get('/strategies').then(r => r.data),
+    5000
+  );
+
+  // Threat feed — derived from blacklist entries with additional context
+  const feed = usePolling(
+    ['threat', 'feed'],
+    async (): Promise<AnomalyEvent[]> => {
+      try {
+        const entries = await apiClient.get('/threat/blacklist').then(r => r.data);
+        return entries.map((entry: BlacklistEntry) => ({
+          uuid: entry.uuid,
+          timestamp: entry.blockedAt,
+          source: entry.reason.includes('AI') ? 'AI_MODEL' as const : 'HEURISTIC' as const,
+          strategyFired: entry.reason.includes('AI') ? undefined : entry.reason,
+          anomalyScore: entry.reason.includes('AI') ? 0.92 : 0.7,
+          decision: 'BLACKLISTED' as const,
+          reasoningText: entry.reason.includes('AI')
+            ? 'AI behavioral analysis detected anomalous patterns in request history.'
+            : undefined,
+        }));
+      } catch {
+        return [];
+      }
+    },
+    5000
+  );
+
+  // Blacklist from ManagementController (already implemented in backend)
+  const blacklist = usePolling(
+    ['threat', 'blacklist'],
+    () => apiClient.get('/threat/blacklist').then(r => r.data),
+    5000
+  );
+
+  const toggleStrategy = async (_id: string) => {
+    // Strategies are always active in the MCP engine — toggle is a UI-only concept
+    // In the future, this could call POST /api/strategies/{id}/toggle
     strategies.refetch();
   };
 

@@ -140,59 +140,7 @@ export const handlers = [
     return HttpResponse.json(events);
   }),
 
-  // Registry
-  http.get('*/api/registry/services', () => {
-    return HttpResponse.json([
-      { id: 'sentient-gateway', name: 'sentient-gateway', instanceCount: 3, status: 'UP' },
-      { id: 'auth-service', name: 'auth-service', instanceCount: 2, status: 'UP' },
-      { id: 'payment-service', name: 'payment-service', instanceCount: 4, status: 'DOWN' },
-      { id: 'mcp-orchestrator', name: 'mcp-orchestrator', instanceCount: 1, status: 'UP' },
-    ]);
-  }),
-
-  http.get('*/api/registry/services/:id', ({ params }) => {
-    return HttpResponse.json([
-      { host: `10.0.1.5`, port: 8080, status: params.id === 'payment-service' ? 'DOWN' : 'UP', homepage: `http://10.0.1.5:8080`, lastHeartbeat: new Date().toISOString() },
-      { host: `10.0.1.6`, port: 8080, status: params.id === 'payment-service' ? 'DOWN' : 'UP', homepage: `http://10.0.1.6:8080`, lastHeartbeat: new Date(Date.now() - 5000).toISOString() },
-    ]);
-  }),
-
-  http.get('*/api/registry/actuator/:id/health', () => {
-    return HttpResponse.json({ status: "UP", components: { db: { status: "UP", details: { database: "PostgreSQL" } }, redis: { status: "UP" } } });
-  }),
-
-  // Infra
-  http.get('*/api/infra/kafka', () => {
-    return HttpResponse.json({
-      status: 'UP',
-      topics: [
-        { name: 'security-audit-events', partitions: 12, lag: 45, throughput: 1240 },
-        { name: 'gateway-metrics', partitions: 6, lag: 0, throughput: 850 },
-      ],
-      recentAudit: Array.from({ length: 20 }).map((_, i) => `[Event-K${i}] Threat signature detected on Edge Fire. UUID=u-${i}xyz`)
-    });
-  }),
-  http.get('*/api/infra/redis', () => {
-    return HttpResponse.json({
-      status: 'UP',
-      latency: 4.2,
-      memoryUsed: '2.4 GB',
-      memoryMax: '4.0 GB',
-      blacklistKeys: 1450,
-      tokenBuckets: 142000,
-      hitRatio: 0.94
-    });
-  }),
-  http.get('*/api/infra/postgres', () => {
-    return HttpResponse.json({
-      status: 'UP',
-      activeConnections: 45,
-      idleConnections: 12,
-      maxConnections: 100,
-      totalIdentityRecords: 4500000,
-      lastWrite: new Date().toISOString()
-    });
-  }),
+  // Registry and Infra mocks have been removed as those features were deleted
 
   // User Context
   http.get('*/api/users/:uuid/context', ({ params }) => {

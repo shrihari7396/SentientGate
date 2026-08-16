@@ -11,4 +11,14 @@ public interface ThreatStrategy {
     Duration getBlockDuration();
 
     String getReason();
+
+    /** Human-readable display name for the UI. Defaults to simple class name. */
+    default String getDisplayName() {
+        return getClass().getSimpleName();
+    }
+
+    /** Description of what this strategy detects, shown in the UI. */
+    default String getDescription() {
+        return "Threat detection strategy: " + getReason();
+    }
 }

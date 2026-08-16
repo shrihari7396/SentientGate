@@ -31,4 +31,9 @@ public class BurstTrafficStrategy implements ThreatStrategy {
     public String getReason() {
         return "BURST_TRAFFIC_DETECTED_BOT_SUSPECT";
     }
+
+    @Override
+    public String getDescription() {
+        return "Detects bots by identifying 20+ requests within a 5-second window — inhuman velocity.";
+    }
 }

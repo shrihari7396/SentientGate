@@ -1,19 +1,27 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ScrollText, GitBranch, Globe, ShieldAlert, Server, Settings, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, ScrollText, GitBranch, ShieldAlert, Settings, Sun, Moon } from 'lucide-react';
 import clsx from 'clsx';
 import { useState } from 'react';
 
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: ScrollText, label: 'Traffic Ledger', path: '/logs', badge: 12 },
+  { icon: ScrollText, label: 'Traffic Ledger', path: '/logs' },
   { icon: GitBranch, label: 'Pipeline', path: '/pipeline' },
-  { icon: Globe, label: 'Service Registry', path: '/registry' },
   { icon: ShieldAlert, label: 'Threat Intel', path: '/threat', accent: true, pulse: true },
-  { icon: Server, label: 'Infrastructure', path: '/infra' },
 ];
 
 export function Sidebar() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
+
+  const toggleTheme = () => {
+    const nextIsDark = !isDark;
+    setIsDark(nextIsDark);
+    if (nextIsDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   return (
     <div className="w-[220px] bg-surface h-full border-r border-border flex flex-col">
@@ -41,11 +49,6 @@ export function Sidebar() {
             <item.icon size={18} className={clsx('mr-3', item.accent ? 'text-teal' : 'opacity-70')} />
             {item.label}
             
-            {item.badge && (
-              <span className="ml-auto bg-blue/20 text-blue font-mono text-[10px] px-1.5 py-0.5 rounded">
-                +{item.badge}
-              </span>
-            )}
             {item.pulse && (
               <span className="ml-auto flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red opacity-75"></span>
@@ -62,7 +65,7 @@ export function Sidebar() {
           Settings
         </button>
         <button 
-          onClick={() => setIsDark(!isDark)}
+          onClick={toggleTheme}
           className="flex items-center w-full px-3 py-2.5 rounded text-sm font-medium text-text-muted hover:bg-elevated hover:text-text-primary transition-colors"
         >
           {isDark ? <Sun size={18} className="mr-3 opacity-70" /> : <Moon size={18} className="mr-3 opacity-70" />}

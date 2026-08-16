@@ -34,4 +34,9 @@ public class RateLimitCoolDownStrategy implements ThreatStrategy {
     public String getReason() {
         return "Aggressive polling detected. 15m cool-down.";
     }
+
+    @Override
+    public String getDescription() {
+        return "Enforces a 15-minute cooldown when a user repeatedly hits rate limits (429 responses).";
+    }
 }

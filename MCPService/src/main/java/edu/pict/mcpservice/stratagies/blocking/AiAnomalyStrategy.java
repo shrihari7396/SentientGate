@@ -41,4 +41,9 @@ public class AiAnomalyStrategy implements ThreatStrategy {
     public String getReason() {
         return "AI_BEHAVIORAL_ANOMALY_DETECTED";
     }
+
+    @Override
+    public String getDescription() {
+        return "Uses LLM-powered analysis to detect complex behavioral anomalies that rule-based strategies miss. Runs asynchronously.";
+    }
 }

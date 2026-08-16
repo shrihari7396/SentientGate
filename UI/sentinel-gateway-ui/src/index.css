@@ -6,6 +6,19 @@
 
 @layer base {
   :root {
+    --bg-base: #F8FAFC; 
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #F1F5F9;
+    --border: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-muted: #64748B;
+    --accent-teal: #0D9488;
+    --accent-amber: #D97706;
+    --accent-red: #DC2626;
+    --accent-blue: #2563EB;
+  }
+
+  .dark {
     --bg-base: #0D1117;
     --bg-surface: #161B22;
     --bg-elevated: #1C2128;
@@ -22,9 +35,15 @@
     @apply bg-[var(--bg-base)] text-[var(--text-primary)] font-sans antialiased;
     /* Subtle grid layout using radial gradients */
     background-image: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .dark body {
+    background-image: 
       linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size: 32px 32px;
   }
 
   * {

@@ -73,4 +73,9 @@ public class PatternMatchStrategy implements ThreatStrategy {
     public String getReason() {
         return "CRITICAL_INJECTION_ATTEMPT";
     }
+
+    @Override
+    public String getDescription() {
+        return "Detects SQL injection, XSS, and path traversal patterns in request paths and payloads.";
+    }
 }
