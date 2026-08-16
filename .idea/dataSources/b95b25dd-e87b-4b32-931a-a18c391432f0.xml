@@ -11,9 +11,8 @@
 4||10|c|G
 4||10|C|G
 4||10|T|G</Grants>
-      <IntrospectionStateNumber>833</IntrospectionStateNumber>
       <ServerVersion>17.10</ServerVersion>
-      <StartupTime>1786459476</StartupTime>
+      <StartupTime>1786776552</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -707,7 +706,6 @@ true posixrules
 13283||10|C|G
 13283||-9223372036854775808|U|G
 13283||10|U|G</Grants>
-      <IntrospectionStateNumber>833</IntrospectionStateNumber>
       <ObjectId>16384</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -716,53 +714,53 @@ true posixrules
       <ObjectId>5</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
-    <role id="4" parent="1" name="pg_checkpoint">
-      <ObjectId>4544</ObjectId>
-    </role>
-    <role id="5" parent="1" name="pg_create_subscription">
-      <ObjectId>6304</ObjectId>
-    </role>
-    <role id="6" parent="1" name="pg_database_owner">
+    <role id="4" parent="1" name="pg_database_owner">
       <ObjectId>6171</ObjectId>
     </role>
-    <role id="7" parent="1" name="pg_execute_server_program">
-      <ObjectId>4571</ObjectId>
+    <role id="5" parent="1" name="pg_read_all_data">
+      <ObjectId>6181</ObjectId>
     </role>
-    <role id="8" parent="1" name="pg_maintain">
-      <ObjectId>6337</ObjectId>
+    <role id="6" parent="1" name="pg_write_all_data">
+      <ObjectId>6182</ObjectId>
     </role>
-    <role id="9" parent="1" name="pg_monitor">
+    <role id="7" parent="1" name="pg_monitor">
       <ObjectId>3373</ObjectId>
       <RoleGrants>3374
 3375
 3377</RoleGrants>
     </role>
-    <role id="10" parent="1" name="pg_read_all_data">
-      <ObjectId>6181</ObjectId>
-    </role>
-    <role id="11" parent="1" name="pg_read_all_settings">
+    <role id="8" parent="1" name="pg_read_all_settings">
       <ObjectId>3374</ObjectId>
     </role>
-    <role id="12" parent="1" name="pg_read_all_stats">
+    <role id="9" parent="1" name="pg_read_all_stats">
       <ObjectId>3375</ObjectId>
     </role>
-    <role id="13" parent="1" name="pg_read_server_files">
+    <role id="10" parent="1" name="pg_stat_scan_tables">
+      <ObjectId>3377</ObjectId>
+    </role>
+    <role id="11" parent="1" name="pg_read_server_files">
       <ObjectId>4569</ObjectId>
+    </role>
+    <role id="12" parent="1" name="pg_write_server_files">
+      <ObjectId>4570</ObjectId>
+    </role>
+    <role id="13" parent="1" name="pg_execute_server_program">
+      <ObjectId>4571</ObjectId>
     </role>
     <role id="14" parent="1" name="pg_signal_backend">
       <ObjectId>4200</ObjectId>
     </role>
-    <role id="15" parent="1" name="pg_stat_scan_tables">
-      <ObjectId>3377</ObjectId>
+    <role id="15" parent="1" name="pg_checkpoint">
+      <ObjectId>4544</ObjectId>
     </role>
-    <role id="16" parent="1" name="pg_use_reserved_connections">
+    <role id="16" parent="1" name="pg_maintain">
+      <ObjectId>6337</ObjectId>
+    </role>
+    <role id="17" parent="1" name="pg_use_reserved_connections">
       <ObjectId>4550</ObjectId>
     </role>
-    <role id="17" parent="1" name="pg_write_all_data">
-      <ObjectId>6182</ObjectId>
-    </role>
-    <role id="18" parent="1" name="pg_write_server_files">
-      <ObjectId>4570</ObjectId>
+    <role id="18" parent="1" name="pg_create_subscription">
+      <ObjectId>6304</ObjectId>
     </role>
     <role id="19" parent="1" name="postgres">
       <BypassRls>1</BypassRls>
@@ -4135,9 +4133,6 @@ true posixrules
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <LastIntrospectionL1Xid>833</LastIntrospectionL1Xid>
-      <LastIntrospectionL2Xid>833</LastIntrospectionL2Xid>
-      <LastIntrospectionL3Xid>833</LastIntrospectionL3Xid>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
       <LastIntrospectionLocalTimestamp>2026-08-11.14:59:19</LastIntrospectionLocalTimestamp>
       <LastIntrospectionVersion>260210</LastIntrospectionVersion>
@@ -4147,115 +4142,115 @@ true posixrules
     </schema>
     <table id="266" parent="265" name="gateway_logs">
       <DetailsLevel>2</DetailsLevel>
-      <ObjectId>16385</ObjectId>
-      <StateNumber>740</StateNumber>
+      <ObjectId>16389</ObjectId>
+      <StateNumber>751</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
     <column id="267" parent="266" name="id">
       <NotNull>1</NotNull>
       <Position>1</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>uuid|0s</StoredType>
       <TypeId>2950</TypeId>
     </column>
     <column id="268" parent="266" name="client_ip">
       <NotNull>1</NotNull>
       <Position>2</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="269" parent="266" name="decision">
       <Position>3</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="270" parent="266" name="ingested_at">
       <NotNull>1</NotNull>
       <Position>4</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>timestamp(6) with time zone|0s</StoredType>
       <TypeId>1184</TypeId>
     </column>
     <column id="271" parent="266" name="latency_ms">
       <NotNull>1</NotNull>
       <Position>5</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <column id="272" parent="266" name="method">
       <Position>6</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="273" parent="266" name="occurred_at">
       <NotNull>1</NotNull>
       <Position>7</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>timestamp(6) with time zone|0s</StoredType>
       <TypeId>1184</TypeId>
     </column>
     <column id="274" parent="266" name="path">
       <Position>8</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="275" parent="266" name="query_params">
       <Position>9</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
     <column id="276" parent="266" name="request_size">
       <Position>10</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <column id="277" parent="266" name="route_id">
       <Position>11</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="278" parent="266" name="status_code">
       <NotNull>1</NotNull>
       <Position>12</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
     <column id="279" parent="266" name="user_agent">
       <Position>13</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
     <column id="280" parent="266" name="visitor_id">
       <Position>14</Position>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <index id="281" parent="266" name="gateway_logs_pkey">
       <ColNames>id</ColNames>
       <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16390</ObjectId>
+      <ObjectId>16394</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>740</StateNumber>
+      <StateNumber>751</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
     <index id="282" parent="266" name="idx_logs_ip_occurred">
       <ColNames>client_ip
 occurred_at</ColNames>
-      <ObjectId>16394</ObjectId>
-      <StateNumber>743</StateNumber>
+      <ObjectId>16398</ObjectId>
+      <StateNumber>754</StateNumber>
       <AccessMethodId>403</AccessMethodId>
       <CollationNames>default</CollationNames>
       <CollationIds>100</CollationIds>
@@ -4263,15 +4258,15 @@ occurred_at</ColNames>
     </index>
     <index id="283" parent="266" name="idx_logs_occurred_at">
       <ColNames>occurred_at</ColNames>
-      <ObjectId>16392</ObjectId>
-      <StateNumber>741</StateNumber>
+      <ObjectId>16396</ObjectId>
+      <StateNumber>752</StateNumber>
       <AccessMethodId>403</AccessMethodId>
     </index>
     <index id="284" parent="266" name="idx_logs_visitor_occurred">
       <ColNames>visitor_id
 occurred_at</ColNames>
-      <ObjectId>16393</ObjectId>
-      <StateNumber>742</StateNumber>
+      <ObjectId>16397</ObjectId>
+      <StateNumber>753</StateNumber>
       <AccessMethodId>403</AccessMethodId>
       <CollationNames>default</CollationNames>
       <CollationIds>100</CollationIds>
@@ -4279,10 +4274,10 @@ occurred_at</ColNames>
     </index>
     <key id="285" parent="266" name="gateway_logs_pkey">
       <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16391</ObjectId>
+      <ObjectId>16395</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>740</StateNumber>
-      <UnderlyingIndexId>16390</UnderlyingIndexId>
+      <StateNumber>751</StateNumber>
+      <UnderlyingIndexId>16394</UnderlyingIndexId>
     </key>
   </database-model>
 </dataSource>

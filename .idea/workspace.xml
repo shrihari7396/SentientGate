@@ -5,7 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/b95b25dd-e87b-4b32-931a-a18c391432f0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/b95b25dd-e87b-4b32-931a-a18c391432f0.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LoggingService/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LoggingService/src/main/resources/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/ai-service-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/ai-service-manifest.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/api-gateway-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/api-gateway-manifest.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/eureka-server-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/eureka-server-manifest.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/logging-service-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/logging-service-manifest.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/mcp-server-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/mcp-server-manifest.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/postgres-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/postgres-manifest.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k8s/sentinel-ui-manifest.yml" beforeDir="false" afterPath="$PROJECT_DIR$/k8s/sentinel-ui-manifest.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_all_services.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,16 +93,22 @@
   <component name="HttpClientOnboardingState">{
   &quot;isOnboardingCommentShown&quot;: true
 }</component>
+  <component name="JsbtTreeLayoutManager">
+    <layout place="tools.popupGrunt">
+      <scroll-view-position x="0" y="0" />
+    </layout>
+  </component>
   <component name="KubernetesApiPersistence">{}</component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "configuredContextKeys": [
+  <component name="KubernetesApiProvider">{
+  &quot;configuredContextKeys&quot;: [
     {
-      "name": "minikube",
-      "configFileUrl": "file:///home/shrihari/.kube/config",
-      "namespace": "default"
+      &quot;name&quot;: &quot;minikube&quot;,
+      &quot;configFileUrl&quot;: &quot;file:///home/shrihari/.kube/config&quot;,
+      &quot;namespace&quot;: &quot;default&quot;,
+      &quot;selectedInIdeNamespace&quot;: &quot;sentientgate&quot;
     }
   ]
-}]]></component>
+}</component>
   <component name="KubernetesSettings">
     <option name="selectedContext">
       <SelectedContextState>

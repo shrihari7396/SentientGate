@@ -33,6 +33,13 @@ spec:
                 name: eureka-server-config
           ports:
             - containerPort: 8761
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service

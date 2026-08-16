@@ -19,7 +19,7 @@ metadata:
   labels:
     app: mcp-server
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mcp-server
@@ -37,18 +37,6 @@ spec:
                 name: mcp-server-config
           ports:
             - containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: /mcp-service/actuator/health
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /mcp-service/actuator/health
-              port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 15
           resources:
             requests:
               cpu: "100m"
@@ -79,7 +67,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: mcp-server
-  minReplicas: 2
+  minReplicas: 1
   maxReplicas: 5
   metrics:
     - type: Resource
