@@ -93,8 +93,7 @@ public class GatewayMetricsController {
                                         .map(
                                                 json -> {
                                                     try {
-                                                        var node =
-                                                                objectMapper.readTree(json);
+                                                        var node = objectMapper.readTree(json);
                                                         String reason =
                                                                 node.has("reason")
                                                                         ? node.get("reason")
@@ -112,10 +111,7 @@ public class GatewayMetricsController {
                             long total = reasons.size();
                             long aiCount =
                                     reasons.stream()
-                                            .filter(
-                                                    r ->
-                                                            r.contains("AI")
-                                                                    || r.contains("ANOMALY"))
+                                            .filter(r -> r.contains("AI") || r.contains("ANOMALY"))
                                             .count();
 
                             return ResponseEntity.ok(
@@ -234,8 +230,7 @@ public class GatewayMetricsController {
                                         .map(
                                                 json -> {
                                                     try {
-                                                        var node =
-                                                                objectMapper.readTree(json);
+                                                        var node = objectMapper.readTree(json);
                                                         String decision =
                                                                 node.has("decision")
                                                                         ? node.get("decision")
@@ -259,23 +254,18 @@ public class GatewayMetricsController {
                                                                                 .toString())
                                                                 .uuid(uuid)
                                                                 .status(
-                                                                        "BLOCKED"
-                                                                                        .equals(
-                                                                                                decision)
+                                                                        "BLOCKED".equals(decision)
                                                                                 ? "BLOCKED"
                                                                                 : "PASSED")
                                                                 .stage(
-                                                                        "BLOCKED"
-                                                                                        .equals(
-                                                                                                decision)
+                                                                        "BLOCKED".equals(decision)
                                                                                 ? "Edge Fire"
                                                                                 : "Response Out")
                                                                 .build();
                                                     } catch (Exception e) {
                                                         return PipelineEvent.builder()
                                                                 .id(key)
-                                                                .timestamp(
-                                                                        Instant.now().toString())
+                                                                .timestamp(Instant.now().toString())
                                                                 .uuid("unknown")
                                                                 .status("PASSED")
                                                                 .stage("Response Out")

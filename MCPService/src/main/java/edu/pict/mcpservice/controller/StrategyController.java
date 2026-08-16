@@ -49,7 +49,8 @@ public class StrategyController {
                                             .enabled(true) // All strategies are always active
                                             .reason(s.getReason())
                                             .blockDuration(
-                                                    formatDuration(s.getBlockDuration().toMinutes()))
+                                                    formatDuration(
+                                                            s.getBlockDuration().toMinutes()))
                                             .build();
                                 })
                         .toList();
