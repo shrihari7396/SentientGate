@@ -45,16 +45,6 @@ spec:
               containerPort: 9092
             - name: controller
               containerPort: 9093
-          readinessProbe:
-            tcpSocket:
-              port: 9092
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          livenessProbe:
-            tcpSocket:
-              port: 9092
-            initialDelaySeconds: 60
-            periodSeconds: 15
 ---
 apiVersion: v1
 kind: Service
