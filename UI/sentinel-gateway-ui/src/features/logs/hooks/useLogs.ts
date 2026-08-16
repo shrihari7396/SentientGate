@@ -31,6 +31,8 @@ export function useLogs(
     if (uuidFilter) params.append('uuid', uuidFilter);
     params.append('page', '0');
     params.append('size', '50');
+    params.append('sortBy', 'occurredAt');
+    params.append('direction', 'DESC');
     
     return apiClient.get('/logs', { params }).then(r => r.data.content as LogEntry[]);
   };

@@ -79,4 +79,9 @@ public class SensitivePathStrategy implements ThreatStrategy {
     public String getReason() {
         return "SENSITIVE_PATH_RECONNAISSANCE";
     }
+
+    @Override
+    public String getDescription() {
+        return "Detects reconnaissance attempts targeting sensitive paths like .env, .git, actuator, and admin panels.";
+    }
 }

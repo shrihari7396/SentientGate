@@ -4,11 +4,11 @@ import { App } from './app/App';
 import './index.css';
 
 async function deferRender() {
-  if (!import.meta.env.DEV) {
+  // Only start MSW mock service worker when explicitly enabled via env flag
+  if (import.meta.env.VITE_USE_MOCKS !== 'true') {
     return;
   }
   
-  // Conditionally import and start MSW based on env or just run it in dev
   const { worker } = await import('./mocks/browser');
   return worker.start({
     onUnhandledRequest: 'bypass',

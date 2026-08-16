@@ -31,4 +31,9 @@ public class HighErrorRateStrategy implements ThreatStrategy {
     public String getReason() {
         return "HIGH_ERROR_RATE_SCANNER_DETECTED";
     }
+
+    @Override
+    public String getDescription() {
+        return "Detects automated scanners by identifying users with >70% error rate across their request history.";
+    }
 }
