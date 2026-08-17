@@ -124,11 +124,11 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
     private void sendLogEvent(LogEvent logEvent) {
         String uuid = logEvent.getUuid();
         assert uuid != null;
-        kafkaTemplate.send(KafkaTopics.USER_LOGS.topic(), uuid, logEvent);
+        kafkaTemplate.send(KafkaTopics.USER_LOGS.topic(), null, logEvent);
     }
 
     private void sendSecurityEvent(String uuid, SecurityAlertEvent alertEvent) {
-        kafkaTemplate.send(KafkaTopics.SECURITY_EVENTS.topic(), uuid, alertEvent);
+        kafkaTemplate.send(KafkaTopics.SECURITY_EVENTS.topic(), null, alertEvent);
     }
 
     @Override
