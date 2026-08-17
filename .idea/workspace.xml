@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/home/shrihari/Desktop/Interview/SentientGate" value="3C7uYQXPENaL47oJlcsOp7RGKAo" />
+      <entry key="_/home/shrihari/Documents/PersonalProjects/SentientGate" value="3FOQsgcszZb5DxcvIM1TIe26asW" />
+    </persistenceIdMap>
+  </component>
+  <component name="DatabaseLocalColorSettings">
+    <colors>
+      <entry key="b95b25dd-e87b-4b32-931a-a18c391432f0" value="" />
+    </colors>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="428" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/Dummy">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/EurekaServer">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/LoggingService">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/MCPService">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/Dummy">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kubernetes Pod" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;shrihari7396&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/shrihari7396/SentientGate.git&quot;,
+    &quot;accountId&quot;: &quot;1235f44f-fec2-48ad-a775-8821ef65deca&quot;
+  }
+}</component>
+  <component name="HttpClientEndpointsTabState">
+    <option name="cachedRequestData" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;61d50b6b77cea4a5184d7051b47fce1ea84b1469&quot; value=&quot;###&amp;#10;GET http://localhost:8010/&amp;#10;    dum/giveAll&quot; /&gt;&#10;  &lt;entry key=&quot;abef2cfe3a5ffd18d93a491a404574cab69d438f&quot; value=&quot;###&amp;#10;GET http://localhost:8090/temp&quot; /&gt;&#10;  &lt;entry key=&quot;e1201884fb740061c5624e248f0b2d4ca2ecd551&quot; value=&quot;###&amp;#10;GET http://localhost:8090/&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
+  </component>
+  <component name="HttpClientOnboardingState">{
+  &quot;isOnboardingCommentShown&quot;: true
+}</component>
+  <component name="JsbtTreeLayoutManager">
+    <layout place="tools.popupGrunt">
+      <scroll-view-position x="0" y="0" />
+    </layout>
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;configuredContextKeys&quot;: [
+    {
+      &quot;name&quot;: &quot;minikube&quot;,
+      &quot;configFileUrl&quot;: &quot;file:///home/shrihari/.kube/config&quot;,
+      &quot;namespace&quot;: &quot;default&quot;,
+      &quot;selectedInIdeNamespace&quot;: &quot;sentientgate&quot;
+    }
+  ]
+}</component>
+  <component name="KubernetesSettings">
+    <option name="selectedContext">
+      <SelectedContextState>
+        <option name="configFileUrl" value="file://$USER_HOME$/.kube/config" />
+        <option name="name" value="minikube" />
+        <option name="namespace" value="default" />
+      </SelectedContextState>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0003700511720195" />
+      <entry key="MS500" value="1.2523056279409452" />
+      <entry key="S2" value="3.2823336628076887" />
+      <entry key="S5" value="5.870045770505406" />
+      <entry key="S10" value="7.543857087523607" />
+      <entry key="S30" value="9.071891141105194" />
+      <entry key="S60" value="9.581737968007007" />
+      <entry key="M2" value="11.399332545944295" />
+      <entry key="M5" value="22.459034719598375" />
+      <entry key="M10" value="39.04223129735241" />
+      <entry key="M15" value="51.961345114388166" />
+      <entry key="M30" value="75.31844738194691" />
+      <entry key="H1" value="94.19194223927859" />
+      <entry key="H2" value="106.39942222447236" />
+      <entry key="H4" value="113.3701696164874" />
+      <entry key="D1" value="119.67974959477644" />
+      <entry key="W1" value="120.81016332879605" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="1.1978543134099345E-83" />
+      <entry key="S5" value="9.944320633381354E-34" />
+      <entry key="S10" value="5.137729990235435E-17" />
+      <entry key="S30" value="8.018119549178865E-6" />
+      <entry key="S60" value="0.005403613019389535" />
+      <entry key="M2" value="0.14472234028349446" />
+      <entry key="M5" value="1.0557381915825912" />
+      <entry key="M10" value="2.0533879751717965" />
+      <entry key="M15" value="2.5640364178846053" />
+      <entry key="M30" value="3.2022369003659192" />
+      <entry key="H1" value="3.578878819485113" />
+      <entry key="H2" value="3.7835637035833414" />
+      <entry key="H4" value="3.8902714800836975" />
+      <entry key="D1" value="3.98149852608708" />
+      <entry key="W1" value="3.997351658710917" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.9205401753796829" />
+      <entry key="MS500" value="1.233048098637363" />
+      <entry key="S2" value="3.258726882039101" />
+      <entry key="S5" value="5.841612553597562" />
+      <entry key="S10" value="7.522227082590317" />
+      <entry key="S30" value="9.062266452534004" />
+      <entry key="S60" value="9.581563612686663" />
+      <entry key="M2" value="11.535175877852422" />
+      <entry key="M5" value="23.493491648480113" />
+      <entry key="M10" value="41.07459050525974" />
+      <entry key="M15" value="54.50768492564791" />
+      <entry key="M30" value="78.50947129324572" />
+      <entry key="H1" value="97.76449735126988" />
+      <entry key="H2" value="110.17962582839293" />
+      <entry key="H4" value="117.25870887113095" />
+      <entry key="D1" value="123.66095193522204" />
+      <entry key="W1" value="124.80747248890029" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="3C7uYQXPENaL47oJlcsOp7RGKAo" />
+  <component name="ProjectSessionTemplates">
+    <option name="panelTemplate">
+      <template>
+        <option name="modeId" value="Agent" />
+        <option name="model">
+          <model>
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+          </model>
+        </option>
+        <option name="targetType" value="BACKGROUND" />
+        <option name="worktreeMode" value="WORKSPACE" />
+      </template>
+    </option>
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build Dummy.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build EurekaServer.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build LoggingService.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build MCPService.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Dummy [:app:compileJava].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Dummy [:app:jar].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Dummy [bootJar].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.AiServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.ApiGatewayApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.DummyServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.EurekaServerApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.LoggingServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.McpServiceApplication.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/shrihari/Documents/PersonalProjects/SentientGate&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/k8s" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="AiServiceApplication" value="STOPPED" />
+              <entry key="ApiGatewayApplication" value="STOPPED" />
+              <entry key="DummyServiceApplication" value="STOPPED" />
+              <entry key="EurekaServerApplication" value="STOPPED" />
+              <entry key="LoggingServiceApplication" value="STOPPED" />
+              <entry key="McpServiceApplication" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="Gradle.Dummy [:app:compileJava]">
+    <configuration name="Dummy [:app:compileJava]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Dummy" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:compileJava" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="Dummy [:app:jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Dummy" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":app:jar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="Dummy [bootJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Dummy" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="bootJar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="All in SentientGate-endpoints_1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$APPLICATION_CONFIG_DIR$/scratches/SentientGate-endpoints_1.http">
+      <method v="2" />
+    </configuration>
+    <configuration name="AiServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="AIService" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="edu.pict.AiServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ApiGatewayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="apigateway" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="edu.pict.apigateway.ApiGatewayApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DummyServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="Dummy.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="edu.pict.dummyservice.DummyServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="edu.pict.dummyservice.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="EurekaServer.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="edu.pict.eurekaserver.EurekaServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LoggingServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="LoggingService.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="edu.pict.loggingservice.LoggingServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="McpServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="MCPService.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="edu.pict.mcpservice.McpServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.Dummy [:app:compileJava]" />
+        <item itemvalue="Gradle.Dummy [:app:jar]" />
+        <item itemvalue="Gradle.Dummy [bootJar]" />
+        <item itemvalue="Spring Boot.DummyServiceApplication" />
+        <item itemvalue="HTTP Request.All in SentientGate-endpoints_1" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-34e2839f716b-intellij.indexing.shared.core-IU-262.9437.185" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.9437.185" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="" />
+      <created>1775748977403</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1775748977403</updated>
+      <workItem from="1775748982066" duration="929000" />
+      <workItem from="1775751711665" duration="3203000" />
+      <workItem from="1775821847469" duration="1376000" />
+      <workItem from="1780915786084" duration="46000" />
+      <workItem from="1781943845300" duration="2835000" />
+      <workItem from="1781962564981" duration="799000" />
+      <workItem from="1782067529717" duration="103000" />
+      <workItem from="1782296618696" duration="6000" />
+      <workItem from="1782475735973" duration="2459000" />
+      <workItem from="1783152799094" duration="635000" />
+      <workItem from="1783153469704" duration="4000" />
+      <workItem from="1783238113640" duration="646000" />
+      <workItem from="1783426649615" duration="298000" />
+      <workItem from="1783963401900" duration="1587000" />
+      <workItem from="1784052209087" duration="573000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

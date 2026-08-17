@@ -44,32 +44,82 @@ public class SentientGateFilter implements GlobalFilter, Ordered {
                                                     ? ((HttpStatus) status).getReasonPhrase()
                                                     : "Unknown";
 
-                                    RequestContext context = requestContextExtractor.extract(exchange);
+                                    String uuid =
+                                            exchange.getRequest()
+                                                    .getHeaders()
+                                                    .getFirst(Constants.VISITOR_ID);
 
-                                    if (context.uuid() == null || context.uuid().isBlank()) {
-                                        log.warn("Skipping event publishing because visitor UUID is missing");
-                                        return;
-                                    }
+                                    String path = exchange.getRequest().getURI().getPath();
+                                    String method = exchange.getRequest().getMethod().toString();
+                                    String queryParams =
+                                            exchange.getRequest().getQueryParams().toString();
 
+                                    long requestSize =
+                                            exchange.getRequest().getHeaders().getContentLength();
+
+                                    String clientIp =
+                                            Objects.requireNonNull(
+                                                            exchange.getRequest()
+                                                                    .getRemoteAddress())
+                                                    .getAddress()
+                                                    .getHostAddress();
+                                    String userAgent =
+                                            exchange.getRequest()
+                                                    .getHeaders()
+                                                    .getFirst("User-Agent");
+
+                                    Route route =
+                                            exchange.getAttribute(
+                                                    ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+                                    String routeId = (route != null) ? route.getId() : "unknown";
+
+                                    // 1. General Pipeline: Always log the history
                                     LogEvent logEvent =
-                                            gatewayEventFactory.buildLogEvent(context, statusCode, duration);
-                                    kafkaTemplate.send(KafkaTopics.USER_LOGS.topic(), context.uuid(), logEvent);
+                                            LogEvent.builder()
+                                                    .uuid(uuid)
+                                                    .path(path)
+                                                    .method(method)
+                                                    .routeId(routeId)
+                                                    .decision("ALLOWED") // In this global filter,
+                                                    // it's generally allowed
+                                                    .latencyMs(duration)
+                                                    .queryParams(queryParams)
+                                                    .clientIp(clientIp)
+                                                    .statusCode(statusCode)
+                                                    .requestSize(requestSize > 0 ? requestSize : 0)
+                                                    .timestamp(System.currentTimeMillis())
+                                                    .userAgent(userAgent)
+                                                    .build();
 
-                                    if (statusCode < 200 || statusCode >= 300) {
+                                    sendLogEvent(logEvent);
+
+                                    // 2. Security Pipeline: Trigger for 4xx and 5xx
+                                    // Client/Server
+                                    // Errors)
+                                    if (statusCode >= 400) {
                                         SecurityAlertEvent alertEvent =
                                                 gatewayEventFactory.buildSecurityAlert(
                                                         context, statusCode, reasonPhrase);
 
-                                        kafkaTemplate.send(
-                                                KafkaTopics.SECURITY_EVENTS.topic(),
-                                                context.uuid(),
-                                                alertEvent);
-                                        log.warn(
-                                                "Security Event: Sent alert for UUID {} due to status {}",
-                                                context.uuid(),
-                                                statusCode);
+                                        sendSecurityEvent(uuid, alertEvent);
                                     }
                                 }));
+    }
+
+    private String determineSeverity(int code) {
+        if (code >= 500) return "HIGH";
+        if (code == 429 || code == 403 || code == 401) return "MEDIUM";
+        return "LOW";
+    }
+
+    private void sendLogEvent(LogEvent logEvent) {
+        String uuid = logEvent.getUuid();
+        assert uuid != null;
+        kafkaTemplate.send(KafkaTopics.USER_LOGS.topic(), uuid, logEvent);
+    }
+
+    private void sendSecurityEvent(String uuid, SecurityAlertEvent alertEvent) {
+        kafkaTemplate.send(KafkaTopics.SECURITY_EVENTS.topic(), uuid, alertEvent);
     }
 
     @Override

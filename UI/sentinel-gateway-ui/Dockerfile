@@ -17,6 +17,10 @@ RUN npm ci
 # drastically reducing the context size sent to the Docker daemon.
 COPY . .
 
+# Pass build-time environment variable for the API Gateway
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 # Build the frontend application
 RUN npm run build
 

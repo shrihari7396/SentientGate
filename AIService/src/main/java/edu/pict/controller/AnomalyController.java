@@ -6,18 +6,19 @@ import edu.pict.service.AnomalyDetectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/anomaly")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AnomalyController {
 
     private final AnomalyDetectionService anomalyService;
 
     @PostMapping("/analyze")
-    public ResponseEntity<AnomalyDetectionResponse> analyze(
+    public Mono<ResponseEntity<AnomalyDetectionResponse>> analyze(
             @RequestBody AnomalyDetectionRequest request) {
 
-        return ResponseEntity.ok(anomalyService.analyze(request));
+        return anomalyService.analyze(request).map(ResponseEntity::ok);
     }
 }

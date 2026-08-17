@@ -41,21 +41,22 @@ public class BlacklistFilter implements GlobalFilter, Ordered {
                 ipService.resolveClientIp(exchange.getRequest().getHeaders(), remoteAddress);
 
         return reactiveStringRedisTemplate
-                .hasKey(UUID_BLACKLIST_PREFIX + uuid)
-                .flatMap(
-                        isBlockedByUuid -> {
-                            if (Boolean.TRUE.equals(isBlockedByUuid)) {
-                                log.warn("Request blocked: UUID {} is on blacklist.", uuid);
-                                exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-                                return exchange.getResponse().setComplete();
-                            }
-
-                            return reactiveStringRedisTemplate.hasKey(LEGACY_BLACKLIST_PREFIX + uuid);
+                .hasKey(BLACKLIST_PREFIX + uuid)
+                .onErrorResume(
+                        e -> {
+                            log.error(
+                                    "Redis connection failed in BlacklistFilter for UUID {}. Allowing request to proceed.",
+                                    uuid,
+                                    e);
+                            return Mono.just(false);
                         })
                 .flatMap(
-                        isBlockedLegacy -> {
-                            if (Boolean.TRUE.equals(isBlockedLegacy)) {
-                                log.warn("Request blocked: UUID {} is on legacy blacklist.", uuid);
+                        isBlocked -> {
+                            if (Boolean.TRUE.equals(isBlocked)) {
+                                //                                For Performance reason log is
+                                // commented
+                                //                                log.warn("Request blocked: UUID {}
+                                // is on the blacklist.", uuid);
                                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                                 return exchange.getResponse().setComplete();
                             }

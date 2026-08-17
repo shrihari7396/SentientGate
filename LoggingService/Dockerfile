@@ -1,13 +1,36 @@
+# ──────────────────────────────────────────────
 # Stage 1: Build
-FROM eclipse-temurin:21-jdk-alpine AS build
-WORKDIR /app
-COPY . .
-RUN chmod +x gradlew
-RUN ./gradlew bootJar --no-daemon
+# ──────────────────────────────────────────────
+FROM eclipse-temurin:21-jdk AS build
 
-# Stage 2: Run
-FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle/ gradle/
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon || true
+
+COPY src/ src/
+
+RUN ./gradlew generateProto --no-daemon
+
+RUN ./gradlew bootJar -x test --no-daemon
+
+# ──────────────────────────────────────────────
+# Stage 2: Run
+# ──────────────────────────────────────────────
+FROM eclipse-temurin:21-jre-alpine
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+WORKDIR /app
+
 COPY --from=build /app/build/libs/*-SNAPSHOT.jar app.jar
-EXPOSE 8010
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+ENV SPRING_PROFILES_ACTIVE=prod
+ENV SERVER_PORT=8080
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
+
+EXPOSE 8080 8080
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

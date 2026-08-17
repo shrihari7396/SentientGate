@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
+<<<<<<< HEAD
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
@@ -10,6 +11,9 @@
         </processorPath>
       </profile>
       <profile name="Annotation profile for ApiGateway" enabled="true">
+=======
+      <profile name="Annotation profile for AIService" enabled="true">
+>>>>>>> UiModification
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />

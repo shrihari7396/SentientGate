@@ -1,0 +1,107 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /logging-service
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  output:
+    ansi:
+      enabled: never
+  application:
+    name: logging-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/mydb}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 100
+
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka-service:9092}
+
+    consumer:
+      group-id: sentientgate-logging-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 500
+
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: true
+        spring.json.type.mapping: "edu.pict.apigateway.kafkaEvent.LogEvent:edu.pict.loggingservice.kafka.model.GatewayDecisionEvent"
+
+    listener:
+      concurrency: 3
+      type: batch
+      ack-mode: batch
+
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:redis}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      timeout: ${SPRING_DATA_REDIS_TIMEOUT:2000ms}
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+          max-wait: 2000ms
+
+  cache:
+    type: redis
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka}
+  instance:
+    prefer-ip-address: true
+    metadata-map:
+      gRPC.port: ${GRPC_SERVER_PORT:9090}
+
+grpc:
+  server:
+    port: ${GRPC_SERVER_PORT:9090}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    edu.pict.loggingservice: INFO
+    edu.pict.loggingservice.kafka: INFO
+    edu.pict.loggingservice.service.strategy: INFO
+    org.springframework.kafka: WARN
+    org.hibernate.SQL: WARN

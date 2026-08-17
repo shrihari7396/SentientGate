@@ -23,6 +23,7 @@
 hs_err_pid*
 replay_pid*
 
+<<<<<<< HEAD
 # Secrets and local config
 *.pem
 .env
@@ -37,3 +38,8 @@ out/
 # IDE/editor
 .idea/
 .vscode/
+=======
+.vscode
+.idea
+!**/.idea
+>>>>>>> UiModification

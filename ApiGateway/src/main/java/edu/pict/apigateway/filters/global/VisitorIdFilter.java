@@ -9,7 +9,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpCookie;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -24,30 +23,31 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("exchange path: {}", exchange.getRequest().getPath().toString());
+        //        log.info("exchange path: {}", exchange.getRequest().getPath().toString());
         HttpCookie cookie = exchange.getRequest().getCookies().getFirst(Constants.VISITOR_ID);
 
         if (cookie != null) {
             String fullToken = cookie.getValue();
             String uuid = sentinelSecurityService.verifyAndExtractId(fullToken);
 
-            if (uuid == null) {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
+            if (uuid != null) {
+                ServerWebExchange mutatedExchange =
+                        exchange.mutate()
+                                .request(
+                                        exchange.getRequest()
+                                                .mutate()
+                                                .headers(
+                                                        headers ->
+                                                                headers.set(
+                                                                        Constants.VISITOR_ID, uuid))
+                                                .build())
+                                .build();
+
+                return chain.filter(mutatedExchange);
             }
-
-            ServerWebExchange mutatedExchange =
-                    exchange.mutate()
-                            .request(
-                                    exchange.getRequest()
-                                            .mutate()
-                                            .header(Constants.VISITOR_ID, uuid)
-                                            .build())
-                            .build();
-
-            return chain.filter(mutatedExchange);
         }
 
+        // This executes when Cookie is not present their (User is coming first time)
         String signedId = sentinelSecurityService.generateSignedId();
         String uuid = sentinelSecurityService.verifyAndExtractId(signedId);
 
@@ -66,7 +66,7 @@ public class VisitorIdFilter implements GlobalFilter, Ordered {
                         .request(
                                 exchange.getRequest()
                                         .mutate()
-                                        .header(Constants.VISITOR_ID, uuid)
+                                        .headers(headers -> headers.set(Constants.VISITOR_ID, uuid))
                                         .build())
                         .build();
 

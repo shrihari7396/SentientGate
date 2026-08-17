@@ -16,17 +16,36 @@ public class LogController {
 
     private final GatewayLogRepository gatewayLogRepository;
 
-    @GetMapping("/raw")
+    @GetMapping({"", "/raw"})
     public ResponseEntity<Page<GatewayLogEntity>> getRawLogs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "occurredAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String direction,
             @RequestParam(required = false) String path,
-            @RequestParam(required = false) Integer statusCode) {
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String uuid) {
+
+        String statusType = "";
+        Integer statusCodeVal = null;
+
+        if (status != null && !status.isEmpty()) {
+            if (status.equals("2xx") || status.equals("4xx") || status.equals("5xx")) {
+                statusType = status;
+            } else {
+                try {
+                    statusCodeVal = Integer.parseInt(status);
+                    statusType = "exact";
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+        }
+
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(
-                gatewayLogRepository.findWithFilters(path, statusCode, pageRequest));
+                gatewayLogRepository.findWithFilters(
+                        path, uuid, statusType, statusCodeVal, pageRequest));
     }
 }

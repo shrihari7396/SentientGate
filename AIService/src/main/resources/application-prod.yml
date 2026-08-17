@@ -1,0 +1,35 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  output:
+    ansi:
+      enabled: never
+  webflux:
+    base-path: /ai-service
+
+server:
+  port: ${SERVER_PORT:8080}
+
+ollama:
+  base-url: ${OLLAMA_BASE_URL:http://host.minikube.internal:11434}
+  model: ${OLLAMA_MODEL:gemma3.2:latest}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka}
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.uuid}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true

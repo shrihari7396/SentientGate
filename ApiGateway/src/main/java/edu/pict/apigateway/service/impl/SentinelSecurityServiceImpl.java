@@ -47,8 +47,6 @@ public class SentinelSecurityServiceImpl implements SentinelSecurityService {
 
     private String calculateHmac(String data) {
         try {
-            // We get a fresh instance of Mac for each thread/call
-            // because Mac is NOT thread-safe.
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
             mac.init(hmacSecretKey);
             byte[] hmacBytes = mac.doFinal(data.getBytes());

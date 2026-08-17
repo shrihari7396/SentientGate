@@ -15,8 +15,20 @@ import org.springframework.stereotype.Repository;
 public interface GatewayLogRepository extends JpaRepository<GatewayLogEntity, UUID> {
 
     @Query(
-            "SELECT l FROM GatewayLogEntity l WHERE (:path IS NULL OR l.path LIKE %:path%) AND (:statusCode IS NULL OR l.statusCode = :statusCode)")
-    Page<GatewayLogEntity> findWithFilters(String path, Integer statusCode, Pageable pageable);
+            """
+        SELECT l FROM GatewayLogEntity l
+        WHERE (:path IS NULL OR :path = '' OR l.path LIKE %:path%)
+          AND (:uuid IS NULL OR :uuid = '' OR l.visitorId = :uuid)
+          AND (
+               :statusType IS NULL OR :statusType = ''
+            OR (:statusType = '2xx' AND l.statusCode >= 200 AND l.statusCode < 300)
+            OR (:statusType = '4xx' AND l.statusCode >= 400 AND l.statusCode < 500)
+            OR (:statusType = '5xx' AND l.statusCode >= 500)
+            OR (:statusType = 'exact' AND l.statusCode = :statusCodeVal)
+          )
+    """)
+    Page<GatewayLogEntity> findWithFilters(
+            String path, String uuid, String statusType, Integer statusCodeVal, Pageable pageable);
 
     List<GatewayLogEntity> findByClientIp(String clientIp);
 

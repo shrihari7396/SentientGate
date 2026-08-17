@@ -1,0 +1,155 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  application:
+    name: api-gateway
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:redis}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-service
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/users/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@visitorKeyResolver}"
+
+            - id: dummy-service
+              uri: lb://DUMMY-SERVICE
+              predicates:
+                - Path=/api/dummy/**
+              filters:
+                - StripPrefix=1
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@visitorKeyResolver}"
+                    
+            - id: LOGGING-SERVICE
+              uri: lb://LOGGING-SERVICE
+              predicates:
+                - Path=/api/logs/**
+              filters:
+                - PrefixPath=/logging-service
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@visitorKeyResolver}"
+
+            - id: MCP_SERVER
+              uri: lb://MCP-SERVER
+              predicates:
+                - Path=/api/mcp/**
+              filters:
+                - PrefixPath=/mcp-service
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@visitorKeyResolver}"
+
+            - id: AI_SERVICE
+              uri: lb://AI-SERVICE
+              predicates:
+                - Path=/api/ai/**
+              filters:
+                - PrefixPath=/ai-service
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 10
+                    key-resolver: "#{@visitorKeyResolver}"
+
+            - id: mcp-strategies
+              uri: lb://MCP-SERVER
+              predicates:
+                - Path=/api/strategies/**
+              filters:
+                - PrefixPath=/mcp-service
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@visitorKeyResolver}"
+
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 5
+                    redis-rate-limiter.burstCapacity: 10
+                    key-resolver: "#{@visitorKeyResolver}"
+
+            - id: after_route
+              uri: lb://DUMMY-SERVICE
+              predicates:
+                - Path=/dummy/**
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    redis-rate-limiter.replenishRate: 10
+                    redis-rate-limiter.burstCapacity: 20
+                    key-resolver: "#{@visitorKeyResolver}"
+
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka-service:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.trusted.packages: "edu.pict.apigateway.kafkaEvent"
+      
+  output:
+    ansi:
+      enabled: never
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka}
+  instance:
+    prefer-ip-address: true
+
+sentinel:
+  security:
+    secret-key: ${SENTINEL_SECRET_KEY}
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+
+logging:
+  level:
+    root: INFO
+    edu.pict.apigateway: INFO
+    org.springframework.cloud.gateway: WARN
+debug: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true

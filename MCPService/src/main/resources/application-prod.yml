@@ -1,0 +1,77 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /mcp-service
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  output:
+    ansi:
+      enabled: never
+
+  data:
+    redis:
+      # In production, NO default fallback to localhost
+      host: ${SPRING_DATA_REDIS_HOST:redis}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka-service:9092}
+    consumer:
+      group-id: ${SPRING_KAFKA_CONSUMER_GROUP_ID:sentientgate-mcp-service}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 500
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: true
+        spring.json.type.mapping: "edu.pict.apigateway.kafkaEvent.SecurityAlertEvent:edu.pict.mcpservice.kafkaEvents.SecurityAlertEvent,edu.pict.apigateway.kafkaEvent.LogEvent:edu.pict.mcpservice.kafkaEvents.LogEvent"
+    listener:
+      concurrency: 3
+      type: batch
+      ack-mode: batch
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka}
+  instance:
+    prefer-ip-address: true
+    # In Kubernetes, the pod IP is used, hostname is dynamic
+    hostname: ${HOSTNAME}
+
+grpc:
+  server:
+    port: -1
+  client:
+    logging-service:
+      address: discovery:///LOGGING-SERVICE
+      negotiation-type: plaintext
+
+logging:
+  level:
+    root: INFO
+    edu.pict.mcpservice: INFO
+    org.springframework.kafka: WARN
+    org.springframework.data.redis: WARN
+    io.grpc: WARN
+
+# Configure actuator to be less verbose or only expose health
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,circuitbreakerevents,retry,timelimiter
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true

@@ -1,197 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@100;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: 240 10% 98%;
-  --foreground: 240 10% 4%;
-
-  --card: 0 0% 100%;
-  --card-foreground: 240 10% 4%;
-
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 4%;
-
-  --primary: 263.4 70% 50.4%;
-  --primary-foreground: 210 20% 98%;
-
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 20% 98%;
-
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 240 5% 64.9%;
-
-  --radius: 1rem;
-}
-
-.dark {
-  --background: 240 10% 2%;
-  --foreground: 0 0% 98%;
-
-  --card: 240 10% 4%;
-  --card-foreground: 0 0% 98%;
-
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-
-  --primary: 263.4 70% 50.4%;
-  --primary-foreground: 210 20% 98%;
-
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-
-  --muted: 240 3.7% 10%;
-  --muted-foreground: 240 5% 64.9%;
-
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
-}
-
 @layer base {
-  * {
-    @apply border-border;
+  :root {
+    --bg-base: #F8FAFC; 
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #F1F5F9;
+    --border: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-muted: #64748B;
+    --accent-teal: #0D9488;
+    --accent-amber: #D97706;
+    --accent-red: #DC2626;
+    --accent-blue: #2563EB;
+  }
+
+  .dark {
+    --bg-base: #0D1117;
+    --bg-surface: #161B22;
+    --bg-elevated: #1C2128;
+    --border: #30363D;
+    --text-primary: #E6EDF3;
+    --text-muted: #7D8590;
+    --accent-teal: #00E5CC;
+    --accent-amber: #F59E0B;
+    --accent-red: #EF4444;
+    --accent-blue: #58A6FF;
   }
 
   body {
-    @apply bg-background text-foreground transition-colors duration-500 selection:bg-purple-500/30 font-['Outfit'];
-    -webkit-font-smoothing: antialiased;
-    letter-spacing: -0.01em;
+    @apply bg-[var(--bg-base)] text-[var(--text-primary)] font-sans antialiased;
+    /* Subtle grid layout using radial gradients */
+    background-image: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .dark body {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  }
+
+  * {
+    @apply border-border;
   }
 }
 
-.font-mono {
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.glass-card {
-  @apply relative overflow-hidden transition-all duration-500 bg-white/80;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.dark .glass-card {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.glass-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.1);
-  border-color: rgba(0, 0, 0, 0.08);
-}
-
-.dark .glass-card:hover {
-  box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.glass-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6), transparent);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.glass-card:hover::before {
-  opacity: 1;
-}
-
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-700 to-purple-600;
-}
-
-.dark .gradient-text {
-  @apply bg-gradient-to-r from-white via-slate-100 to-purple-400;
-  text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
-}
-
-.purple-glow {
-  box-shadow: 0 0 40px -10px rgba(168, 85, 247, 0.6);
-}
-
-.vignette {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.1) 100%);
-  pointer-events: none;
-  z-index: 99;
-}
-
-.dark .vignette {
-  background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.6) 100%);
-}
-
-.mesh-grid {
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: -1;
-  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-}
-
-.dark .mesh-grid {
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-}
-
-.animate-in {
-  animation: scale-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes scale-up {
-  from {
-    opacity: 0;
-    transform: scale(0.97) translateY(15px);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* Custom Scrollbar */
+  /* Custom Scrollbar for Dark Command Center */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-transparent;
+  @apply bg-[var(--bg-base)];
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-200 dark:bg-white/10 rounded-full hover:bg-slate-300 dark:hover:bg-white/20 transition-all;
+  @apply bg-[var(--bg-surface)] hover:bg-[var(--bg-elevated)] rounded;
+}
+
+/* Animations that are reusable */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.flash-teal {
+  animation: flashTeal 400ms ease-out;
+}
+
+@keyframes flashTeal {
+  0% { background-color: rgba(0, 229, 204, 0.3); }
+  100% { background-color: transparent; }
 }

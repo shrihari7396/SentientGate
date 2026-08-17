@@ -1,0 +1,11 @@
+GET http://localhost:8010/dum/giveAll
+
+<> 2026-08-10T124355.404.html
+
+###
+GET http://localhost:8090/dummy/dummy
+
+###
+GET http://localhost:8090/dummy/dummy
+
+###

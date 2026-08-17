@@ -1,7 +1,7 @@
 package edu.pict.loggingservice.service;
 
 import edu.pict.loggingservice.entity.GatewayLogEntity;
-import edu.pict.loggingservice.repository.GatewayLogRepository;
+import edu.pict.loggingservice.service.strategy.LogFetchStrategyResolver;
 import edu.pict.mcpservice.grpc.UserLogEvent;
 import edu.pict.mcpservice.grpc.UserLogEventResponse;
 import edu.pict.mcpservice.grpc.UserLogEventServiceGrpc;
@@ -19,15 +19,16 @@ import net.devh.boot.grpc.server.service.GrpcService;
 @RequiredArgsConstructor
 public class UserLogEventGrpcService extends UserLogEventServiceGrpc.UserLogEventServiceImplBase {
 
-    private final GatewayLogRepository gatewayLogRepository;
+    private final LogFetchStrategyResolver strategyResolver;
 
     @Override
     public void getUserEvents(
             UserLogEventsRequest request, StreamObserver<UserLogEventResponse> responseObserver) {
 
         Instant since = Instant.now().minus(Duration.ofMinutes(request.getDuration()));
-        List<GatewayLogEntity> logs =
-                gatewayLogRepository.findByVisitorIdAndOccurredAtAfter(request.getUuid(), since);
+
+        // Strategy Pattern: tries Redis first (fast), falls back to PostgreSQL on cache miss
+        List<GatewayLogEntity> logs = strategyResolver.fetchLogs(request.getUuid(), since);
 
         UserLogEventResponse.Builder responseBuilder = UserLogEventResponse.newBuilder();
 

@@ -3,7 +3,8 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+!**/.idea/**
+.mvn/   
 ### STS ###
 .apt_generated
 .classpath
@@ -31,3 +32,4 @@ build/
 
 ### VS Code ###
 .vscode/
+.mvn/.develocity/
