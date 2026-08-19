@@ -8,10 +8,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -55,9 +53,7 @@ public class DashboardStatsService {
         }
     }
 
-    @Cacheable(
-            value = "dashboardVelocity",
-            key = "#start.toString() + '-' + #end.toString()")
+    @Cacheable(value = "dashboardVelocity", key = "#start.toString() + '-' + #end.toString()")
     public List<TimeBucketStats> getVelocity(Instant start, Instant end) {
         return gatewayLogRepository.aggregateByMinute(start, end).stream()
                 .map(

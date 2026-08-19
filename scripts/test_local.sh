@@ -7,6 +7,9 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Generate Protos
+./scripts/generate_protos.sh
+
 echo -e "${BLUE}🚀 Starting SentientGate Services Tests...${NC}"
 
 # Start Infrastructure for integration tests
