@@ -5,78 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c94a9eef-ee72-4a04-abfb-5647984c6bdd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/cmd/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/internal/config/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/internal/controller/anomaly_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/internal/dtos/models.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/internal/service/anomaly_detection_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/internal/service/anomaly_detection_service_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/AIService/internal/service/ollama_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/Dummy/cmd/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/Dummy/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/cmd/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/config/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/controller/dashboard_stats_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/controller/ip_aggregation_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/controller/log_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/controller/route_aggregation_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/controller/time_aggregation_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/dto/dtos.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/entity/gateway_log.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/grpc/user_log_event_server.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/kafka/database_consumer.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/kafka/redis_consumer.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/repository/gateway_log_repository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/service/dashboard_stats_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/service/ip_aggregation_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/service/redis_log_cache_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/service/route_aggregation_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/service/time_window_aggregation_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/strategy/database_fetch_strategy.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/strategy/log_fetch_strategy.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/strategy/log_fetch_strategy_resolver.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/strategy/redis_fetch_strategy.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/LoggingService/internal/strategy/strategy_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/cmd/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/clients/ai_service_client.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/config/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/controller/strategy_controller.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/kafka/security_event_consumer.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/model/models.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/service/enforcement_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/service/event_history_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/service/mcp_analysis_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/strategies/ai_anomaly.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/strategies/burst_traffic.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/strategies/high_error_rate.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/strategies/pattern_match.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/strategies/rate_limit_cooldown.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/strategies/sensitive_path.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/strategies/strategies_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/strategies/threat_strategy.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/util/input_normalizer.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/util/input_normalizer_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/MCPService/internal/util/redis_guard_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/proto/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/proto/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/proto/pb/user_log_event.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/proto/pb/user_log_event_grpc.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/proto/user_log_event.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/scripts/build_and_push_images.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/scripts/deploy.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/scripts/format_services.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/scripts/infrastructure.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/scripts/run_local.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/scripts/stop_local.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/golang_version/scripts/test_local.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interview.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -292,6 +222,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.AiServiceApplication.executor": "Run",
     "Spring Boot.ApiGatewayApplication.executor": "Run",
@@ -302,7 +233,7 @@
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "go",
+    "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/shrihari/Documents/PersonalProjects/SentientGate",
