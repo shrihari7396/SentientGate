@@ -7,19 +7,22 @@ import edu.pict.loggingservice.repository.GatewayLogRepository;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@lombok.extern.slf4j.Slf4j
+@Slf4j
 public class DashboardStatsService {
 
     private final GatewayLogRepository gatewayLogRepository;
 
-    @org.springframework.cache.annotation.Cacheable(
-            value = "dashboardSummary",
-            key = "#start.toString() + '-' + #end.toString()")
+    @Cacheable(value = "dashboardSummary", key = "#start.toString() + '-' + #end.toString()")
     public DashboardSummaryStats getSummary(Instant start, Instant end) {
         try {
             log.info("📊 Fetching dashboard summary from {} to {}", start, end);
@@ -52,7 +55,7 @@ public class DashboardStatsService {
         }
     }
 
-    @org.springframework.cache.annotation.Cacheable(
+    @Cacheable(
             value = "dashboardVelocity",
             key = "#start.toString() + '-' + #end.toString()")
     public List<TimeBucketStats> getVelocity(Instant start, Instant end) {
@@ -64,6 +67,6 @@ public class DashboardStatsService {
                                         ((Number) r[1]).longValue(),
                                         ((Number) r[2]).longValue(),
                                         ((Number) r[3]).longValue()))
-                .toList();
+                .collect(Collectors.toList());
     }
 }
