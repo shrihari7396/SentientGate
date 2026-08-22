@@ -26,6 +26,18 @@ fi
 echo "✅ Kubernetes cluster is available."
 echo
 
+echo "[+] Checking for KEDA (required for autoscaling)..."
+if ! kubectl get crd scaledobjects.keda.sh >/dev/null 2>&1; then
+    echo "📦 KEDA not found. Installing KEDA..."
+    kubectl apply --server-side -f https://github.com/kedacore/keda/releases/download/v2.15.1/keda-2.15.1.yaml
+    echo "⏳ Waiting for KEDA to be ready..."
+    sleep 10
+    kubectl wait --for=condition=ready pod -l app=keda-operator -n keda --timeout=120s
+else
+    echo "✅ KEDA is already installed."
+fi
+echo
+
 echo "[+] Kubernetes manifests:"
 find k8s/ -type f \( -name "*.yaml" -o -name "*.yml" \) | sort
 echo
