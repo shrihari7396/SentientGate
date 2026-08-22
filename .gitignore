@@ -4,7 +4,9 @@
 # Log file
 *.log
 
-./idea
+.idea/
+.vscode/
+!**/.idea   
 
 # BlueJ files
 *.ctxt
