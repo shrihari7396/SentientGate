@@ -57,22 +57,20 @@ spec:
   selector:
     app: mcp-server
 ---
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
 metadata:
-  name: mcp-server-hpa
+  name: mcp-server-kafka-scaledobject
   namespace: sentientgate
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
     name: mcp-server
-  minReplicas: 1
-  maxReplicas: 5
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 80
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: kafka-service.sentientgate.svc.cluster.local:9092
+        consumerGroup: mcp-analysis-group
+        topic: security-events
+        lagThreshold: "10"

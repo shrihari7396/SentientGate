@@ -67,3 +67,40 @@ The MCP Service communicates with the Logging Service via gRPC.
 * Updated `GRPC_CLIENT_LOGGING_SERVICE_ADDRESS` from `discovery:///LOGGING-SERVICE` to `dns:///logging-service:9090` in `mcp-server-manifest.yml`.
 ### Why it Matters:
 * While `discovery:///` works perfectly with Eureka, relying on Eureka for internal service-to-service communication inside Kubernetes is often redundant and adds a single point of failure. Using standard Kubernetes DNS (`dns:///`) leverages the cluster's native CoreDNS, providing a more robust, decoupled network link between your gRPC client and server.
+
+## 6. KEDA Kafka Lag Autoscaling (Event-Driven Scaling)
+
+To intelligently scale the MCP Service based on actual workload rather than just CPU utilization, we integrated KEDA (Kubernetes Event-driven Autoscaling).
+
+### What Changed:
+* **HPA Replacement**: Removed the default CPU-based `HorizontalPodAutoscaler` from `mcp-server-manifest.yml`.
+* **ScaledObject Creation**: Added a KEDA `ScaledObject` that targets the `mcp-server` deployment.
+* **Kafka Trigger**: Configured the `ScaledObject` to monitor the `security-events` Kafka topic using the `mcp-analysis-group` consumer group.
+
+### Why it Matters:
+* Traditional CPU scaling can be slow to react to sudden spikes in messaging traffic. By scaling directly on the **consumer lag** (with a threshold of 10 messages per partition), the cluster can proactively spin up more MCP service instances *before* the CPU is overwhelmed. This ensures smooth and timely processing of streaming security events.
+
+## 7. Kubernetes Manifests Documentation
+
+The `k8s/` directory contains all the YAML manifests required to deploy SentientGate to a Kubernetes cluster. Below is a summary of each manifest:
+
+### Core Services
+* **[`ai-service-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/ai-service-manifest.yml)**: Deploys the AI Service (ConfigMap, Deployment, Service, and CPU-based HPA).
+* **[`api-gateway-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/api-gateway-manifest.yml)**: Deploys the Spring Cloud API Gateway (ConfigMap, Secret, Deployment, Service, and HPA).
+* **[`api-gateway-ingress.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/api-gateway-ingress.yml)**: Defines the Nginx Ingress routing rules to expose the API Gateway to external traffic.
+* **[`eureka-server-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/eureka-server-manifest.yml)**: Deploys the Netflix Eureka Server for service discovery.
+* **[`logging-service-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/logging-service-manifest.yml)**: Deploys the Logging Service (ConfigMap, Secret, Deployment, Service, and HPA).
+* **[`mcp-server-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/mcp-server-manifest.yml)**: Deploys the MCP Service (ConfigMap, Deployment, Service) and includes the KEDA `ScaledObject` for Kafka lag-based autoscaling.
+
+### User Interfaces
+* **[`sentinel-ui-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/sentinel-ui-manifest.yml)**: Deploys the Sentinel UI frontend (Deployment, Service, and HPA).
+* **[`sentinel-ui-ingress.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/sentinel-ui-ingress.yml)**: Defines the Nginx Ingress routing rules to expose the Sentinel UI.
+* **[`kafka-ui-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/kafka-ui-manifest.yml)**: Deploys an administrative Kafka UI dashboard to visualize Kafka topics and consumer groups.
+
+### Infrastructure & Databases
+* **[`kafka-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/kafka-manifest.yml)**: Deploys a standalone Apache Kafka broker used for asynchronous messaging (ConfigMap, Deployment, Service).
+* **[`postgres-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/postgres-manifest.yml)**: Deploys a PostgreSQL database instance along with a PersistentVolumeClaim (PVC) for durable storage.
+* **[`redis-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/redis-manifest.yml)**: Deploys a Redis in-memory cache/datastore.
+
+### Miscellaneous
+* **[`dummy-service-manifest.yml`](file:///home/shrihari/Documents/PersonalProjects/SentientGate/k8s/dummy-service-manifest.yml)**: Deploys a placeholder/dummy service used for testing and validation.
