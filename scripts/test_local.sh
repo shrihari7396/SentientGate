@@ -2,6 +2,9 @@
 # scripts/test_local.sh
 cd "$(dirname "$0")/.."
 
+# Service set + per-service run/test dispatch (single source of truth).
+source scripts/services.sh
+
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
@@ -15,13 +18,7 @@ echo -e "${BLUE}🚀 Starting SentientGate Services Tests...${NC}"
 # Start Infrastructure for integration tests
 echo -e "${BLUE}📦 Starting Infrastructure (Postgres, Redis, Kafka, Zookeeper)...${NC}"
 cd TOOLS
-docker compose up -d 
-
-cd ..
-cd UI
-cd sentinel-gateway-ui  
-npm install
-cd ..
+docker compose up -d
 cd ..
 
 echo -e "${BLUE}⏳ Waiting for Postgres database to be healthy...${NC}"
@@ -31,17 +28,17 @@ until docker exec postgres-db pg_isready -U postgres >/dev/null 2>&1 || docker e
 done
 echo -e "\n${GREEN}✅ Postgres is healthy!${NC}"
 
-# Array of services to test
-SERVICES=("EurekaServer" "ApiGateway" "LoggingService" "MCPService" "AIService" "Dummy" "UI/sentinel-gateway-ui")
 FAILED_SERVICES=()
 
-for SERVICE in "${SERVICES[@]}"; do
-    echo -e "${BLUE}🧪 Testing $SERVICE...${NC}"
-    if ./$SERVICE/test.sh; then
-        echo -e "${GREEN}✅ $SERVICE tests passed!${NC}"
+for service in "${SERVICES[@]}"; do
+    folder="${service%%:*}"
+    label="${service##*:}"
+    echo -e "${BLUE}🧪 Testing $label...${NC}"
+    if test_service "$folder"; then
+        echo -e "${GREEN}✅ $label tests passed!${NC}"
     else
-        echo -e "${RED}❌ $SERVICE tests failed!${NC}"
-        FAILED_SERVICES+=("$SERVICE")
+        echo -e "${RED}❌ $label tests failed!${NC}"
+        FAILED_SERVICES+=("$label")
     fi
 done
 
