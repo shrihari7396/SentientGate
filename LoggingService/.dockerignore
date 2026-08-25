@@ -1,0 +1,9 @@
+**/target/
+**/build/
+**/bin/
+**/.gradle/
+.git
+.gitignore
+.idea
+*.iml
+*.log

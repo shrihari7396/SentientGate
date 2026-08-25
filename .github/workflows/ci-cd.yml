@@ -29,19 +29,15 @@ jobs:
           node-version: '20'
 
       - name: Make scripts executable
-        run: |
-          chmod +x scripts/*.sh
-          find . -name "*.sh" -exec chmod +x {} \;
+        run: chmod +x scripts/linux/*.sh
 
       - name: Set up Infrastructure
         run: |
-          cd scripts
-          ./infrastructure.sh
-          cd ..
+          ./scripts/linux/infrastructure.sh
           sleep 10
 
       - name: Run Tests
-        run: ./scripts/test_local.sh
+        run: ./scripts/linux/test_local.sh
 
   publish:
     needs: test
@@ -59,8 +55,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Make scripts executable
-        run: |
-          chmod +x scripts/*.sh
+        run: chmod +x scripts/linux/*.sh
 
-      - name: Build and Push Images
-        run: ./scripts/build_and_push_images.sh
+      - name: Build all images
+        run: ./scripts/linux/build_and_push_images.sh build
+
+      - name: Push all images
+        run: ./scripts/linux/build_and_push_images.sh push

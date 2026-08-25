@@ -1,19 +1,17 @@
 # ──────────────────────────────────────────────
 # Stage 1: Build
+# NOTE: Debian/glibc base (NOT alpine) is required so the protoc / protoc-gen-grpc-java
+# codegen binaries pulled by protobuf-maven-plugin can execute (they are glibc-linked).
 # ──────────────────────────────────────────────
-FROM eclipse-temurin:21-jdk AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-COPY build.gradle settings.gradle gradlew ./
-COPY gradle/ gradle/
-RUN chmod +x gradlew && ./gradlew dependencies --no-daemon || true
+COPY pom.xml .
+COPY src ./src
 
-COPY src/ src/
-
-RUN ./gradlew generateProto --no-daemon
-
-RUN ./gradlew bootJar -x test --no-daemon
+# Builds the JAR and generates the gRPC/protobuf sources (bound to generate-sources)
+RUN mvn clean package -DskipTests
 
 # ──────────────────────────────────────────────
 # Stage 2: Run
@@ -25,12 +23,13 @@ USER appuser
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*-SNAPSHOT.jar app.jar
 
 ENV SPRING_PROFILES_ACTIVE=prod
 ENV SERVER_PORT=8080
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:+UseG1GC"
 
-EXPOSE 8080 8080
+# 8080 = HTTP/actuator, 9090 = gRPC server
+EXPOSE 8080 9090
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

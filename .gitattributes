@@ -1,0 +1,22 @@
+# Line-ending policy for a repo authored on Windows and built/run on Linux (Ubuntu).
+# Shell scripts and the Maven wrapper MUST be LF, or Linux fails with
+# "/bin/bash^M: bad interpreter" / "./mvnw: not found".
+*.sh    text eol=lf
+mvnw    text eol=lf
+
+# Windows batch wrappers must stay CRLF.
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# PowerShell scripts (scripts/windows/) are Windows-native; keep CRLF.
+*.ps1   text eol=crlf
+
+# Treat common binaries as binary (never normalize).
+*.jar   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
