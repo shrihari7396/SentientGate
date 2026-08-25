@@ -4,7 +4,6 @@ FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 COPY pom.xml .
 COPY dummy-service dummy-service
-COPY app app
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run

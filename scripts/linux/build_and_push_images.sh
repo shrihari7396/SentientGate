@@ -68,6 +68,7 @@ push_all() {
         local remote_tag="${REGISTRY_USER}/${image}:${TAG}"
 
         echo -e "\n${BLUE}🏷️  Tagging ${local_tag} -> ${remote_tag}${NC}"
+        docker rmi "$remote_tag" 2>/dev/null || true
         docker tag "$local_tag" "$remote_tag"
 
         echo -e "${BLUE}📤 Pushing ${remote_tag}...${NC}"
