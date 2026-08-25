@@ -23,7 +23,7 @@
     </properties>
 
     <dependencies>
-        <!-- ---------------- Spring Boot ---------------- -->
+        <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -49,19 +49,19 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
-        <!-- ---------------- Kafka ---------------- -->
+        <!-- Kafka -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-        <!-- ---------------- Spring Cloud ---------------- -->
+        <!-- Spring Cloud -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
-        <!-- ---------------- gRPC (server only; runtime libs come transitively) ---------------- -->
+        <!-- gRPC (server only; runtime libs come transitively) -->
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
@@ -75,14 +75,14 @@
             <version>2.1.1</version>
         </dependency>
 
-        <!-- ---------------- Lombok ---------------- -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!-- ---------------- Devtools ---------------- -->
+        <!-- Devtools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -90,14 +90,14 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- ---------------- Database (runtime) ---------------- -->
+        <!-- Database (runtime) -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- ---------------- Testing ---------------- -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
