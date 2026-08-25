@@ -18,10 +18,10 @@ for service in EurekaServer ApiGateway LoggingService MCPService AIService Dummy
     fi
 done
 
-# Catch-all for lingering gradlew or node development server processes associated with this project
-if pgrep -f "gradlew bootRun" > /dev/null; then
-    echo "Killing remaining gradlew bootRun processes..."
-    pkill -f "gradlew bootRun"
+# Catch-all for lingering Maven spring-boot:run or node development server processes associated with this project
+if pgrep -f "spring-boot:run" > /dev/null; then
+    echo "Killing remaining spring-boot:run processes..."
+    pkill -f "spring-boot:run"
 fi
 
 if pgrep -f "vite" > /dev/null; then
