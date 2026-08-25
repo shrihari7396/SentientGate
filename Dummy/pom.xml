@@ -17,7 +17,6 @@
 
     <modules>
         <module>dummy-service</module>
-        <module>app</module>
     </modules>
 
     <properties>
