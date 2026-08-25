@@ -3,6 +3,9 @@
 cd "$(dirname "$0")/.."
 mkdir -p logs
 
+# Service set + per-service run/test dispatch (single source of truth).
+source scripts/services.sh
+
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
@@ -23,10 +26,9 @@ until docker exec postgres-db pg_isready -U postgres >/dev/null 2>&1 || docker e
 done
 echo -e "\n${GREEN}✅ Postgres is healthy!${NC}"
 
-# Step 3: Start Eureka Server
+# Step 3: Start Eureka Server first (service registry) — every other service depends on it.
 echo -e "${BLUE}📦 Starting Eureka Server locally...${NC}"
-./EurekaServer/run.sh > logs/EurekaServer.log 2>&1 &
-EUREKA_PID=$!
+run_service EurekaServer > logs/EurekaServer.log 2>&1 &
 
 # Step 4: Wait for Eureka Server port 8761 to open
 echo -e "${BLUE}⏳ Waiting for Eureka Server to listen on port 8761...${NC}"
@@ -36,15 +38,14 @@ until curl -s http://localhost:8761/eureka/apps >/dev/null 2>&1; do
 done
 echo -e "\n${GREEN}✅ Eureka Registry is up and running!${NC}"
 
-# Step 5: Start all downstream microservices and frontend
+# Step 5: Start all downstream microservices and the frontend.
 echo -e "${BLUE}📦 Starting Microservices (ApiGateway, LoggingService, MCPServer, AIService, Dummy, SentinelUI)...${NC}"
-
-./ApiGateway/run.sh > logs/ApiGateway.log 2>&1 &
-./LoggingService/run.sh > logs/LoggingService.log 2>&1 &
-./MCPService/run.sh > logs/MCPService.log 2>&1 &
-./AIService/run.sh > logs/AIService.log 2>&1 &
-./Dummy/run.sh > logs/Dummy.log 2>&1 &
-./UI/sentinel-gateway-ui/run.sh > logs/SentinelUI.log 2>&1 &
+for service in "${SERVICES[@]}"; do
+    folder="${service%%:*}"
+    label="${service##*:}"
+    [ "$folder" = "EurekaServer" ] && continue   # already started in Step 3
+    run_service "$folder" > "logs/${label}.log" 2>&1 &
+done
 
 echo -e "\n${GREEN}🎉 All services started successfully in the background!${NC}"
 echo -e "${BLUE}Logs are being written to the 'logs/' directory.${NC}"
