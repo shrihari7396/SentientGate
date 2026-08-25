@@ -12,7 +12,7 @@ echo -e "${BLUE}🔨 Generating Protocol Buffer files...${NC}"
 # LoggingService
 echo -e "${BLUE}➡️ Generating protos for LoggingService...${NC}"
 cd LoggingService
-./gradlew generateProto
+./mvnw -q protobuf:compile protobuf:compile-custom
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ LoggingService protos generated successfully!${NC}"
 else
@@ -24,7 +24,7 @@ cd ..
 # MCPService
 echo -e "${BLUE}➡️ Generating protos for MCPService...${NC}"
 cd MCPService
-./gradlew generateProto
+./mvnw -q protobuf:compile protobuf:compile-custom
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✅ MCPService protos generated successfully!${NC}"
 else
