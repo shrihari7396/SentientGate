@@ -83,7 +83,7 @@ SentientGate/
 ├── Dummy/
 ├── UI/sentinel-gateway-ui/
 ├── k8s/                     # Consolidated Kubernetes manifests
-├── scripts/                 # Automation scripts (test, build, deploy)
+├── scripts/                 # Automation scripts, per-OS: linux/ + macos/ (Bash), windows/ (PowerShell)
 ├── TOOLS/                   # Local infrastructure docker-compose
 ├── .github/workflows/       # CI/CD Pipelines
 ├── ARCHITECTURE.md          # In-depth Mermaid diagrams
@@ -92,22 +92,32 @@ SentientGate/
 
 ## Quick Start (Local Development)
 
+We provide automation scripts to easily spin up Postgres, Redis, Kafka, and the microservices locally. Use the folder that matches your OS: `scripts/linux/` and `scripts/macos/` (Bash), or `scripts/windows/` (PowerShell). The examples below show Linux; substitute `macos` or use the PowerShell variant as noted.
+
 ### 1. Start Infrastructure & Services
-We provide automation scripts to easily spin up Postgres, Redis, Kafka, and the microservices locally.
 ```bash
-./scripts/run_local.sh
+./scripts/linux/run_local.sh          # macOS: ./scripts/macos/run_local.sh
+```
+```powershell
+.\scripts\windows\run_local.ps1        # Windows (PowerShell)
 ```
 *Note: This script launches the infrastructure and sequentially boots up all microservices.*
 
 ### 2. Run Tests
 Execute the full integration test suite across all services:
 ```bash
-./scripts/test_local.sh
+./scripts/linux/test_local.sh         # macOS: ./scripts/macos/test_local.sh
+```
+```powershell
+.\scripts\windows\test_local.ps1       # Windows (PowerShell)
 ```
 
 ### 3. Stop Environment
 ```bash
-./scripts/stop_local.sh
+./scripts/linux/stop_local.sh         # macOS: ./scripts/macos/stop_local.sh
+```
+```powershell
+.\scripts\windows\stop_local.ps1       # Windows (PowerShell)
 ```
 
 ## Kubernetes Deployment (Production Ready)
@@ -123,12 +133,18 @@ minikube start
 
 2. Build and push your Docker images to your registry:
 ```bash
-./scripts/build_and_push_images.sh
+./scripts/linux/build_and_push_images.sh    # macOS: ./scripts/macos/build_and_push_images.sh
+```
+```powershell
+.\scripts\windows\build_and_push_images.ps1  # Windows (PowerShell)
 ```
 
 3. Deploy all services to Kubernetes:
 ```bash
-./scripts/deploy.sh
+./scripts/linux/deploy.sh             # macOS: ./scripts/macos/deploy.sh
+```
+```powershell
+.\scripts\windows\deploy.ps1           # Windows (PowerShell)
 ```
 
 ## CI/CD Automation
