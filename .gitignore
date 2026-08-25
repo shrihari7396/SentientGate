@@ -4,6 +4,9 @@
 # Log file
 *.log
 
+# Maven build output (matches target/ at any depth)
+target/
+
 .idea/
 .vscode/
 !**/.idea   
