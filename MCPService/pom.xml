@@ -23,7 +23,7 @@
     </properties>
 
     <dependencies>
-        <!-- ---------------- Spring Boot ---------------- -->
+        <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -45,7 +45,7 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
-        <!-- ---------------- Spring Cloud ---------------- -->
+        <!-- Spring Cloud -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
@@ -59,13 +59,13 @@
             <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
         </dependency>
 
-        <!-- ---------------- Kafka ---------------- -->
+        <!-- Kafka -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-        <!-- ---------------- gRPC (ONLY STARTERS, NO MANUAL CORE DEPS) ---------------- -->
+        <!-- gRPC (ONLY STARTERS, NO MANUAL CORE DEPS) -->
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
@@ -84,14 +84,14 @@
             <version>2.1.1</version>
         </dependency>
 
-        <!-- ---------------- Lombok ---------------- -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!-- ---------------- Devtools ---------------- -->
+        <!-- Devtools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -99,7 +99,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- ---------------- Testing ---------------- -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
