@@ -17,26 +17,13 @@ format_maven_service() {
     mvn spotless:apply
 }
 
-format_gradle_service() {
-    SERVICE_NAME=$1
-    SERVICE_PATH=$BASE_DIR/$SERVICE_NAME
-
-    echo "----------------------------------------"
-    echo "Formatting Gradle Service: $SERVICE_NAME..."
-    echo "----------------------------------------"
-    cd $SERVICE_PATH || exit
-    ./gradlew spotlessApply
-}
-
-# Format Maven services
+# Format Maven services (all services are Maven)
 format_maven_service AIService
 format_maven_service ApiGateway
-
-# Format Gradle services
-format_gradle_service Dummy
-format_gradle_service EurekaServer
-format_gradle_service LoggingService
-format_gradle_service MCPService
+format_maven_service Dummy
+format_maven_service EurekaServer
+format_maven_service LoggingService
+format_maven_service MCPService
 
 echo "----------------------------------------"
 echo "All services formatted!"
