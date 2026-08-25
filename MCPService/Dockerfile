@@ -1,16 +1,12 @@
-FROM eclipse-temurin:21-jdk AS build
-
+# Stage 1: Build
+# NOTE: Debian/glibc base (NOT alpine) is required so the protoc / protoc-gen-grpc-java
+# codegen binaries pulled by protobuf-maven-plugin can execute (they are glibc-linked).
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
-
-COPY . .
-
-RUN chmod +x gradlew
-
-# Generate Java classes from .proto files
-RUN ./gradlew generateProto --no-daemon
-
-# Build Spring Boot JAR
-RUN ./gradlew bootJar -x test --no-daemon
+COPY pom.xml .
+COPY src ./src
+# Also generates the gRPC/protobuf sources (protobuf-maven-plugin binds to generate-sources)
+RUN mvn clean package -DskipTests
 
 # Stage 2: Run
 FROM eclipse-temurin:21-jre-alpine
@@ -21,7 +17,7 @@ USER appuser
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*-SNAPSHOT.jar app.jar
 
 ENV SERVER_PORT=8080
 ENV SPRING_PROFILES_ACTIVE=prod
