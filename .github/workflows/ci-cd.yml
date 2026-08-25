@@ -62,5 +62,8 @@ jobs:
         run: |
           chmod +x scripts/*.sh
 
-      - name: Build and Push Images
-        run: ./scripts/build_and_push_images.sh
+      - name: Build all images
+        run: ./scripts/build_and_push_images.sh build
+
+      - name: Push all images
+        run: ./scripts/build_and_push_images.sh push
