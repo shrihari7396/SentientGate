@@ -1,5 +1,22 @@
 #!/bin/bash
+# scripts/build_and_push_images.sh
+#
+# Usage:
+#   build_and_push_images.sh [build|push|all]
+#
+#   build  - build every image locally (no push)
+#   push   - tag + push every previously-built image
+#   all    - build every image, then push them (default)
+#
+# The build phase aborts on the FIRST failure (set -e), so a service that fails
+# to compile/package can never result in a partial set of pushed images. In CI,
+# run `build` and `push` as two separate steps so a build failure fails the job
+# before anything is pushed to the registry.
+set -euo pipefail
+
 cd "$(dirname "$0")/.."
+
+PHASE="${1:-all}"
 
 # Configuration
 REGISTRY_USER="shrihari7396"
@@ -10,8 +27,6 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
-
-echo -e "${BLUE}🚀 Starting Build and Push Process for SentientGate Services...${NC}"
 
 # Define services with their folder name and final image name
 # Format: "FOLDER_NAME:IMAGE_NAME"
@@ -25,48 +40,49 @@ SERVICES=(
     "UI/sentinel-gateway-ui:sentinel-ui"
 )
 
-# Function to build and push a service
-build_and_push() {
-    local folder=$1
-    local image=$2
-    local local_tag="sentientgate_${image}"
-    local remote_tag="${REGISTRY_USER}/${image}:${TAG}"
+build_all() {
+    echo -e "\n${BLUE}=== Building all images ===${NC}"
+    for service in "${SERVICES[@]}"; do
+        local folder="${service%%:*}"
+        local image="${service##*:}"
+        local local_tag="sentientgate_${image}"
 
-    echo -e "\n${BLUE}------------------------------------------------${NC}"
-    echo -e "${BLUE}🔨 Building service in: ${folder} (Local Tag: ${local_tag})...${NC}"
-    echo -e "${BLUE}------------------------------------------------${NC}"
-
-    if [ -d "$folder" ]; then
-        # Build image
-        docker build -t "$local_tag" "$folder"
-        if [ $? -eq 0 ]; then
-            echo -e "${GREEN}✅ Successfully built local image: ${local_tag}${NC}"
-            
-            # Tag image
-            echo -e "${BLUE}🏷️  Tagging ${local_tag} as ${remote_tag}...${NC}"
-            docker tag "$local_tag" "$remote_tag"
-            
-            # Push image
-            echo -e "${BLUE}📤 Pushing ${remote_tag} to registry...${NC}"
-            docker push "$remote_tag"
-            if [ $? -eq 0 ]; then
-                echo -e "${GREEN}✅ Successfully pushed: ${remote_tag}${NC}"
-            else
-                echo -e "${RED}❌ Failed to push: ${remote_tag}${NC}"
-            fi
-        else
-            echo -e "${RED}❌ Failed to build service in folder: ${folder}${NC}"
+        if [ ! -d "$folder" ]; then
+            echo -e "${RED}❌ Folder not found: ${folder}${NC}"
+            exit 1
         fi
-    else
-        echo -e "${RED}⚠️  Folder not found: ${folder}${NC}"
-    fi
+
+        echo -e "\n${BLUE}🔨 Building ${folder} -> ${local_tag}...${NC}"
+        docker build -t "$local_tag" "$folder"
+        echo -e "${GREEN}✅ Built: ${local_tag}${NC}"
+    done
+    echo -e "\n${GREEN}✅ All images built successfully.${NC}"
 }
 
-# Run the loop
-for service in "${SERVICES[@]}"; do
-    FOLDER="${service%%:*}"
-    IMAGE="${service##*:}"
-    build_and_push "$FOLDER" "$IMAGE"
-done
+push_all() {
+    echo -e "\n${BLUE}=== Pushing all images ===${NC}"
+    for service in "${SERVICES[@]}"; do
+        local image="${service##*:}"
+        local local_tag="sentientgate_${image}"
+        local remote_tag="${REGISTRY_USER}/${image}:${TAG}"
 
-echo -e "\n${GREEN}🎉 All build and push operations completed!${NC}"
+        echo -e "\n${BLUE}🏷️  Tagging ${local_tag} -> ${remote_tag}${NC}"
+        docker tag "$local_tag" "$remote_tag"
+
+        echo -e "${BLUE}📤 Pushing ${remote_tag}...${NC}"
+        docker push "$remote_tag"
+        echo -e "${GREEN}✅ Pushed: ${remote_tag}${NC}"
+    done
+    echo -e "\n${GREEN}🎉 All images pushed successfully!${NC}"
+}
+
+echo -e "${BLUE}🚀 SentientGate images — phase: ${PHASE}${NC}"
+case "$PHASE" in
+    build) build_all ;;
+    push)  push_all ;;
+    all)   build_all; push_all ;;
+    *)
+        echo -e "${RED}Unknown phase: ${PHASE} (use: build | push | all)${NC}"
+        exit 2
+        ;;
+esac
