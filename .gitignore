@@ -9,8 +9,7 @@ target/
 
 .idea/
 .vscode/
-!**/.idea/
-
+!**/.idea/**/
 # BlueJ files
 *.ctxt
 
