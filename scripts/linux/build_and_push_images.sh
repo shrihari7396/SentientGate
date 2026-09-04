@@ -37,7 +37,7 @@ SERVICES=(
     "LoggingService:logging-service"
     "MCPService:mcp-server"
     "AIService:ai-service"
-    "Dummy:dummy-service"
+    "services:dummy-service"
     "UI/sentinel-gateway-ui:sentinel-ui"
 )
 

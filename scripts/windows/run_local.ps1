@@ -70,7 +70,7 @@ while ($true) {
 Write-Host "Eureka Registry is up and running!" -ForegroundColor Green
 
 # Step 5: Start all downstream microservices and the frontend.
-Write-Host "Starting Microservices (ApiGateway, LoggingService, MCPServer, AIService, Dummy, SentinelUI)..." -ForegroundColor Cyan
+Write-Host "Starting Microservices (ApiGateway, LoggingService, MCPServer, AIService, services, SentinelUI)..." -ForegroundColor Cyan
 foreach ($s in $Services) {
     if ($s.Folder -eq 'EurekaServer') { continue }   # already started in Step 3
     $Procs += Start-ServiceProcess -Folder $s.Folder -Label $s.Label

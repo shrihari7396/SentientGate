@@ -13,7 +13,7 @@ echo -e "${BLUE}🛑 Stopping SentientGate Services locally...${NC}"
 
 echo -e "${BLUE}Stopping Microservices and UI processes...${NC}"
 # Find and kill processes related to the project
-for service in EurekaServer ApiGateway LoggingService MCPService AIService Dummy sentinel-gateway-ui; do
+for service in EurekaServer ApiGateway LoggingService MCPService AIService services sentinel-gateway-ui; do
     if pgrep -f "$service" > /dev/null; then
         echo "Killing processes for $service..."
         pkill -f "$service"

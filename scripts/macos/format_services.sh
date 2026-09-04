@@ -14,7 +14,7 @@ format_service() {
     ( cd "$ROOT_DIR/$svc" && ./mvnw -q spotless:apply )
 }
 
-for svc in AIService ApiGateway Dummy EurekaServer LoggingService MCPService; do
+for svc in AIService ApiGateway EurekaServer LoggingService MCPService services; do
     format_service "$svc"
 done
 

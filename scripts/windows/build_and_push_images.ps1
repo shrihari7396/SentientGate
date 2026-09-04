@@ -26,7 +26,7 @@ $Services = @(
     @{ Folder = 'LoggingService';          Image = 'logging-service' }
     @{ Folder = 'MCPService';              Image = 'mcp-server' }
     @{ Folder = 'AIService';               Image = 'ai-service' }
-    @{ Folder = 'Dummy';                   Image = 'dummy-service' }
+    @{ Folder = 'services';                Image = 'dummy-service' }
     @{ Folder = 'UI/sentinel-gateway-ui';  Image = 'sentinel-ui' }
 )
 

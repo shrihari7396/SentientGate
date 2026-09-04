@@ -20,7 +20,7 @@ SERVICES=(
     "LoggingService:LoggingService"
     "MCPService:MCPService"
     "AIService:AIService"
-    "Dummy:Dummy"
+    "services:services"
     "UI/sentinel-gateway-ui:SentinelUI"
 )
 
@@ -35,7 +35,7 @@ run_service() {
             UI/*)
                 npm install && npm run dev
                 ;;
-            Dummy)
+            services)
                 # Aggregator reactor: run the one bootable module, building its deps first.
                 ./mvnw -pl dummy-service -am spring-boot:run -DskipTests
                 ;;

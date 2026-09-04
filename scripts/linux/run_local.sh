@@ -52,7 +52,7 @@ done
 echo -e "\n${GREEN}✅ Eureka Registry is up and running!${NC}"
 
 # Step 5: Start all downstream microservices and the frontend.
-echo -e "${BLUE}📦 Starting Microservices (ApiGateway, LoggingService, MCPServer, AIService, Dummy, SentinelUI)...${NC}"
+echo -e "${BLUE}📦 Starting Microservices (ApiGateway, LoggingService, MCPServer, AIService, services, SentinelUI)...${NC}"
 for service in "${SERVICES[@]}"; do
     folder="${service%%:*}"
     label="${service##*:}"

@@ -6,7 +6,7 @@ $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 
 Write-Host "Formatting all services with Spotless..."
 
-foreach ($svc in @('AIService', 'ApiGateway', 'Dummy', 'EurekaServer', 'LoggingService', 'MCPService')) {
+foreach ($svc in @('AIService', 'ApiGateway', 'EurekaServer', 'LoggingService', 'MCPService', 'services')) {
     Write-Host ('-' * 40)
     Write-Host "Formatting: $svc"
     Write-Host ('-' * 40)

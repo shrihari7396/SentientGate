@@ -19,7 +19,7 @@ $Services = @(
     @{ Folder = 'LoggingService';          Label = 'LoggingService' }
     @{ Folder = 'MCPService';              Label = 'MCPService' }
     @{ Folder = 'AIService';               Label = 'AIService' }
-    @{ Folder = 'Dummy';                   Label = 'Dummy' }
+    @{ Folder = 'services';                Label = 'services' }
     @{ Folder = 'UI/sentinel-gateway-ui';  Label = 'SentinelUI' }
 )
 
@@ -32,7 +32,7 @@ function Invoke-RunService {
     try {
         switch -Wildcard ($Folder) {
             'UI/*'  { npm install; npm run dev; break }
-            'Dummy' { & '.\mvnw.cmd' -pl dummy-service -am spring-boot:run -DskipTests; break }
+            'services' { & '.\mvnw.cmd' -pl dummy-service -am spring-boot:run -DskipTests; break }
             default { & '.\mvnw.cmd' spring-boot:run -DskipTests; break }
         }
     }
