@@ -114,8 +114,7 @@ class McpAnalysisServiceTest {
         @Test
         @DisplayName("Blocks user if a synchronous rule matches")
         void blocksIfSyncRuleMatches() {
-            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList()))
-                    .thenReturn(true);
+            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList())).thenReturn(true);
 
             mcpAnalysisService.analyze(uuid, alerts);
 
@@ -134,8 +133,7 @@ class McpAnalysisServiceTest {
         @DisplayName("Runs AI analysis asynchronously if no synchronous rules match")
         void runsAiIfNoSyncMatches() {
             // Sync rule returns false
-            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList()))
-                    .thenReturn(false);
+            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList())).thenReturn(false);
 
             // Capture the Runnable submitted to the Executor
             doAnswer(
@@ -162,8 +160,7 @@ class McpAnalysisServiceTest {
         @Test
         @DisplayName("AI Exception is caught gracefully")
         void handlesAiExceptionGracefully() {
-            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList()))
-                    .thenReturn(false);
+            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList())).thenReturn(false);
 
             doAnswer(
                             invocation -> {

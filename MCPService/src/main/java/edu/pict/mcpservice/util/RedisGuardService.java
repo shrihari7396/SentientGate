@@ -27,7 +27,7 @@ public class RedisGuardService {
     /** Returns true if this UUID was already processed by MCP within the checked window. */
     public boolean wasRecentlyChecked(String uuid) {
         String checkedKey = CHECKED_PREFIX + uuid;
-        if (stringRedisTemplate.hasKey(checkedKey)) {
+        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(checkedKey))) {
             log.debug("UUID {} was recently checked by MCP, skipping", uuid);
             return true;
         }

@@ -7,8 +7,7 @@ import java.util.regex.Pattern;
 
 public final class InputNormalizer {
 
-    private InputNormalizer() {
-    }
+    private InputNormalizer() {}
 
     private static final int MAX_DECODE_PASSES = 3;
 

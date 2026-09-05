@@ -7,8 +7,7 @@ import java.util.stream.Collectors;
 
 public final class LogEventMapper {
 
-    private LogEventMapper() {
-    }
+    private LogEventMapper() {}
 
     public static LogEvent fromGrpc(UserLogEvent grpcEvent) {
         if (grpcEvent == null) {
@@ -32,8 +31,6 @@ public final class LogEventMapper {
         if (grpcEvents == null) {
             return List.of();
         }
-        return grpcEvents.stream()
-                .map(LogEventMapper::fromGrpc)
-                .collect(Collectors.toList());
+        return grpcEvents.stream().map(LogEventMapper::fromGrpc).collect(Collectors.toList());
     }
 }
