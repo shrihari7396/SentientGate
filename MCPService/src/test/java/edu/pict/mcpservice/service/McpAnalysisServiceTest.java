@@ -103,7 +103,7 @@ class McpAnalysisServiceTest {
             verify(redisGuardService).markAsChecked(uuid);
             verify(eventHistoryService).getAllEventsInDuration(eq(uuid), anyInt());
             // Strategy should never be checked since it was skipped by dedup
-            verify(syncStrategy, never()).isAvailable(any(), any());
+            verify(syncStrategy, never()).process(any(), any());
         }
     }
 
@@ -114,7 +114,7 @@ class McpAnalysisServiceTest {
         @Test
         @DisplayName("Blocks user if a synchronous rule matches")
         void blocksIfSyncRuleMatches() {
-            when(syncStrategy.isAvailable(any(SecurityAlertEvent.class), anyList()))
+            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList()))
                     .thenReturn(true);
 
             mcpAnalysisService.analyze(uuid, alerts);
@@ -134,7 +134,7 @@ class McpAnalysisServiceTest {
         @DisplayName("Runs AI analysis asynchronously if no synchronous rules match")
         void runsAiIfNoSyncMatches() {
             // Sync rule returns false
-            when(syncStrategy.isAvailable(any(SecurityAlertEvent.class), anyList()))
+            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList()))
                     .thenReturn(false);
 
             // Capture the Runnable submitted to the Executor
@@ -148,7 +148,7 @@ class McpAnalysisServiceTest {
                     .execute(any(Runnable.class));
 
             // Setup AI strategy to detect a threat
-            when(aiStrategy.isAvailable(any(SecurityAlertEvent.class), anyList())).thenReturn(true);
+            when(aiStrategy.process(any(SecurityAlertEvent.class), anyList())).thenReturn(true);
 
             mcpAnalysisService.analyze(uuid, alerts);
 
@@ -162,7 +162,7 @@ class McpAnalysisServiceTest {
         @Test
         @DisplayName("AI Exception is caught gracefully")
         void handlesAiExceptionGracefully() {
-            when(syncStrategy.isAvailable(any(SecurityAlertEvent.class), anyList()))
+            when(syncStrategy.process(any(SecurityAlertEvent.class), anyList()))
                     .thenReturn(false);
 
             doAnswer(
@@ -175,7 +175,7 @@ class McpAnalysisServiceTest {
                     .execute(any(Runnable.class));
 
             // AI strategy throws an exception
-            when(aiStrategy.isAvailable(any(SecurityAlertEvent.class), anyList()))
+            when(aiStrategy.process(any(SecurityAlertEvent.class), anyList()))
                     .thenThrow(new RuntimeException("AI API Timeout"));
 
             // Should not throw out of the analyze method

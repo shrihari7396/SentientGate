@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class HighErrorRateStrategy implements ThreatStrategy {
 
     @Override
-    public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
+    public boolean process(SecurityAlertEvent alert, List<LogEvent> history) {
         if (history.isEmpty()) return false;
 
         long errorCount = history.stream().filter(log -> log.getStatusCode() >= 400).count();

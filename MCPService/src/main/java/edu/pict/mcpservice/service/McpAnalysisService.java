@@ -146,7 +146,7 @@ public class McpAnalysisService {
 
         return strategies.stream()
                 .filter(s -> !(s instanceof AiAnomalyStrategy))
-                .filter(s -> s.isAvailable(alert, history))
+                .filter(s -> s.process(alert, history))
                 .findFirst();
     }
 
@@ -182,7 +182,7 @@ public class McpAnalysisService {
             List<LogEvent> history,
             ThreatStrategy aiStrategy) {
         try {
-            if (aiStrategy.isAvailable(alert, history)) {
+            if (aiStrategy.process(alert, history)) {
                 log.warn(
                         "[AI] Threat Detected! Strategy: {}",
                         aiStrategy.getClass().getSimpleName());

@@ -48,7 +48,7 @@ public class SensitivePathStrategy implements ThreatStrategy {
                     Pattern.compile("^/latest/meta-data(/|$)"));
 
     @Override
-    public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
+    public boolean process(SecurityAlertEvent alert, List<LogEvent> history) {
         // Check the current alert path
         if (isForbidden(InputNormalizer.normalizePath(alert.getAttemptedPath()))) {
             return true;

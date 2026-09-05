@@ -69,21 +69,21 @@ class HighErrorRateStrategyTest {
         @DisplayName("triggers with 100% error rate and >5 entries")
         void allErrors() {
             List<LogEvent> history = buildHistory(10, 0); // 100% errors, 10 entries
-            assertTrue(strategy.isAvailable(defaultAlert, history));
+            assertTrue(strategy.process(defaultAlert, history));
         }
 
         @Test
         @DisplayName("triggers with ~80% error rate and >5 entries")
         void highErrorRate() {
             List<LogEvent> history = buildHistory(8, 2); // 80% errors, 10 entries
-            assertTrue(strategy.isAvailable(defaultAlert, history));
+            assertTrue(strategy.process(defaultAlert, history));
         }
 
         @Test
         @DisplayName("triggers at boundary: 6 entries, 5 errors (83%)")
         void boundaryTrigger() {
             List<LogEvent> history = buildHistory(5, 1); // 83.3% errors, 6 entries
-            assertTrue(strategy.isAvailable(defaultAlert, history));
+            assertTrue(strategy.process(defaultAlert, history));
         }
 
         @Test
@@ -98,7 +98,7 @@ class HighErrorRateStrategyTest {
             history.add(logWithStatus(502, ts++));
             history.add(logWithStatus(503, ts++));
             // 6 entries, all >= 400 → 100% error rate
-            assertTrue(strategy.isAvailable(defaultAlert, history));
+            assertTrue(strategy.process(defaultAlert, history));
         }
     }
 
@@ -113,35 +113,35 @@ class HighErrorRateStrategyTest {
         @Test
         @DisplayName("does not trigger on empty history")
         void emptyHistory() {
-            assertFalse(strategy.isAvailable(defaultAlert, Collections.emptyList()));
+            assertFalse(strategy.process(defaultAlert, Collections.emptyList()));
         }
 
         @Test
         @DisplayName("does not trigger with <=5 entries even if all errors")
         void tooFewEntries() {
             List<LogEvent> history = buildHistory(5, 0); // 100% errors but only 5 entries
-            assertFalse(strategy.isAvailable(defaultAlert, history));
+            assertFalse(strategy.process(defaultAlert, history));
         }
 
         @Test
         @DisplayName("does not trigger with low error rate (30%)")
         void lowErrorRate() {
             List<LogEvent> history = buildHistory(3, 7); // 30% errors, 10 entries
-            assertFalse(strategy.isAvailable(defaultAlert, history));
+            assertFalse(strategy.process(defaultAlert, history));
         }
 
         @Test
         @DisplayName("does not trigger at exactly 70% error rate boundary")
         void exactBoundaryNoTrigger() {
             List<LogEvent> history = buildHistory(7, 3); // exactly 70%, not > 70%
-            assertFalse(strategy.isAvailable(defaultAlert, history));
+            assertFalse(strategy.process(defaultAlert, history));
         }
 
         @Test
         @DisplayName("does not trigger with all 200s")
         void allSuccess() {
             List<LogEvent> history = buildHistory(0, 10);
-            assertFalse(strategy.isAvailable(defaultAlert, history));
+            assertFalse(strategy.process(defaultAlert, history));
         }
     }
 
@@ -158,6 +158,6 @@ class HighErrorRateStrategyTest {
             history.add(logWithStatus(399, ts++));
         }
         // All 399 → 0% error rate
-        assertFalse(strategy.isAvailable(defaultAlert, history));
+        assertFalse(strategy.process(defaultAlert, history));
     }
 }

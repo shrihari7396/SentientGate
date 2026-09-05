@@ -74,7 +74,7 @@ public class EventHistoryService {
     }
 
     @CircuitBreaker(name = "loggingService", fallbackMethod = "fallbackHistory")
-    public List<UserLogEvent> fetchFromGrpc(String uuid, int duration) {
+    private List<UserLogEvent> fetchFromGrpc(String uuid, int duration) {
         log.info("📡 Requesting {} min history for UUID: {}", duration, uuid);
 
         UserLogEventsRequest request =

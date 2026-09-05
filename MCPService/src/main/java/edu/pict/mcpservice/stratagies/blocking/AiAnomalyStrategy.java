@@ -19,7 +19,7 @@ public class AiAnomalyStrategy implements ThreatStrategy {
     private final AIClient aiClient;
 
     @Override
-    public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
+    public boolean process(SecurityAlertEvent alert, List<LogEvent> history) {
         // AI analysis is only needed if history is rich enough
         if (history.size() < 5) return false;
 

@@ -32,7 +32,7 @@ public class PatternMatchStrategy implements ThreatStrategy {
             List.of("../", "etc/passwd", "--", "' or ", "1=1", "<script>", "alert(");
 
     @Override
-    public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
+    public boolean process(SecurityAlertEvent alert, List<LogEvent> history) {
         // Check the current alert path first
         if (containsMaliciousPattern(InputNormalizer.normalize(alert.getAttemptedPath()))) {
             return true;

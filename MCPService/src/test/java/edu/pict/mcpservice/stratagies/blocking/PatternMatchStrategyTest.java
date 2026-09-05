@@ -69,7 +69,7 @@ class PatternMatchStrategyTest {
                 })
         void shouldBlockPlainTextPayloads(String path) {
             assertTrue(
-                    strategy.isAvailable(alertWithPath(path), emptyHistory),
+                    strategy.process(alertWithPath(path), emptyHistory),
                     "Expected block for path: " + path);
         }
     }
@@ -98,7 +98,7 @@ class PatternMatchStrategyTest {
                 })
         void shouldBlockEncodedPayloads(String path) {
             assertTrue(
-                    strategy.isAvailable(alertWithPath(path), emptyHistory),
+                    strategy.process(alertWithPath(path), emptyHistory),
                     "Expected block for encoded path: " + path);
         }
     }
@@ -123,7 +123,7 @@ class PatternMatchStrategyTest {
                 })
         void shouldBlockCommentInjectedPayloads(String path) {
             assertTrue(
-                    strategy.isAvailable(alertWithPath(path), emptyHistory),
+                    strategy.process(alertWithPath(path), emptyHistory),
                     "Expected block for comment-injected path: " + path);
         }
     }
@@ -146,7 +146,7 @@ class PatternMatchStrategyTest {
                 })
         void shouldBlockCombinedAttacks(String path) {
             assertTrue(
-                    strategy.isAvailable(alertWithPath(path), emptyHistory),
+                    strategy.process(alertWithPath(path), emptyHistory),
                     "Expected block for combined attack: " + path);
         }
     }
@@ -175,7 +175,7 @@ class PatternMatchStrategyTest {
                 })
         void shouldNotBlockLegitimatePathsWithSubstrings(String path) {
             assertFalse(
-                    strategy.isAvailable(alertWithPath(path), emptyHistory),
+                    strategy.process(alertWithPath(path), emptyHistory),
                     "Should NOT block legitimate path: " + path);
         }
     }
@@ -191,36 +191,36 @@ class PatternMatchStrategyTest {
         @Test
         @DisplayName("case-insensitive keyword matching")
         void caseInsensitive() {
-            assertTrue(strategy.isAvailable(alertWithPath("/q=SELECT * FROM users"), emptyHistory));
-            assertTrue(strategy.isAvailable(alertWithPath("/q=SeLeCt * FROM users"), emptyHistory));
+            assertTrue(strategy.process(alertWithPath("/q=SELECT * FROM users"), emptyHistory));
+            assertTrue(strategy.process(alertWithPath("/q=SeLeCt * FROM users"), emptyHistory));
         }
 
         @Test
         @DisplayName("path traversal with backslashes")
         void backslashTraversal() {
             // ../ is the marker — backslash variant doesn't apply unless normalized
-            assertFalse(strategy.isAvailable(alertWithPath("/api/..\\etc\\passwd"), emptyHistory));
+            assertFalse(strategy.process(alertWithPath("/api/..\\etc\\passwd"), emptyHistory));
         }
 
         @Test
         @DisplayName("XSS with mixed case does not bypass substring check")
         void xssMixedCase() {
             // <script> is checked after lowercasing
-            assertTrue(strategy.isAvailable(alertWithPath("/page?x=<SCRIPT>"), emptyHistory));
+            assertTrue(strategy.process(alertWithPath("/page?x=<SCRIPT>"), emptyHistory));
         }
 
         @Test
         @DisplayName("SQL keyword at word boundary in query param")
         void sqlKeywordInQueryParam() {
             assertTrue(
-                    strategy.isAvailable(
+                    strategy.process(
                             alertWithPath("/api/data?q=union select 1,2,3"), emptyHistory));
         }
 
         @Test
         @DisplayName("SQL keyword NOT at word boundary should not trigger")
         void sqlKeywordNotAtBoundary() {
-            assertFalse(strategy.isAvailable(alertWithPath("/reselection/overview"), emptyHistory));
+            assertFalse(strategy.process(alertWithPath("/reselection/overview"), emptyHistory));
         }
     }
 
@@ -244,7 +244,7 @@ class PatternMatchStrategyTest {
                                     .path("/search?q=select * from users")
                                     .timestamp(2000L)
                                     .build());
-            assertTrue(strategy.isAvailable(cleanAlert, history));
+            assertTrue(strategy.process(cleanAlert, history));
         }
 
         @Test
@@ -257,7 +257,7 @@ class PatternMatchStrategyTest {
                                     .path("/api/%2e%2e%2fetc/passwd")
                                     .timestamp(1000L)
                                     .build());
-            assertTrue(strategy.isAvailable(cleanAlert, history));
+            assertTrue(strategy.process(cleanAlert, history));
         }
 
         @Test
@@ -268,7 +268,7 @@ class PatternMatchStrategyTest {
                     List.of(
                             LogEvent.builder().path("/api/v1/health").timestamp(1000L).build(),
                             LogEvent.builder().path("/dashboard").timestamp(2000L).build());
-            assertFalse(strategy.isAvailable(cleanAlert, history));
+            assertFalse(strategy.process(cleanAlert, history));
         }
 
         @Test
@@ -277,7 +277,7 @@ class PatternMatchStrategyTest {
             SecurityAlertEvent cleanAlert = alertWithPath("/api/v1/users");
             List<LogEvent> history =
                     List.of(LogEvent.builder().path(null).timestamp(1000L).build());
-            assertFalse(strategy.isAvailable(cleanAlert, history));
+            assertFalse(strategy.process(cleanAlert, history));
         }
 
         @Test
@@ -294,7 +294,7 @@ class PatternMatchStrategyTest {
                                     .path("/api/insert-user-note")
                                     .timestamp(2000L)
                                     .build());
-            assertFalse(strategy.isAvailable(cleanAlert, history));
+            assertFalse(strategy.process(cleanAlert, history));
         }
     }
 }

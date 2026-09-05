@@ -60,13 +60,13 @@ class AiAnomalyStrategyTest {
     class InsufficientHistory {
         @Test
         void emptyHistory() {
-            assertFalse(strategy.isAvailable(defaultAlert, Collections.emptyList()));
+            assertFalse(strategy.process(defaultAlert, Collections.emptyList()));
             verifyNoInteractions(aiClient);
         }
 
         @Test
         void fourEntries() {
-            assertFalse(strategy.isAvailable(defaultAlert, historyOfSize(4)));
+            assertFalse(strategy.process(defaultAlert, historyOfSize(4)));
             verifyNoInteractions(aiClient);
         }
     }
@@ -78,14 +78,14 @@ class AiAnomalyStrategyTest {
         void anomalyAboveThreshold() {
             when(aiClient.analyze(any()))
                     .thenReturn(new AnomalyDetectionResponse(true, 0.95, "SCAN", 60));
-            assertTrue(strategy.isAvailable(defaultAlert, historyOfSize(10)));
+            assertTrue(strategy.process(defaultAlert, historyOfSize(10)));
         }
 
         @Test
         void anomalyAtBoundary086() {
             when(aiClient.analyze(any()))
                     .thenReturn(new AnomalyDetectionResponse(true, 0.86, "SCAN", 30));
-            assertTrue(strategy.isAvailable(defaultAlert, historyOfSize(5)));
+            assertTrue(strategy.process(defaultAlert, historyOfSize(5)));
         }
     }
 
@@ -96,21 +96,21 @@ class AiAnomalyStrategyTest {
         void notAnomaly() {
             when(aiClient.analyze(any()))
                     .thenReturn(new AnomalyDetectionResponse(false, 0.95, "NONE", 0));
-            assertFalse(strategy.isAvailable(defaultAlert, historyOfSize(10)));
+            assertFalse(strategy.process(defaultAlert, historyOfSize(10)));
         }
 
         @Test
         void anomalyButLowConfidence() {
             when(aiClient.analyze(any()))
                     .thenReturn(new AnomalyDetectionResponse(true, 0.50, "SCAN", 60));
-            assertFalse(strategy.isAvailable(defaultAlert, historyOfSize(10)));
+            assertFalse(strategy.process(defaultAlert, historyOfSize(10)));
         }
 
         @Test
         void anomalyAtExactly085Boundary() {
             when(aiClient.analyze(any()))
                     .thenReturn(new AnomalyDetectionResponse(true, 0.85, "SCAN", 30));
-            assertFalse(strategy.isAvailable(defaultAlert, historyOfSize(10)));
+            assertFalse(strategy.process(defaultAlert, historyOfSize(10)));
         }
     }
 }

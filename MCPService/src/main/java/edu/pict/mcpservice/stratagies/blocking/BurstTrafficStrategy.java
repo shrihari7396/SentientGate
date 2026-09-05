@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class BurstTrafficStrategy implements ThreatStrategy {
 
     @Override
-    public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
+    public boolean process(SecurityAlertEvent alert, List<LogEvent> history) {
         if (history.size() < 10) return false;
 
         // Check if the last 20 requests happened in under 5 seconds

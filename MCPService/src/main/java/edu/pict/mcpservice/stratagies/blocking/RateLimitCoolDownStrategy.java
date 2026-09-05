@@ -14,7 +14,7 @@ public class RateLimitCoolDownStrategy implements ThreatStrategy {
     private static final int RATE_LIMIT_HISTORY_THRESHOLD = 3;
 
     @Override
-    public boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history) {
+    public boolean process(SecurityAlertEvent alert, List<LogEvent> history) {
         // Current alert is a 429 — immediate trigger
         if (alert.getErrorCode() == 429) {
             return true;

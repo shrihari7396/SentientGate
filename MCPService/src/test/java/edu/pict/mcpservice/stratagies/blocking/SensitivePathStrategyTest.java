@@ -63,7 +63,7 @@ class SensitivePathStrategyTest {
                     "/WP-ADMIN", // case-insensitive
                 })
         void shouldBlockWordPressPaths(String path) {
-            assertTrue(strategy.isAvailable(alertWithPath(path), emptyHistory));
+            assertTrue(strategy.process(alertWithPath(path), emptyHistory));
         }
     }
 
@@ -98,7 +98,7 @@ class SensitivePathStrategyTest {
                     "/web.config",
                 })
         void shouldBlockConfigPaths(String path) {
-            assertTrue(strategy.isAvailable(alertWithPath(path), emptyHistory));
+            assertTrue(strategy.process(alertWithPath(path), emptyHistory));
         }
     }
 
@@ -136,7 +136,7 @@ class SensitivePathStrategyTest {
                     "/api-docs/v3",
                 })
         void shouldBlockAdminPaths(String path) {
-            assertTrue(strategy.isAvailable(alertWithPath(path), emptyHistory));
+            assertTrue(strategy.process(alertWithPath(path), emptyHistory));
         }
     }
 
@@ -159,7 +159,7 @@ class SensitivePathStrategyTest {
                     "/latest/meta-data/iam",
                 })
         void shouldBlockDbAndCloudPaths(String path) {
-            assertTrue(strategy.isAvailable(alertWithPath(path), emptyHistory));
+            assertTrue(strategy.process(alertWithPath(path), emptyHistory));
         }
     }
 
@@ -181,7 +181,7 @@ class SensitivePathStrategyTest {
                     "/%61ctuator/env", // URL-encoded actuator
                 })
         void shouldBlockEncodedPaths(String path) {
-            assertTrue(strategy.isAvailable(alertWithPath(path), emptyHistory));
+            assertTrue(strategy.process(alertWithPath(path), emptyHistory));
         }
     }
 
@@ -206,7 +206,7 @@ class SensitivePathStrategyTest {
                     "/swagger-resources", // doesn't start with /swagger/
                 })
         void shouldNotBlockLegitPaths(String path) {
-            assertFalse(strategy.isAvailable(alertWithPath(path), emptyHistory));
+            assertFalse(strategy.process(alertWithPath(path), emptyHistory));
         }
     }
 
@@ -226,7 +226,7 @@ class SensitivePathStrategyTest {
                     List.of(
                             LogEvent.builder().path("/api/v1/health").timestamp(1000L).build(),
                             LogEvent.builder().path("/.env").timestamp(2000L).build());
-            assertTrue(strategy.isAvailable(cleanAlert, history));
+            assertTrue(strategy.process(cleanAlert, history));
         }
 
         @Test
@@ -235,7 +235,7 @@ class SensitivePathStrategyTest {
             SecurityAlertEvent cleanAlert = alertWithPath("/dashboard");
             List<LogEvent> history =
                     List.of(LogEvent.builder().path("/%2eenv").timestamp(1000L).build());
-            assertTrue(strategy.isAvailable(cleanAlert, history));
+            assertTrue(strategy.process(cleanAlert, history));
         }
 
         @Test
@@ -246,7 +246,7 @@ class SensitivePathStrategyTest {
                     List.of(
                             LogEvent.builder().path("/api/v1/health").timestamp(1000L).build(),
                             LogEvent.builder().path("/dashboard").timestamp(2000L).build());
-            assertFalse(strategy.isAvailable(cleanAlert, history));
+            assertFalse(strategy.process(cleanAlert, history));
         }
 
         @Test
@@ -255,7 +255,7 @@ class SensitivePathStrategyTest {
             SecurityAlertEvent cleanAlert = alertWithPath("/api/v1/users");
             List<LogEvent> history =
                     List.of(LogEvent.builder().path(null).timestamp(1000L).build());
-            assertFalse(strategy.isAvailable(cleanAlert, history));
+            assertFalse(strategy.process(cleanAlert, history));
         }
 
         @Test
@@ -263,7 +263,7 @@ class SensitivePathStrategyTest {
         void currentAlertStillTriggers() {
             List<LogEvent> cleanHistory =
                     List.of(LogEvent.builder().path("/api/health").timestamp(1000L).build());
-            assertTrue(strategy.isAvailable(alertWithPath("/.env"), cleanHistory));
+            assertTrue(strategy.process(alertWithPath("/.env"), cleanHistory));
         }
     }
 }

@@ -52,7 +52,7 @@ class RateLimitCoolDownStrategyTest {
     @Test
     @DisplayName("triggers on 429 error code")
     void triggersOn429() {
-        assertTrue(strategy.isAvailable(alertWithErrorCode(429), emptyHistory));
+        assertTrue(strategy.process(alertWithErrorCode(429), emptyHistory));
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -62,31 +62,31 @@ class RateLimitCoolDownStrategyTest {
     @Test
     @DisplayName("does NOT trigger on 200")
     void doesNotTriggerOn200() {
-        assertFalse(strategy.isAvailable(alertWithErrorCode(200), emptyHistory));
+        assertFalse(strategy.process(alertWithErrorCode(200), emptyHistory));
     }
 
     @Test
     @DisplayName("does NOT trigger on 400")
     void doesNotTriggerOn400() {
-        assertFalse(strategy.isAvailable(alertWithErrorCode(400), emptyHistory));
+        assertFalse(strategy.process(alertWithErrorCode(400), emptyHistory));
     }
 
     @Test
     @DisplayName("does NOT trigger on 403")
     void doesNotTriggerOn403() {
-        assertFalse(strategy.isAvailable(alertWithErrorCode(403), emptyHistory));
+        assertFalse(strategy.process(alertWithErrorCode(403), emptyHistory));
     }
 
     @Test
     @DisplayName("does NOT trigger on 500")
     void doesNotTriggerOn500() {
-        assertFalse(strategy.isAvailable(alertWithErrorCode(500), emptyHistory));
+        assertFalse(strategy.process(alertWithErrorCode(500), emptyHistory));
     }
 
     @Test
     @DisplayName("does NOT trigger on 0 (default)")
     void doesNotTriggerOnZero() {
-        assertFalse(strategy.isAvailable(alertWithErrorCode(0), emptyHistory));
+        assertFalse(strategy.process(alertWithErrorCode(0), emptyHistory));
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -105,7 +105,7 @@ class RateLimitCoolDownStrategyTest {
                             LogEvent.builder().statusCode(429).timestamp(1000L).build(),
                             LogEvent.builder().statusCode(429).timestamp(2000L).build(),
                             LogEvent.builder().statusCode(429).timestamp(3000L).build());
-            assertTrue(strategy.isAvailable(alertWithErrorCode(200), history));
+            assertTrue(strategy.process(alertWithErrorCode(200), history));
         }
 
         @Test
@@ -115,7 +115,7 @@ class RateLimitCoolDownStrategyTest {
                     List.of(
                             LogEvent.builder().statusCode(429).timestamp(1000L).build(),
                             LogEvent.builder().statusCode(429).timestamp(2000L).build());
-            assertFalse(strategy.isAvailable(alertWithErrorCode(200), history));
+            assertFalse(strategy.process(alertWithErrorCode(200), history));
         }
 
         @Test
@@ -123,7 +123,7 @@ class RateLimitCoolDownStrategyTest {
         void current429StillTriggers() {
             List<LogEvent> cleanHistory =
                     List.of(LogEvent.builder().statusCode(200).timestamp(1000L).build());
-            assertTrue(strategy.isAvailable(alertWithErrorCode(429), cleanHistory));
+            assertTrue(strategy.process(alertWithErrorCode(429), cleanHistory));
         }
 
         @Test
@@ -134,7 +134,7 @@ class RateLimitCoolDownStrategyTest {
                             LogEvent.builder().statusCode(400).timestamp(1000L).build(),
                             LogEvent.builder().statusCode(403).timestamp(2000L).build(),
                             LogEvent.builder().statusCode(500).timestamp(3000L).build());
-            assertFalse(strategy.isAvailable(alertWithErrorCode(200), history));
+            assertFalse(strategy.process(alertWithErrorCode(200), history));
         }
 
         @Test
@@ -147,7 +147,7 @@ class RateLimitCoolDownStrategyTest {
                             LogEvent.builder().statusCode(404).timestamp(3000L).build(),
                             LogEvent.builder().statusCode(429).timestamp(4000L).build(),
                             LogEvent.builder().statusCode(429).timestamp(5000L).build());
-            assertTrue(strategy.isAvailable(alertWithErrorCode(200), history));
+            assertTrue(strategy.process(alertWithErrorCode(200), history));
         }
     }
 }

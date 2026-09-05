@@ -6,7 +6,7 @@ import java.time.Duration;
 import java.util.List;
 
 public interface ThreatStrategy {
-    boolean isAvailable(SecurityAlertEvent alert, List<LogEvent> history);
+    boolean process(SecurityAlertEvent alert, List<LogEvent> history);
 
     Duration getBlockDuration();
 

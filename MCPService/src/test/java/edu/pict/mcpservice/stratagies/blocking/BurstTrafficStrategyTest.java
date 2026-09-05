@@ -55,22 +55,22 @@ class BurstTrafficStrategyTest {
     class Triggers {
         @Test
         void twentyRequestsInThreeSeconds() {
-            assertTrue(strategy.isAvailable(defaultAlert, buildHistory(20, 1000, 3999)));
+            assertTrue(strategy.process(defaultAlert, buildHistory(20, 1000, 3999)));
         }
 
         @Test
         void thirtyRequestsInFourSeconds() {
-            assertTrue(strategy.isAvailable(defaultAlert, buildHistory(30, 0, 3999)));
+            assertTrue(strategy.process(defaultAlert, buildHistory(30, 0, 3999)));
         }
 
         @Test
         void simultaneousRequests() {
-            assertTrue(strategy.isAvailable(defaultAlert, buildHistory(20, 1000, 1000)));
+            assertTrue(strategy.process(defaultAlert, buildHistory(20, 1000, 1000)));
         }
 
         @Test
         void boundaryTrigger4999ms() {
-            assertTrue(strategy.isAvailable(defaultAlert, buildHistory(20, 0, 4999)));
+            assertTrue(strategy.process(defaultAlert, buildHistory(20, 0, 4999)));
         }
     }
 
@@ -79,27 +79,27 @@ class BurstTrafficStrategyTest {
     class NoTrigger {
         @Test
         void emptyHistory() {
-            assertFalse(strategy.isAvailable(defaultAlert, Collections.emptyList()));
+            assertFalse(strategy.process(defaultAlert, Collections.emptyList()));
         }
 
         @Test
         void lessThanTenEntries() {
-            assertFalse(strategy.isAvailable(defaultAlert, buildHistory(9, 0, 100)));
+            assertFalse(strategy.process(defaultAlert, buildHistory(9, 0, 100)));
         }
 
         @Test
         void twentyRequestsOverSixSeconds() {
-            assertFalse(strategy.isAvailable(defaultAlert, buildHistory(20, 0, 6000)));
+            assertFalse(strategy.process(defaultAlert, buildHistory(20, 0, 6000)));
         }
 
         @Test
         void exactlyFiveSeconds() {
-            assertFalse(strategy.isAvailable(defaultAlert, buildHistory(20, 0, 5000)));
+            assertFalse(strategy.process(defaultAlert, buildHistory(20, 0, 5000)));
         }
 
         @Test
         void fifteenFastRequests() {
-            assertFalse(strategy.isAvailable(defaultAlert, buildHistory(15, 0, 1000)));
+            assertFalse(strategy.process(defaultAlert, buildHistory(15, 0, 1000)));
         }
     }
 }
